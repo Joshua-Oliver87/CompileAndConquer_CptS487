@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,18 +12,27 @@ public abstract class Entity
     public Vector2 Position;
     public Vector2 Velocity;
     public float Orientation;
+    public float Scale = 1.0f;
     
-    public Vector2 Size
+    private Vector2 size
     {
         get
         {
             return texture == null ? Vector2.Zero : new Vector2(texture.Width, texture.Height);
         }
     }
+
+    public Vector2 Size
+    {
+        get
+        {
+            return size * Scale;
+        }
+    }
     
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(texture, Position, null, color, Orientation, Size / 2f, 1f, 0, 0);
+        spriteBatch.Draw(texture, Position, null, color, Orientation, Size / 2f, Scale, 0, 0);
     }
 
     public abstract void Update();

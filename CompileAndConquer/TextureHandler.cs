@@ -11,7 +11,7 @@ public class TextureHandler
 
     public static void Load(ContentManager content)
     {
-        Player = content.Load<Texture2D>("ball");
-        Bullet = content.Load<Texture2D>("ball");
+        Player = content.Load<Texture2D>("spaceship");
+        Bullet = content.Load<Texture2D>("bullet");
     }
 }

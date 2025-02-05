@@ -9,6 +9,7 @@ public class Bullet : Entity
         texture = TextureHandler.Bullet;
         this.Position = position;
         this.Velocity = velocity;
+        Scale = 2.0f;
     }
 
     public override void Update()

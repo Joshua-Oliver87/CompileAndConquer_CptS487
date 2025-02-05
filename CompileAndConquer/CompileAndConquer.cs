@@ -5,14 +5,14 @@ using Microsoft.Xna.Framework.Input;
 
 namespace CompileAndConquer;
 
-public class Game1 : Game
+public class CompileAndConquer : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    
-    //Vector2 ScreenSize { get { return new Vector2(Viewport.Width, Viewport.Height); } }
 
-    public Game1()
+    public static Vector2 ScreenSize;
+
+    public CompileAndConquer()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
@@ -34,6 +34,10 @@ public class Game1 : Game
 
         // TODO: use this.Content to load your game content here
         TextureHandler.Load(Content);
+        
+        // Set our screen size
+        ScreenSize.X = GraphicsDevice.Viewport.Width;
+        ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
     }
@@ -43,42 +47,24 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+        
+        // Update our screen size
+        ScreenSize.X = GraphicsDevice.Viewport.Width;
+        ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         // TODO: Add your update logic here
         InputHandler.Update();
         EntityHandler.Update();
-
-        //float updatedBallSpeed = ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-        
-
-        // if (ballPosition.X > _graphics.PreferredBackBufferWidth - ballTexture.Width / 2)
-        // {
-        //     ballPosition.X = _graphics.PreferredBackBufferWidth - ballTexture.Width / 2;
-        // }
-        // else if (ballPosition.X < ballTexture.Width / 2)
-        // {
-        //     ballPosition.X = ballTexture.Width / 2;
-        // }
-        //
-        // if (ballPosition.Y > _graphics.PreferredBackBufferHeight - ballTexture.Height / 2)
-        // {
-        //     ballPosition.Y = _graphics.PreferredBackBufferHeight - ballTexture.Height / 2;
-        // }
-        // else if (ballPosition.Y < ballTexture.Height / 2)
-        // {
-        //     ballPosition.Y = ballTexture.Height / 2;
-        // }
         
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(Color.Black);
 
         // TODO: Add your drawing code here
-        _spriteBatch.Begin();
+        _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         
         EntityHandler.Draw(_spriteBatch);
         
