@@ -9,6 +9,8 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    
+    //Vector2 ScreenSize { get { return new Vector2(Viewport.Width, Viewport.Height); } }
 
     public Game1()
     {
@@ -33,7 +35,7 @@ public class Game1 : Game
         // TODO: use this.Content to load your game content here
         TextureHandler.Load(Content);
 
-        EntityHandler.AddEntity(Player.Instance);
+        EntityHandler.Add(Player.Instance);
     }
 
     protected override void Update(GameTime gameTime)
@@ -45,7 +47,7 @@ public class Game1 : Game
         // TODO: Add your update logic here
         InputHandler.Update();
         EntityHandler.Update();
-        // The time since Update was called last.
+
         //float updatedBallSpeed = ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         
