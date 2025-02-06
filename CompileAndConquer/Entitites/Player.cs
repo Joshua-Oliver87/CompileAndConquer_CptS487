@@ -43,15 +43,16 @@ public class Player : Entity
         if (bulletCooldown > 0)
             bulletCooldown--;
 
-
         Velocity += speed * InputHandler.GetMovement(); 
         this.Position += Velocity;
 
-        // Check bounds
-        if (this.Position.X - this.Size.X / 2 < 0)
-            this.Position.X = 0 + this.Size.X / 2;
-        if (this.Position.Y - this.Size.Y / 2 < 0)
-            this.Position.Y = 0 + this.Size.Y / 2;
+        Console.WriteLine(this.Position + ", " + this.Size);
+
+        // Check bounds 
+        if (this.Position.X - (this.Size.X / 2) < 0)
+            this.Position.X = 0 + (this.Size.X / 2);
+        if (this.Position.Y - (this.Size.Y / 2) < 0)
+            this.Position.Y = 0 + (this.Size.Y / 2);
         if (this.Position.X + this.Size.X / 2 > CompileAndConquer.ScreenSize.X)
             this.Position.X = CompileAndConquer.ScreenSize.X - this.Size.X / 2;
         if (this.Position.Y + this.Size.Y / 2 > CompileAndConquer.ScreenSize.Y)

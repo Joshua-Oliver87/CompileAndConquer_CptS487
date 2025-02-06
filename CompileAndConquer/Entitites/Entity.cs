@@ -26,13 +26,13 @@ public abstract class Entity
     {
         get
         {
-            return size * Scale;
+            return (size) * Scale;
         }
     }
     
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(texture, Position, null, color, Orientation, Size / 2f, Scale, 0, 0);
+        spriteBatch.Draw(texture, Position, null, color, Orientation, size / 2f, Scale, 0, 0);
     }
 
     public abstract void Update();
