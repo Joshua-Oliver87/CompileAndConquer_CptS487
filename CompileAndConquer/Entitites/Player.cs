@@ -27,7 +27,7 @@ public class Player : Entity
             return instance;
         }
     }
-    // Uncopied
+    // Un-copied
     
     private Player()
     {
