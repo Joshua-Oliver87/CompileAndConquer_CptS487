@@ -2,13 +2,16 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace CompileAndConquer;
 
 public class Game1 : Game
 {
+    public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    
 
     public Game1()
     {
@@ -34,6 +37,16 @@ public class Game1 : Game
         TextureHandler.Load(Content);
 
         EntityHandler.AddEntity(Player.Instance);
+        
+        // spawn random enemies
+
+        EntityHandler.AddEntity(new TypeA(TextureHandler.Enemy, new Vector2(300, 200)));
+        
+        EntityHandler.AddEntity(new TypeB(TextureHandler.Enemy, new Vector2(500, 300)));
+        
+        EntityHandler.AddEntity(new MiniBoss(TextureHandler.Enemy, new Vector2(700, 400)));
+        
+        EntityHandler.AddEntity(new FinalBoss(TextureHandler.Enemy, new Vector2(900, 500)));
     }
 
     protected override void Update(GameTime gameTime)
@@ -67,6 +80,14 @@ public class Game1 : Game
         // {
         //     ballPosition.Y = ballTexture.Height / 2;
         // }
+        
+        foreach (var entity in EntityHandler.Entities)
+            {
+                if (entity is Enemy enemy)
+                {
+                    Console.WriteLine($"Enemy at {enemy.Position}");
+                }
+            }
         
         base.Update(gameTime);
     }

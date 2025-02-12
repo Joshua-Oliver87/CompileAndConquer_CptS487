@@ -6,7 +6,7 @@ namespace CompileAndConquer.Content;
 // ranged enemy
 public class TypeB : Enemy
 {
-    private bool movingRight = false
+    private bool movingRight = false;
     public TypeB(Texture2D texture, Vector2 position) : base(texture, position, 2.5f)
     {
         this.health = 120; // default
@@ -31,6 +31,6 @@ public class TypeB : Enemy
 
     public override void Attack()
     {
-        Game1.SpawnProjectile(this.Position, Player.Instance.Position);
+      //  Game1.SpawnProjectile(this.Position, Player.Instance.Position);
     }
 }

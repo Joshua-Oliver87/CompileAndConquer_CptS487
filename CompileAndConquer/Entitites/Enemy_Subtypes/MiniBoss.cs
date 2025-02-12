@@ -20,7 +20,7 @@ public class MiniBoss : Enemy
         if (direction.Length() > 0)
             direction.Normalize();
 
-        this.Postion += direction * Speed;
+        this.Position += direction * Speed;
 
         attackTimer++;
         if (attackTimer % 200 == 0)
@@ -33,7 +33,7 @@ public class MiniBoss : Enemy
     {
         if (attackTimer % 400 == 0)
         {
-            Game1.SpawnProjectile(this.Position, Player.Instance.Position, true); // true means special attack?   
+           // Game1.SpawnProjectile(this.Position, Player.Instance.Position, true); // true means special attack?   
         }
         else
         {

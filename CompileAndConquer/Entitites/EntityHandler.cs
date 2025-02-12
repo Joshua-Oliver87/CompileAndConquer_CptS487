@@ -6,6 +6,8 @@ namespace CompileAndConquer.Content;
 public class EntityHandler
 {
     static List<Entity> entities = new List<Entity>();
+
+    public static List<Entity> Entities => entities;
     
     public static void AddEntity(Entity entity)
     {
