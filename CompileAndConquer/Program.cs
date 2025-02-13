@@ -1,2 +1,2 @@
-﻿using var game = new CompileAndConquer.Game1();
+﻿using var game = new CompileAndConquer.CompileAndConquer();
 game.Run();
