@@ -32,9 +32,9 @@ public class Player : Entity
     private Player()
     {
         texture = TextureHandler.Player;
-        Console.WriteLine(CompileAndConquer.ScreenSize);
         Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y / 2);
         Scale = 2.0f;
+        Collider = new Collider(texture.Height * (int)Scale, texture.Width * (int)Scale, this);
     }
 
     public override void Update()
@@ -45,9 +45,7 @@ public class Player : Entity
 
         Velocity += speed * InputHandler.GetMovement(); 
         this.Position += Velocity;
-
-        Console.WriteLine(this.Position + ", " + this.Size);
-
+        
         // Check bounds 
         if (this.Position.X - (this.Size.X / 2) < 0)
             this.Position.X = 0 + (this.Size.X / 2);
@@ -62,7 +60,8 @@ public class Player : Entity
 
         if (InputHandler.GetFire() && bulletCooldown == 0)
         {
-            EntityHandler.Add(new Bullet(this.Position + new Vector2(0, -50), new Vector2(0, -10.0f)));
+            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(24, -16), new Vector2(0, -0.100f)));
+            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-20, -16), new Vector2(0, -10.0f)));
             bulletCooldown = maxBulletCooldown;
         }
     }

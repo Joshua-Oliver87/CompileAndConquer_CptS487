@@ -13,6 +13,8 @@ public abstract class Entity
     public Vector2 Velocity;
     public float Orientation;
     public float Scale = 1.0f;
+
+    public Collider Collider;
     
     private Vector2 size
     {

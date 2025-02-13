@@ -20,6 +20,10 @@ public class EntityHandler
     private static void AddEntity(Entity entity)
     {
         entities.Add(entity);
+        if (entity.Collider != null)
+        {
+            CollisionHandler.Add(entity.Collider);
+        }
     }
 
     public static void Update()
@@ -29,7 +33,8 @@ public class EntityHandler
 
         foreach (var entity in entities)
             entity.Update();
-        
+
+        CollisionHandler.Update();
         isUpdating = false;
         
         // Add entities that are waiting to be added and clear list
@@ -42,6 +47,12 @@ public class EntityHandler
     public static void Draw(SpriteBatch spriteBatch)
     {
         foreach (var entity in entities)
+        {
             entity.Draw(spriteBatch);
+            if (entity.Collider != null)
+            {
+                entity.Collider.Draw(spriteBatch);
+            }
+        }
     }
 }

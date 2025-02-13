@@ -13,5 +13,6 @@ public class TextureHandler
     {
         Player = content.Load<Texture2D>("spaceship");
         Bullet = content.Load<Texture2D>("bullet");
+        
     }
 }
