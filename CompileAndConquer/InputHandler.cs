@@ -17,28 +17,19 @@ public class InputHandler
     {
         Vector2 movement = new Vector2();
         
-        if (kstate.IsKeyDown(Keys.Up))
-        {
+        if (kstate.IsKeyDown(Keys.Up)) 
             movement.Y -= 1;
-        }
-        
-        if (kstate.IsKeyDown(Keys.Down))
-        {
+        if (kstate.IsKeyDown(Keys.Down)) 
             movement.Y += 1;
-        }
-        
-        if (kstate.IsKeyDown(Keys.Left))
-        {
+        if (kstate.IsKeyDown(Keys.Left)) 
             movement.X -= 1;
-        }
-        
-        if (kstate.IsKeyDown(Keys.Right))
-        {
+        if (kstate.IsKeyDown(Keys.Right)) 
             movement.X += 1;
-        }
         
         // TODO normalize movement vector
 
         return movement;
     }
+    
+    public static bool GetFire() { return kstate.IsKeyDown(Keys.Space); }
 }

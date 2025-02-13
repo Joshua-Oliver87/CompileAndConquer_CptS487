@@ -7,6 +7,14 @@ namespace CompileAndConquer.Content;
 
 public class Player : Entity
 {
+
+    // 
+    private int bulletCooldown = 0;
+    private int maxBulletCooldown = 12;
+    
+    
+    private float speed = 4.0f;
+    
     // Copied
     private static Player instance;
     public static Player Instance 
@@ -19,18 +27,42 @@ public class Player : Entity
             return instance;
         }
     }
-    // Uncopied
+    // Un-copied
     
     private Player()
     {
         texture = TextureHandler.Player;
+        Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y / 2);
+        Scale = 2.0f;
+        Collider = new Collider(texture.Height * (int)Scale, texture.Width * (int)Scale, this);
     }
 
     public override void Update()
     {
-        const float speed = 4.0f;
-        Velocity += speed * InputHandler.GetMovement();
+        // Iterate bulletCooldown down
+        if (bulletCooldown > 0)
+            bulletCooldown--;
+
+        Velocity += speed * InputHandler.GetMovement(); 
         this.Position += Velocity;
+        
+        // Check bounds 
+        if (this.Position.X - (this.Size.X / 2) < 0)
+            this.Position.X = 0 + (this.Size.X / 2);
+        if (this.Position.Y - (this.Size.Y / 2) < 0)
+            this.Position.Y = 0 + (this.Size.Y / 2);
+        if (this.Position.X + this.Size.X / 2 > CompileAndConquer.ScreenSize.X)
+            this.Position.X = CompileAndConquer.ScreenSize.X - this.Size.X / 2;
+        if (this.Position.Y + this.Size.Y / 2 > CompileAndConquer.ScreenSize.Y)
+            this.Position.Y = CompileAndConquer.ScreenSize.Y - this.Size.Y / 2;
+        
         Velocity = Vector2.Zero;
+
+        if (InputHandler.GetFire() && bulletCooldown == 0)
+        {
+            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f)));
+            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f)));
+            bulletCooldown = maxBulletCooldown;
+        }
     }
 }
