@@ -12,6 +12,8 @@ public abstract class Entity
     public Vector2 Velocity;
     public float Orientation;
     float ballSpeed;
+
+    public int health;
     
     public Vector2 Size
     {
