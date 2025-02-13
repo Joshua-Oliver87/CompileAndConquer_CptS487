@@ -60,8 +60,8 @@ public class Player : Entity
 
         if (InputHandler.GetFire() && bulletCooldown == 0)
         {
-            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(24, -16), new Vector2(0, -0.100f)));
-            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-20, -16), new Vector2(0, -10.0f)));
+            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f)));
+            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f)));
             bulletCooldown = maxBulletCooldown;
         }
     }
