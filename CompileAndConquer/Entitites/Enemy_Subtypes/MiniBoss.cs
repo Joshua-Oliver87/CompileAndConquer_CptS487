@@ -1,7 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using CompileAndConquer.Content;
 
-namespace CompileAndConquer.Content;
+namespace CompileAndConquer.Entities.Enemy_Subtypes;
 
 // Stronger enemy with melee + ranged attacks
 public class MiniBoss : Enemy

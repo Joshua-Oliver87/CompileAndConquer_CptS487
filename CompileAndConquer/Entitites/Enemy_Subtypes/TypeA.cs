@@ -1,7 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using CompileAndConquer.Content;
 
-namespace CompileAndConquer.Content;
+
+namespace CompileAndConquer.Entities.Enemy_Subtypes;
 
 // melee enemy
 public class TypeA : Enemy

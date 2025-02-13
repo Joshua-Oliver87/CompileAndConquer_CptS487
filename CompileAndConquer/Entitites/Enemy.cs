@@ -1,7 +1,8 @@
+using CompileAndConquer.Content;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CompileAndConquer.Content;
+namespace CompileAndConquer.Entities;
 public abstract class Enemy : Entity
 {
     public float Speed { get; protected set; } = 2.0f;    //default speed for enemies

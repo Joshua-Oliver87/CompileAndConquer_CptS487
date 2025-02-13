@@ -1,7 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using CompileAndConquer.Content;
 
-namespace CompileAndConquer.Content;
+namespace CompileAndConquer.Entities.Enemy_Subtypes;
 
 // Strongest enemy and can summon other enemies 
 public class FinalBoss : Enemy
