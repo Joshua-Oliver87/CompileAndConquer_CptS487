@@ -12,6 +12,8 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     
+	private double spawnTimer = 0;
+	private bool spawningTypeA = true;
 
     public Game1()
     {
@@ -24,15 +26,12 @@ public class Game1 : Game
 		_graphics.ApplyChanges();
     }
 
-	// default screen size: W = 800, H = 480
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
         this.Content.RootDirectory = "Content";
         
         base.Initialize();
-		Console.WriteLine($"Screen Width: {_graphics.PreferredBackBufferWidth}");
-    	Console.WriteLine($"Screen Height: {_graphics.PreferredBackBufferHeight}");
     }
 
     protected override void LoadContent()
@@ -45,15 +44,9 @@ public class Game1 : Game
 
         EntityHandler.AddEntity(Player.Instance);
         
-        // spawn random enemies
-
-        EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
-        
-        EntityHandler.AddEntity(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 300)));
-        
-        //EntityHandler.AddEntity(new MiniBoss(TextureHandler.Enemy, new Vector2(700, 400)));
-        
-        //EntityHandler.AddEntity(new FinalBoss(TextureHandler.Enemy, new Vector2(900, 500)));
+        // spawn enemies
+		
+		SpawnTypeAEnemies();
     }
 
     protected override void Update(GameTime gameTime)
@@ -65,39 +58,44 @@ public class Game1 : Game
         // TODO: Add your update logic here
         InputHandler.Update();
         EntityHandler.Update();
-        // The time since Update was called last.
-        //float updatedBallSpeed = ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+     	
+		spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
-        
+		if (spawnTimer >= 10){
+			spawnTimer = 0;
 
-        // if (ballPosition.X > _graphics.PreferredBackBufferWidth - ballTexture.Width / 2)
-        // {
-        //     ballPosition.X = _graphics.PreferredBackBufferWidth - ballTexture.Width / 2;
-        // }
-        // else if (ballPosition.X < ballTexture.Width / 2)
-        // {
-        //     ballPosition.X = ballTexture.Width / 2;
-        // }
-        //
-        // if (ballPosition.Y > _graphics.PreferredBackBufferHeight - ballTexture.Height / 2)
-        // {
-        //     ballPosition.Y = _graphics.PreferredBackBufferHeight - ballTexture.Height / 2;
-        // }
-        // else if (ballPosition.Y < ballTexture.Height / 2)
-        // {
-        //     ballPosition.Y = ballTexture.Height / 2;
-        // }
-        
-        foreach (var entity in EntityHandler.Entities)
-            {
-                if (entity is Enemy enemy)
-                {
-                    Console.WriteLine($"Enemy at {enemy.Position}");
-                }
-            }
+			if (spawningTypeA) {
+				DespawnEnemies();
+				SpawnTypeBEnemies();
+				spawningTypeA = false;
+			}
+			else
+			{
+				DespawnEnemies();
+				SpawnTypeAEnemies();
+				spawningTypeA = true;
+			}
+		}
         
         base.Update(gameTime);
     }
+
+	private void SpawnTypeAEnemies()
+	{
+		Console.WriteLine("Spawning Type A Enemies");
+		EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
+	}
+
+	private void SpawnTypeBEnemies()
+	{
+		Console.WriteLine("Spawning Type B Enemies");
+		EntityHandler.AddEntity(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
+	}
+	
+	private void DespawnEnemies(){
+		Console.WriteLine("Despawning Enemies");
+		EntityHandler.ClearEnemies();
+	}
 
     protected override void Draw(GameTime gameTime)
     {

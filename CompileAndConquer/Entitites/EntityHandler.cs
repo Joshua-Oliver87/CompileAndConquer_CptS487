@@ -25,4 +25,9 @@ public class EntityHandler
         foreach (var entity in entities)
             entity.Draw(spriteBatch);
     }
+
+    public static void ClearEnemies()
+    {
+        entities.RemoveAll(e => e is Enemy);
+    }
 }
