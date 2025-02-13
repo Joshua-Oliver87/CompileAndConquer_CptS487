@@ -6,7 +6,7 @@ namespace CompileAndConquer.Content;
 // melee enemy
 public class TypeA : Enemy
 {
-    public TypeA(Texture2D texture, Vector2 position) : base(texture, position, 2.5f)
+    public TypeA(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.5f)
     {
         this.health = 80; // default
     }
@@ -26,4 +26,5 @@ public class TypeA : Enemy
     {
         Player.Instance.health -= 10;   // example
     }
+
 }

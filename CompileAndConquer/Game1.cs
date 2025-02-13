@@ -18,14 +18,21 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+
+		_graphics.PreferredBackBufferWidth = 1024;
+		_graphics.PreferredBackBufferHeight = 768;
+		_graphics.ApplyChanges();
     }
 
+	// default screen size: W = 800, H = 480
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
         this.Content.RootDirectory = "Content";
         
         base.Initialize();
+		Console.WriteLine($"Screen Width: {_graphics.PreferredBackBufferWidth}");
+    	Console.WriteLine($"Screen Height: {_graphics.PreferredBackBufferHeight}");
     }
 
     protected override void LoadContent()
@@ -40,13 +47,13 @@ public class Game1 : Game
         
         // spawn random enemies
 
-        EntityHandler.AddEntity(new TypeA(TextureHandler.Enemy, new Vector2(300, 200)));
+        EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
         
-        EntityHandler.AddEntity(new TypeB(TextureHandler.Enemy, new Vector2(500, 300)));
+        EntityHandler.AddEntity(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 300)));
         
-        EntityHandler.AddEntity(new MiniBoss(TextureHandler.Enemy, new Vector2(700, 400)));
+        //EntityHandler.AddEntity(new MiniBoss(TextureHandler.Enemy, new Vector2(700, 400)));
         
-        EntityHandler.AddEntity(new FinalBoss(TextureHandler.Enemy, new Vector2(900, 500)));
+        //EntityHandler.AddEntity(new FinalBoss(TextureHandler.Enemy, new Vector2(900, 500)));
     }
 
     protected override void Update(GameTime gameTime)

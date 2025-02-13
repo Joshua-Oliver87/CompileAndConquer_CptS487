@@ -7,11 +7,13 @@ namespace CompileAndConquer.Content;
 public class TextureHandler
 {
     public static Texture2D Player { get; set; }
-    public static Texture2D Enemy { get; set; }
+    public static Texture2D TypeAEnemy { get; set; }
+    public static Texture2D TypeBEnemy { get; set; }
 
     public static void Load(ContentManager content)
     {
         Player = content.Load<Texture2D>("ball");
-        Enemy = content.Load<Texture2D>("alien");
+        TypeAEnemy = content.Load<Texture2D>("alien");
+		TypeBEnemy = content.Load<Texture2D>("typeB");
     }
 }

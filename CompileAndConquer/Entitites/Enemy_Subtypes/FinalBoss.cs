@@ -8,7 +8,7 @@ public class FinalBoss : Enemy
 {
     private int phase = 1;
     private int attackTimer = 0;
-    public FinalBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.0f)
+    public FinalBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.0f, 2.0f)
     {
         this.health = 1000; // default
     }
@@ -47,7 +47,7 @@ public class FinalBoss : Enemy
 
             for (int i = 0; i < 3; i++)
             {
-                EntityHandler.AddEntity(new TypeA(TextureHandler.Enemy,
+                EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy,
                     new Vector2(this.Position.X + i * 20, this.Position.Y)));
             }
         }

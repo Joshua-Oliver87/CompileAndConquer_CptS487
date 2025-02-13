@@ -7,7 +7,7 @@ namespace CompileAndConquer.Content;
 public class MiniBoss : Enemy
 {
     private int attackTimer = 0;
-    public MiniBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.5f)
+    public MiniBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.5f, 1.75f)
     {
         this.health = 300; // default
     }
