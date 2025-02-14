@@ -1,0 +1,84 @@
+Controls:
+The player is moved with the Arrow Keys
+Z causes a short barrage of shots to be fired; it can be held down for rapid fire
+X releases a bomb (if the player has any left)
+Shift slows the character’s movements
+Esc pauses the fame and displays an in-game menu
+Q returns you to the title screen when the game is paused
+R returns you to the beginning of stage 1 when the game is paused
+
+Player Stats:
+Player has 100 Hp
+Player has 3 lives
+Player has 2 bombs
+The bomb attack does heavy damage to enemies it touches, and gets rid of any bullets in its way
+
+Boss Stats:
+Mid boss has 100 Hp
+Final boss has 200 Hp
+
+Scoring: 
+Hitting an enemy gives 500 points
+Defeating an enemy gives you 10,000 points
+Collecting items gives you 10,000 points
+Grazing bullets gives you 1000 points
+Each life remaining gives you 100,000 points.
+
+Gameplay: 
+Regular play with grunts - 30 sec
+4 grunts move across screen from left to right
+4 grunts move across screen from right to left
+Above pattern is repeated.
+Fairy miniboss spawns at 15 second mark, firing red triangle bullet pattern towards player
+Fairy attacks for 5 seconds, then leaves the screen
+Second fairy miniboss spawns after 20 seconds, firing red triangle bullet pattern towards player
+Grunts and fairy miniboss leave at the 25 second mark
+2 lines of grunts form a horizontal line across the upper middle screen
+Each grunt shoots a circle bullet towards the player, then exit the screen
+
+Mid boss attack - 25 sec
+Mid boss appears along with health bar
+Yellow arc bullet spray with three arcs, last arc is red bullets, originating from mid boss
+Yellow circle bullet spray with three concentric circles, originating from mid boss, slightly faster pattern than the arc spray
+Alternates between arc and circle spray of bullets for around twenty seconds
+Mid boss leaves after twenty-five seconds is up, or once player defeats mid boss
+
+More grunts - 45 sec
+Two fairy minibosses spawn from each side of the screen, moving towards the opposite side of the screen, while attacking the player by shooting triangle shaped bullet patterns towards the player
+Line of 5 grunts move to middle of the screen from left side and exit
+Line of 5 grunts move to middle of the screen from right side and exit
+After 5 seconds of fairy miniboss attacks, fairies exit
+2 lines of grunts form a horizontal line across the upper middle screen
+Each grunt shoots a circle bullet towards the player, then exit the screen
+Two fairy minibosses spawn from each side of the screen, moving towards the opposite side of the screen, while attacking the player by shooting triangle shaped bullet patterns towards the player
+Line of 5 grunts move to middle of the screen from left side and exit
+Line of 5 grunts move to middle of the screen from right side and exit
+After 5 seconds of fairy miniboss attacks, fairies exit
+2 lines of grunts form a horizontal line across the upper middle screen
+Each grunt shoots a circle bullet towards the player, then exit the screen
+6 grunts form a pyramid shape on the left side of screen, and fire bullets toward the player, while moving toward the right side of screen.
+6 grunts form a pyramid shape on the right side of screen, and fire bullets toward the player, while moving toward the left side of screen.
+Two fairy minibosses spawn from each side of the screen, moving towards the opposite side of the screen, while attacking the player by shooting triangle shaped bullet patterns towards the player
+Line of 5 grunts move to middle of the screen from left side and exit
+Line of 5 grunts move to middle of the screen from right side and exit
+After 5 seconds of fairy miniboss attacks, fairies exit
+
+Final Boss - 90 sec
+First stage of attack - 30 seconds
+One red double helix bullet shape, originating from boss, follows the player
+One blue circle bullet shape spinning left, originating from boss, getting consistently larger
+One blue circle bullet shape spinning right, originating from boss, getting consistently larger
+Second stage of attack ~ 30 seconds
+One blue circle of bullets spinning left and one red circle of bullets spinning right originating from the boss, gets consistently larger in bursts, and alternates directions of bullets with each burst
+One blue circle of bullets spinning right and one red circle of bullets spinning left originating from the boss, gets consistently larger in bursts, and alternates directions of bullets with each burst
+Alternates between two above bullet patterns
+Between bullets spawning, the boss moves randomly around the top third of the screen.
+Boss finishes this attack once player gets the boss down to 75 Hp
+Third stage of attack ~ 20 seconds
+One blue circle spinning left that pulsates, originating from the boss, gets consistently larger
+One blue circle spinning right that pulsates, originating from boss, gets consistently larger
+Three red spirals, originating from same spot, bottom spiral follows player
+These attacks repeat as boss moves randomly across top third of the screen
+Once boss is defeated, boss falls down the screen
+
+Game stats are displayed on the screen with buttons to take player to the home screen or play again
