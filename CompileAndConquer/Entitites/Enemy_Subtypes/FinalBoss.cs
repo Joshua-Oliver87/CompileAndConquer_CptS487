@@ -16,8 +16,8 @@ public class FinalBoss : Enemy
     // Move unpredictably
     public override void Update()
     {
-        this.Position.X += (float)(Speed * (Game1.RandomGenerator.NextDouble() - 0.5));
-        this.Position.Y += (float)(Speed * (Game1.RandomGenerator.NextDouble() - 0.5));
+        this.Position.X += (float)(Speed * (CompileAndConquer.RandomGenerator.NextDouble() - 0.5));
+        this.Position.Y += (float)(Speed * (CompileAndConquer.RandomGenerator.NextDouble() - 0.5));
         
         // change phase at some condition
         if (this.health < 500 && phase == 1)

@@ -19,7 +19,7 @@ public class EntityHandler
         else 
             AddEntity(entity);
     }
-    private static void AddEntity(Entity entity)
+    public static void AddEntity(Entity entity)
     {
         entities.Add(entity);
         if (entity.Collider != null)
