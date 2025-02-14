@@ -6,6 +6,8 @@ namespace CompileAndConquer.Content;
 public class EntityHandler
 {
     static List<Entity> entities = new List<Entity>();
+
+    public static List<Entity> Entities => entities;
     
     static bool isUpdating = false;
     static List<Entity> toAddList = new List<Entity>();
@@ -54,5 +56,10 @@ public class EntityHandler
                 entity.Collider.Draw(spriteBatch);
             }
         }
+    }
+
+    public static void ClearEnemies()
+    {
+        entities.RemoveAll(e => e is Enemy);
     }
 }

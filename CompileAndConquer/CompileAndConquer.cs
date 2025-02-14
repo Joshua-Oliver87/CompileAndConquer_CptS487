@@ -2,13 +2,18 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace CompileAndConquer;
 
 public class CompileAndConquer : Game
 {
+    public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    
+	private double spawnTimer = 0;
+	private bool spawningTypeA = true;
 
     public static Vector2 ScreenSize;
 
@@ -17,6 +22,10 @@ public class CompileAndConquer : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+
+		_graphics.PreferredBackBufferWidth = 1024;
+		_graphics.PreferredBackBufferHeight = 768;
+		_graphics.ApplyChanges();
     }
 
     protected override void Initialize()
@@ -40,6 +49,10 @@ public class CompileAndConquer : Game
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
+        
+        // spawn enemies
+		
+		SpawnTypeAEnemies();
     }
 
     protected override void Update(GameTime gameTime)
@@ -55,9 +68,44 @@ public class CompileAndConquer : Game
         // TODO: Add your update logic here
         InputHandler.Update();
         EntityHandler.Update();
+     	
+		spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
+
+		if (spawnTimer >= 10){
+			spawnTimer = 0;
+
+			if (spawningTypeA) {
+				DespawnEnemies();
+				SpawnTypeBEnemies();
+				spawningTypeA = false;
+			}
+			else
+			{
+				DespawnEnemies();
+				SpawnTypeAEnemies();
+				spawningTypeA = true;
+			}
+		}
         
         base.Update(gameTime);
     }
+
+	private void SpawnTypeAEnemies()
+	{
+		Console.WriteLine("Spawning Type A Enemies");
+		EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
+	}
+
+	private void SpawnTypeBEnemies()
+	{
+		Console.WriteLine("Spawning Type B Enemies");
+		EntityHandler.AddEntity(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
+	}
+	
+	private void DespawnEnemies(){
+		Console.WriteLine("Despawning Enemies");
+		EntityHandler.ClearEnemies();
+	}
 
     protected override void Draw(GameTime gameTime)
     {

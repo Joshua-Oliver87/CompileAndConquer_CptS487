@@ -12,6 +12,9 @@ public abstract class Entity
     public Vector2 Position;
     public Vector2 Velocity;
     public float Orientation;
+    float ballSpeed;
+
+    public int health;
     public float Scale = 1.0f;
 
     public Collider Collider;
