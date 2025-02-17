@@ -47,7 +47,7 @@ public class FinalBoss : Enemy
 
             for (int i = 0; i < 3; i++)
             {
-                EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy,
+                EntityHandler.Add(new TypeA(TextureHandler.TypeAEnemy,
                     new Vector2(this.Position.X + i * 20, this.Position.Y)));
             }
         }

@@ -93,13 +93,13 @@ public class CompileAndConquer : Game
 	private void SpawnTypeAEnemies()
 	{
 		Console.WriteLine("Spawning Type A Enemies");
-		EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
+		EntityHandler.Add(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
 	}
 
 	private void SpawnTypeBEnemies()
 	{
 		Console.WriteLine("Spawning Type B Enemies");
-		EntityHandler.AddEntity(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
+		EntityHandler.Add(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
 	}
 	
 	private void DespawnEnemies(){

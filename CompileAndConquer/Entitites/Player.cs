@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework.Media;
 
 namespace CompileAndConquer.Content;
@@ -34,7 +35,10 @@ public class Player : Entity
         texture = TextureHandler.Player;
         Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y / 2);
         Scale = 2.0f;
-        Collider = new Collider(texture.Height * (int)Scale, texture.Width * (int)Scale, this);
+        CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, texture.Width * (int)Scale, texture.Height * (int)Scale);
+        DebugMode = true;
+        Collidable = true;
+        health = 3;
     }
 
     public override void Update()
@@ -43,7 +47,32 @@ public class Player : Entity
         if (bulletCooldown > 0)
             bulletCooldown--;
 
-        Velocity += speed * InputHandler.GetMovement(); 
+        // SlowMode Calculations
+        if (InputHandler.GetSlowMode())
+        {
+            Velocity += speed * InputHandler.GetMovement() * 0.5f;
+            CollisionRectangle.Width = texture.Width * (int)(Scale * 0.5);
+            CollisionRectangle.Height = texture.Height * (int)(Scale * 0.5);
+            
+            // Update collider
+            CollisionRectangle.X = (int)Position.X - (texture.Width / 2 * (int)(Scale * 0.5));
+            CollisionRectangle.Y = (int)Position.Y - (texture.Height / 2 * (int)(Scale * 0.5));
+            
+            DebugMode = true;
+        }
+        else
+        {
+            Velocity += speed * InputHandler.GetMovement();
+            CollisionRectangle.Width = texture.Width * (int)(Scale);
+            CollisionRectangle.Height = texture.Height * (int)(Scale);
+            
+            // Update collider
+            CollisionRectangle.X = (int)Position.X - (texture.Width / 2 * (int)Scale);
+            CollisionRectangle.Y = (int)Position.Y - (texture.Height / 2 * (int)Scale);
+            
+            DebugMode = false;
+        }
+
         this.Position += Velocity;
         
         // Check bounds 
@@ -57,7 +86,10 @@ public class Player : Entity
             this.Position.Y = CompileAndConquer.ScreenSize.Y - this.Size.Y / 2;
         
         Velocity = Vector2.Zero;
+        
+        
 
+        // Fire Controls
         if (InputHandler.GetFire() && bulletCooldown == 0)
         {
             EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f)));

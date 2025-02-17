@@ -27,9 +27,15 @@ public class InputHandler
             movement.X += 1;
         
         // TODO normalize movement vector
+        if (movement.Length() > 0)
+        {
+            movement = Vector2.Normalize(movement);
+        }
 
         return movement;
     }
     
     public static bool GetFire() { return kstate.IsKeyDown(Keys.Space); }
+    
+    public static bool GetSlowMode() { return kstate.IsKeyDown(Keys.LeftControl); }
 }
