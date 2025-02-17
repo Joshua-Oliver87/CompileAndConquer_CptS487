@@ -16,7 +16,10 @@ public abstract class Entity
     public int health;
     public float Scale = 1.0f;
 
-    public Collider Collider;
+    // Collisions
+    public bool Collidable = false;
+    public Rectangle CollisionRectangle;
+    public bool DebugMode = false;
     
     private Vector2 size
     {
@@ -37,6 +40,17 @@ public abstract class Entity
     public virtual void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(texture, Position, null, color, Orientation, size / 2f, Scale, 0, 0);
+        
+        if (DebugMode && Collidable)
+        {
+            Texture2D _texture;
+            _texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            _texture.SetData(new Color[] { Color.DarkGreen });
+
+            spriteBatch.Draw(_texture,
+                CollisionRectangle,
+                Color.White * 0.5f);
+        }
     }
 
     public abstract void Update();

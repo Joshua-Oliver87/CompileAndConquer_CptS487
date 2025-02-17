@@ -40,10 +40,15 @@ public class CompileAndConquer : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         TextureHandler.Load(Content);
         
-        ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+        // Set our screen size
+        ScreenSize.X = GraphicsDevice.Viewport.Width;
+        ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
-        SpawnNextEnemy();
+        
+        // spawn enemies
+		
+		SpawnTypeAEnemies();
     }
 
     protected override void Update(GameTime gameTime)
@@ -73,16 +78,16 @@ public class CompileAndConquer : Game
         switch (spawnPhase)
         {
             case 0:
-                EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
+                EntityHandler.Add(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
                 break;
             case 1:
-                EntityHandler.AddEntity(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
+                EntityHandler.Add(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
                 break;
             case 2:
-                EntityHandler.AddEntity(new MiniBoss(TextureHandler.MiniBoss, new Vector2(ScreenSize.X / 2, 100)));
+                EntityHandler.Add(new MiniBoss(TextureHandler.MiniBoss, new Vector2(ScreenSize.X / 2, 100)));
                 break;
             case 3:
-                EntityHandler.AddEntity(new FinalBoss(TextureHandler.FinalBoss, new Vector2(ScreenSize.X / 2, 100)));
+                EntityHandler.Add(new FinalBoss(TextureHandler.FinalBoss, new Vector2(ScreenSize.X / 2, 100)));
                 break;
         }
 
@@ -92,18 +97,38 @@ public class CompileAndConquer : Game
     private void DespawnAllEnemies()
     {
 
-        foreach (var entity in EntityHandler.Entities.ToList()) 
+        foreach (var entity in EntityHandler.entities.ToList()) 
         {
             if (!(entity is Player)) 
                 EntityHandler.RemoveEntity(entity);
         }
     }
+	private void SpawnTypeAEnemies()
+	{
+		Console.WriteLine("Spawning Type A Enemies");
+		EntityHandler.Add(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
+	}
+
+	private void SpawnTypeBEnemies()
+	{
+		Console.WriteLine("Spawning Type B Enemies");
+		EntityHandler.Add(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
+	}
+	
+	private void DespawnEnemies(){
+		Console.WriteLine("Despawning Enemies");
+		EntityHandler.ClearEnemies();
+	}
 
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.Black);
+
+        // TODO: Add your drawing code here
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+        
         EntityHandler.Draw(_spriteBatch);
+        
         _spriteBatch.End();
 
         base.Draw(gameTime);

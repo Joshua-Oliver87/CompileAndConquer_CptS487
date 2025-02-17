@@ -16,6 +16,12 @@ public abstract class Enemy : Entity
         
         // ScaleFactor for enemies relative to player size
         this.ScaleFactor = scalePercentage * (Player.Instance.Size.X / texture.Width);
+        
+        // Collision logic to change later
+        CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, texture.Width * (int)ScaleFactor, texture.Height * (int)ScaleFactor);
+        DebugMode = false;
+        Collidable = true;
+        health = 1;
     }
 
     public abstract override void Update();
@@ -25,5 +31,17 @@ public abstract class Enemy : Entity
     public override void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(texture, Position, null, color, Orientation, Size / 2f, ScaleFactor, SpriteEffects.None, 0);
+        
+        // Collision drawing
+        if (DebugMode && Collidable)
+        {
+            Texture2D _texture;
+            _texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            _texture.SetData(new Color[] { Color.DarkGreen });
+
+            spriteBatch.Draw(_texture,
+                CollisionRectangle,
+                Color.White * 0.5f);
+        }
     }
 }

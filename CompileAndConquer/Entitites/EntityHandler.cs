@@ -6,14 +6,14 @@ namespace CompileAndConquer.Content;
 
 public class EntityHandler
 {
-    static List<Entity> entities = new List<Entity>();
+    static public List<Entity> entities = new List<Entity>();
 
     static List<Entity> toAddList = new List<Entity>();
     static List<Entity> toRemoveList = new List<Entity>();  
     static bool clearEnemiesScheduled = false;
 
-    public static List<Entity> Entities => entities;
-
+    static List<Entity> Collisions = new List<Entity>();
+    
     static bool isUpdating = false;
 
     public static void Add(Entity entity)
@@ -32,23 +32,51 @@ public class EntityHandler
         }
     }
 
-    public static void AddEntity(Entity entity)
+    private static void AddEntity(Entity entity)
     {
         entities.Add(entity);
-        if (entity.Collider != null)
-        {
-            CollisionHandler.Add(entity.Collider);
-        }
+
+        if (entity.Collidable)
+            Collisions.Add(entity);
     }
 
     public static void Update()
     {
+        // Need to strategically add entities so they aren't added while looping through the list
         isUpdating = true;
 
         foreach (var entity in entities)
             entity.Update();
+        
+        // Check collisions
+        Stack<Entity> col = new Stack<Entity>();
 
-        CollisionHandler.Update();
+        foreach (Entity collider in Collisions)
+            col.Push(collider);
+        
+        while (col.Count > 0)
+        {
+            Entity checking = col.Pop();
+            foreach (Entity toCheck in col)
+            {
+                if (checking.CollisionRectangle.Intersects(toCheck.CollisionRectangle))
+                {
+                    // COLLISIONS HERE WILL MOVE LATER
+                    // Player and Enemy collision
+                    if ((toCheck is Player && checking is Enemy) || (toCheck is Enemy && checking is Player))
+                    {
+                        Console.WriteLine("Player & Enemy Collision");
+                    }
+                    
+                    // Bullet and Enemy collision
+                    if ((toCheck is PlayerBullet && checking is Enemy) || (toCheck is Enemy && checking is PlayerBullet))
+                    {
+                        Console.WriteLine("Bullet & Enemy Collision");
+                    }
+                }
+            }
+        }
+        
         isUpdating = false;
 
         foreach (var entity in toRemoveList)
@@ -71,10 +99,6 @@ public class EntityHandler
         foreach (var entity in entities)
         {
             entity.Draw(spriteBatch);
-            if (entity.Collider != null)
-            {
-                entity.Collider.Draw(spriteBatch);
-            }
         }
     }
 
