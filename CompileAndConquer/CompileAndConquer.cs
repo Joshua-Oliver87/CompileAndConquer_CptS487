@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Linq;
 
 namespace CompileAndConquer;
 
@@ -11,9 +12,9 @@ public class CompileAndConquer : Game
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    
-	private double spawnTimer = 0;
-	private bool spawningTypeA = true;
+
+    private double spawnTimer = 0;
+    private int spawnPhase = 0;
 
     public static Vector2 ScreenSize;
 
@@ -23,25 +24,20 @@ public class CompileAndConquer : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
-		_graphics.PreferredBackBufferWidth = 1024;
-		_graphics.PreferredBackBufferHeight = 768;
-		_graphics.ApplyChanges();
+        _graphics.PreferredBackBufferWidth = 1024;
+        _graphics.PreferredBackBufferHeight = 768;
+        _graphics.ApplyChanges();
     }
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
         this.Content.RootDirectory = "Content";
-        
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
-        // Create a new SpriteBatch, which can be used to draw textures.
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-        // TODO: use this.Content to load your game content here
         TextureHandler.Load(Content);
         
         // Set our screen size
@@ -90,6 +86,36 @@ public class CompileAndConquer : Game
         base.Update(gameTime);
     }
 
+    private void SpawnNextEnemy()
+    {
+        switch (spawnPhase)
+        {
+            case 0:
+                EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
+                break;
+            case 1:
+                EntityHandler.AddEntity(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
+                break;
+            case 2:
+                EntityHandler.AddEntity(new MiniBoss(TextureHandler.MiniBoss, new Vector2(ScreenSize.X / 2, 100)));
+                break;
+            case 3:
+                EntityHandler.AddEntity(new FinalBoss(TextureHandler.FinalBoss, new Vector2(ScreenSize.X / 2, 100)));
+                break;
+        }
+
+        spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
+    }
+
+    private void DespawnAllEnemies()
+    {
+
+        foreach (var entity in EntityHandler.Entities.ToList()) 
+        {
+            if (!(entity is Player)) 
+                EntityHandler.RemoveEntity(entity);
+        }
+    }
 	private void SpawnTypeAEnemies()
 	{
 		Console.WriteLine("Spawning Type A Enemies");
