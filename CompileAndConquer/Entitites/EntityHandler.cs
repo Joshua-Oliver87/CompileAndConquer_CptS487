@@ -6,7 +6,7 @@ namespace CompileAndConquer.Content;
 
 public class EntityHandler
 {
-    static List<Entity> entities = new List<Entity>();
+    static public List<Entity> entities = new List<Entity>();
 
     static List<Entity> toAddList = new List<Entity>();
     static List<Entity> toRemoveList = new List<Entity>();  

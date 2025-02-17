@@ -10,11 +10,19 @@ public class EnemyBullet : Entity
         this.Position = position;
         this.Velocity = velocity;
         Scale = 2.0f;
-        Collider = new Collider(texture.Height * (int)Scale, texture.Width * (int)Scale, this);
+        
+        CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, texture.Width * (int)Scale, texture.Height * (int)Scale);
+        DebugMode = false;
+        Collidable = true;
+        health = 1;
     }
 
     public override void Update()
     {
         Position += Velocity;
+        
+        // Update collider
+        CollisionRectangle.X = (int)Position.X - (texture.Width / 2 * (int)Scale);
+        CollisionRectangle.Y = (int)Position.Y - (texture.Height / 2 * (int)Scale);
     }
 }

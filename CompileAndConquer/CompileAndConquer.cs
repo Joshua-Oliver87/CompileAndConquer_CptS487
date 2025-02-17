@@ -56,33 +56,20 @@ public class CompileAndConquer : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-        
-        // Update our screen size
-        ScreenSize.X = GraphicsDevice.Viewport.Width;
-        ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
-        // TODO: Add your update logic here
+        ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
         InputHandler.Update();
         EntityHandler.Update();
-     	
-		spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
-
-		if (spawnTimer >= 10){
-			spawnTimer = 0;
-
-			if (spawningTypeA) {
-				DespawnEnemies();
-				SpawnTypeBEnemies();
-				spawningTypeA = false;
-			}
-			else
-			{
-				DespawnEnemies();
-				SpawnTypeAEnemies();
-				spawningTypeA = true;
-			}
-		}
         
+        spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
+        if (spawnTimer >= 10)  // Every 10 seconds cycle to next enemy
+        {
+            spawnTimer = 0;
+            DespawnAllEnemies();
+            SpawnNextEnemy();
+        }
+
         base.Update(gameTime);
     }
 
@@ -91,16 +78,16 @@ public class CompileAndConquer : Game
         switch (spawnPhase)
         {
             case 0:
-                EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
+                EntityHandler.Add(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
                 break;
             case 1:
-                EntityHandler.AddEntity(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
+                EntityHandler.Add(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
                 break;
             case 2:
-                EntityHandler.AddEntity(new MiniBoss(TextureHandler.MiniBoss, new Vector2(ScreenSize.X / 2, 100)));
+                EntityHandler.Add(new MiniBoss(TextureHandler.MiniBoss, new Vector2(ScreenSize.X / 2, 100)));
                 break;
             case 3:
-                EntityHandler.AddEntity(new FinalBoss(TextureHandler.FinalBoss, new Vector2(ScreenSize.X / 2, 100)));
+                EntityHandler.Add(new FinalBoss(TextureHandler.FinalBoss, new Vector2(ScreenSize.X / 2, 100)));
                 break;
         }
 
@@ -110,7 +97,7 @@ public class CompileAndConquer : Game
     private void DespawnAllEnemies()
     {
 
-        foreach (var entity in EntityHandler.Entities.ToList()) 
+        foreach (var entity in EntityHandler.entities.ToList()) 
         {
             if (!(entity is Player)) 
                 EntityHandler.RemoveEntity(entity);

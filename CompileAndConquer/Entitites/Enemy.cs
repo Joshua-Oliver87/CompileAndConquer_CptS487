@@ -19,7 +19,7 @@ public abstract class Enemy : Entity
         
         // Collision logic to change later
         CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, texture.Width * (int)ScaleFactor, texture.Height * (int)ScaleFactor);
-        DebugMode = true;
+        DebugMode = false;
         Collidable = true;
         health = 1;
     }
