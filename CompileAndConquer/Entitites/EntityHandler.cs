@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace CompileAndConquer.Content;
 
@@ -7,10 +8,13 @@ public class EntityHandler
 {
     static List<Entity> entities = new List<Entity>();
 
-    public static List<Entity> Entities => entities;
-    
-    static bool isUpdating = false;
     static List<Entity> toAddList = new List<Entity>();
+    static List<Entity> toRemoveList = new List<Entity>();  
+    static bool clearEnemiesScheduled = false;
+
+    public static List<Entity> Entities => entities;
+
+    static bool isUpdating = false;
 
     public static void Add(Entity entity)
     {
@@ -19,6 +23,15 @@ public class EntityHandler
         else 
             AddEntity(entity);
     }
+
+    public static void RemoveEntity(Entity entity)
+    {
+        if (!toRemoveList.Contains(entity))
+        {
+            toRemoveList.Add(entity);
+        }
+    }
+
     public static void AddEntity(Entity entity)
     {
         entities.Add(entity);
@@ -30,7 +43,6 @@ public class EntityHandler
 
     public static void Update()
     {
-        // Need to strategically add entities so they aren't added while looping through the list
         isUpdating = true;
 
         foreach (var entity in entities)
@@ -38,12 +50,20 @@ public class EntityHandler
 
         CollisionHandler.Update();
         isUpdating = false;
-        
-        // Add entities that are waiting to be added and clear list
+
+        foreach (var entity in toRemoveList)
+            entities.Remove(entity);
+        toRemoveList.Clear();
+
+        if (clearEnemiesScheduled)
+        {
+            entities.RemoveAll(e => e is Enemy);
+            clearEnemiesScheduled = false;  // Reset flag
+        }
+
         foreach (var entity in toAddList)
             AddEntity(entity);
         toAddList.Clear();
-
     }
 
     public static void Draw(SpriteBatch spriteBatch)
@@ -58,8 +78,13 @@ public class EntityHandler
         }
     }
 
-    public static void ClearEnemies()
+	public static void ClearEnemies()
     {
         entities.RemoveAll(e => e is Enemy);
+    }
+
+    public static void ScheduleClearEnemies()
+    {
+        clearEnemiesScheduled = true;
     }
 }

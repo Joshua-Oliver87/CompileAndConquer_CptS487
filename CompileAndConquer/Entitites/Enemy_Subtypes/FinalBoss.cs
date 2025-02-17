@@ -1,29 +1,36 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System;
 
 namespace CompileAndConquer.Content;
 
-// Strongest enemy and can summon other enemies 
 public class FinalBoss : Enemy
 {
-    private int phase = 1;
     private int attackTimer = 0;
+    private double lifetime = 15.0;
+    private bool movingDown = true;
+    private float topBound = 50;
+    private float bottomBound = CompileAndConquer.ScreenSize.Y - 100;
+
+    private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
+
     public FinalBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.0f, 2.0f)
     {
-        this.health = 1000; // default
+        this.health = 1000;
     }
 
-    // Move unpredictably
     public override void Update()
     {
-        this.Position.X += (float)(Speed * (CompileAndConquer.RandomGenerator.NextDouble() - 0.5));
-        this.Position.Y += (float)(Speed * (CompileAndConquer.RandomGenerator.NextDouble() - 0.5));
-        
-        // change phase at some condition
-        if (this.health < 500 && phase == 1)
+        if (movingDown)
         {
-            phase = 2;
-            Speed = 2.0f;
+            this.Position.Y += Speed;
+            if (this.Position.Y >= bottomBound) movingDown = false; // Reverse direction
+        }
+        else
+        {
+            this.Position.Y -= Speed;
+            if (this.Position.Y <= topBound) movingDown = true; // Reverse direction
         }
 
         attackTimer++;
@@ -31,25 +38,25 @@ public class FinalBoss : Enemy
         {
             Attack();
         }
+
+        lifetime -= 1.0 / 60.0;
+        if (lifetime <= 0)
+        {
+            EntityHandler.ScheduleClearEnemies();
+            EntityHandler.RemoveEntity(this);
+        }
+
+        foreach (var bullet in pendingBullets)
+            EntityHandler.Add(bullet);
+        pendingBullets.Clear();
     }
 
     public override void Attack()
     {
-        // if phase 1 do range attack
+        Vector2 direction = Player.Instance.Position - this.Position;
+        if (direction.Length() > 0)
+            direction.Normalize();
 
-        if (phase == 1)
-        {
-            //Game1.SpawnProjectile(this.Position, Player.Instance.Position);
-        }
-        else
-        {
-            // summon other enemies
-
-            for (int i = 0; i < 3; i++)
-            {
-                EntityHandler.AddEntity(new TypeA(TextureHandler.TypeAEnemy,
-                    new Vector2(this.Position.X + i * 20, this.Position.Y)));
-            }
-        }
+        pendingBullets.Add(new EnemyBullet(this.Position, direction * 6.0f));
     }
 }

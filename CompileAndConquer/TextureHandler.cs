@@ -10,6 +10,8 @@ public class TextureHandler
     public static Texture2D TypeAEnemy { get; set; }
     public static Texture2D TypeBEnemy { get; set; }
 	public static Texture2D Bullet { get; set; }
+	public static Texture2D MiniBoss { get; set; }
+	public static Texture2D FinalBoss { get; set; }
 
     public static void Load(ContentManager content)
     {
@@ -17,5 +19,7 @@ public class TextureHandler
         TypeAEnemy = content.Load<Texture2D>("alien");
 		TypeBEnemy = content.Load<Texture2D>("typeB");
 		Bullet = content.Load<Texture2D>("bullet");
+		MiniBoss = content.Load<Texture2D>("miniboss");
+		FinalBoss = content.Load<Texture2D>("finalboss");
     }
 }
