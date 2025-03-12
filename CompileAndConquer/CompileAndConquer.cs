@@ -9,6 +9,8 @@ namespace CompileAndConquer;
 
 public class CompileAndConquer : Game
 {
+    public static bool isPaused = false; //if the game is paused, do not update or redraw.
+
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -53,8 +55,13 @@ public class CompileAndConquer : Game
 
     protected override void Update(GameTime gameTime)
     {
+        if (isPaused == true )
+        {
+            return; // if the game is paused, get out 
+        }
+
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
+            Keyboard.GetState().IsKeyDown(Keys.Delete))
             Exit();
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
@@ -122,6 +129,11 @@ public class CompileAndConquer : Game
 
     protected override void Draw(GameTime gameTime)
     {
+        if (isPaused == true )
+        {
+            return; // if the game is paused, get out 
+        }
+
         GraphicsDevice.Clear(Color.Black);
 
         // TODO: Add your drawing code here

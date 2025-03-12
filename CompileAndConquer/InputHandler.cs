@@ -34,6 +34,16 @@ public class InputHandler
 
         return movement;
     }
+
+    public static bool PauseGame()
+    {
+        bool isPaused = false;
+        if (kstate.IsKeyDown(Keys.Escape)) //update the pause state if escape pressed
+        {
+            isPaused = true;
+        }
+        return isPaused;
+    }
     
     public static bool GetFire() { return kstate.IsKeyDown(Keys.Space); }
     
