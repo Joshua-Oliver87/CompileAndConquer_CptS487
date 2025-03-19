@@ -1,0 +1,27 @@
+{
+  "PlayerStats": {
+    "Health": 100,
+    "Lives": 3,
+    "Bombs": 2,
+    "BombEffect": "Heavy damage to enemies and clears bullets"
+  },
+  
+  "BossStats": {
+    "MidBossHealth": 100,
+    "FinalBossHealth": 200
+  },
+  
+  "Scoring": {
+    "HitEnemy": 500,
+    "DefeatEnemy": 10000,
+    "CollectItem": 10000,
+    "GrazeBullet": 1000,
+    "LeftoverLife": 100000
+  },
+  
+  "Gameplay": {
+    
+  },
+  
+  "GameEnd": "Game stats displayed with buttons for home screen or replay"
+}
