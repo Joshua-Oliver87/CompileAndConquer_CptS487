@@ -13,12 +13,12 @@ public class TypeB : Enemy
     private int maxAttackCooldown = 150; // Fires every 2.5 seconds
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public TypeB(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.75f)
+    public TypeB(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.75f, new ZigZagMovement(10, 1000, 2.5f))
     {
         this.health = 120;
     }
 
-    public override void Update()
+    public override void Update(GameTime gameTime)
     {
 		this.Position.Y = 50;
         if (movingRight)

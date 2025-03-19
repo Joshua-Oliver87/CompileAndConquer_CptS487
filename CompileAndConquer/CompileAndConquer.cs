@@ -59,8 +59,8 @@ public class CompileAndConquer : Game
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
-        InputHandler.Update();
-        EntityHandler.Update();
+        InputHandler.Update(gameTime);
+        EntityHandler.Update(gameTime);
         
         spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
         if (spawnTimer >= 10)  // Every 10 seconds cycle to next enemy

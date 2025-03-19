@@ -10,12 +10,12 @@ public class TypeA : Enemy
     private int maxAttackCooldown = 120; // Fires every 2 seconds
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public TypeA(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.5f)
+    public TypeA(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.5f, new LinearMovement(new Vector2(0,1), 2.5f))
     {
         this.health = 80;
     }
 
-    public override void Update()
+    public override void Update(GameTime gameTime)
     {
         Vector2 direction = Player.Instance.Position - this.Position;
         if (direction.Length() > 0)

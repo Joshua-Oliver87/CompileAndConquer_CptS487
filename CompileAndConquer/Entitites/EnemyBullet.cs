@@ -17,7 +17,7 @@ public class EnemyBullet : Entity
         health = 1;
     }
 
-    public override void Update()
+    public override void Update(GameTime gameTime)
     {
         Position += Velocity;
         

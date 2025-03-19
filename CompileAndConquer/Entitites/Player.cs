@@ -41,7 +41,7 @@ public class Player : Entity
         health = 3;
     }
 
-    public override void Update()
+    public override void Update(GameTime gameTime)
     {
         // Iterate bulletCooldown down
         if (bulletCooldown > 0)

@@ -11,12 +11,12 @@ public class MiniBoss : Enemy
 	private double lifetime = 15.0;
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public MiniBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.5f, 1.75f)
+    public MiniBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.5f, 1.75f, new ZigZagMovement(30, 3000, 4.5f))
     {
         this.health = 300;
     }
 
-    public override void Update()
+    public override void Update(GameTime gameTime)
     {
 		lifetime -= 1.0 / 60.0;
 		if (lifetime <= 0)

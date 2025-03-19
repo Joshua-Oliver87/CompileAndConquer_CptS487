@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using Microsoft.Xna.Framework;
+
 
 namespace CompileAndConquer.Content;
 
@@ -40,13 +42,13 @@ public class EntityHandler
             Collisions.Add(entity);
     }
 
-    public static void Update()
+    public static void Update(GameTime gameTime)
     {
         // Need to strategically add entities so they aren't added while looping through the list
         isUpdating = true;
 
         foreach (var entity in entities)
-            entity.Update();
+            entity.Update(gameTime);
         
         // Check collisions
         Stack<Entity> col = new Stack<Entity>();

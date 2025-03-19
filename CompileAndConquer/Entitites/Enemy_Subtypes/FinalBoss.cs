@@ -15,12 +15,12 @@ public class FinalBoss : Enemy
 
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public FinalBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.0f, 2.0f)
+    public FinalBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.0f, 2.0f, new ZigZagMovement(20, 2000, 1.5f))
     {
         this.health = 1000;
     }
 
-    public override void Update()
+    public override void Update(GameTime gameTime)
     {
         if (movingDown)
         {
