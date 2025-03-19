@@ -44,6 +44,37 @@ public class InputHandler
         }
         return isPaused;
     }
+
+    public static int HandlePauseMenuInput()
+    {
+        KeyboardState keyboardState = Keyboard.GetState();
+        int _selectedOption = 0;
+        string[] _menuOptions = { "Resume", "Quit" };
+
+
+        if (keyboardState.IsKeyDown(Keys.Up))
+        {
+            _selectedOption = (_selectedOption - 1 + _menuOptions.Length) % _menuOptions.Length;
+        }
+        else if (keyboardState.IsKeyDown(Keys.Down))
+        {
+            _selectedOption = (_selectedOption + 1) % _menuOptions.Length;
+        }
+        else if (keyboardState.IsKeyDown(Keys.Enter))
+        {
+            // if (_selectedOption == 0) 
+            // {
+            //     //_showPauseMenu = false;
+            //     isPaused = false;
+            // }
+            // else if (_selectedOption == 1) 
+            // {
+            //     Exit();
+            // }
+            return _selectedOption;
+        }
+        return _selectedOption;
+    }
     
     public static bool GetFire() { return kstate.IsKeyDown(Keys.Space); }
     

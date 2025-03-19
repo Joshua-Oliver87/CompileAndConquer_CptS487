@@ -9,12 +9,12 @@ namespace CompileAndConquer.Screens;
 
 public class ScreenHandler
 {
-    public static MenuScreen menuScreen;
+    public static PauseMenuScreen menuScreen;
     public static void Update()
     {
         if (InputHandler.PauseGame())
         {
-            menuScreen.ShowScreen();
+            // menuScreen.ShowScreen();
 
         }
     }
