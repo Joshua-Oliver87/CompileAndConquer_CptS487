@@ -17,6 +17,12 @@ public class CompileAndConquer : Game
 
     private double spawnTimer = 0;
     private int spawnPhase = 0;
+    
+    private SpriteFont _menuFont;
+    private bool _showPauseMenu = false;
+    private string[] _menuOptions = { "Resume", "Quit" };
+    private int _selectedOption = 0;
+
 
     public static Vector2 ScreenSize;
 
@@ -41,36 +47,46 @@ public class CompileAndConquer : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         TextureHandler.Load(Content);
-        
-        // Set our screen size
+
+        _menuFont = Content.Load<SpriteFont>("MenuFont");
+
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
-        
-        // spawn enemies
-		
-		SpawnTypeAEnemies();
+        SpawnTypeAEnemies();
     }
+
 
     protected override void Update(GameTime gameTime)
     {
-        if (isPaused == true )
+        KeyboardState keyboardState = Keyboard.GetState();
+
+        if (keyboardState.IsKeyDown(Keys.Escape))
         {
-            return; // if the game is paused, get out 
+            _showPauseMenu = !_showPauseMenu;
+            isPaused = _showPauseMenu;
+        }
+        
+        if (_showPauseMenu)
+        {
+            HandlePauseMenuInput();
+            return; 
         }
 
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Delete))
+            keyboardState.IsKeyDown(Keys.Delete))
+        {
             Exit();
+        }
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
         InputHandler.Update();
         EntityHandler.Update();
-        
+
         spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
-        if (spawnTimer >= 10)  // Every 10 seconds cycle to next enemy
+        if (spawnTimer >= 10) 
         {
             spawnTimer = 0;
             DespawnAllEnemies();
@@ -79,6 +95,7 @@ public class CompileAndConquer : Game
 
         base.Update(gameTime);
     }
+
 
     private void SpawnNextEnemy()
     {
@@ -129,20 +146,61 @@ public class CompileAndConquer : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        if (isPaused == true )
-        {
-            return; // if the game is paused, get out 
-        }
-
         GraphicsDevice.Clear(Color.Black);
 
-        // TODO: Add your drawing code here
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        
-        EntityHandler.Draw(_spriteBatch);
-        
+
+        if (_showPauseMenu)
+        {
+            DrawPauseMenu();
+        }
+        else
+        {
+            EntityHandler.Draw(_spriteBatch);
+        }
+
         _spriteBatch.End();
 
         base.Draw(gameTime);
     }
+    
+    private void HandlePauseMenuInput()
+    {
+        KeyboardState keyboardState = Keyboard.GetState();
+
+        if (keyboardState.IsKeyDown(Keys.Up))
+        {
+            _selectedOption = (_selectedOption - 1 + _menuOptions.Length) % _menuOptions.Length;
+        }
+        else if (keyboardState.IsKeyDown(Keys.Down))
+        {
+            _selectedOption = (_selectedOption + 1) % _menuOptions.Length;
+        }
+        else if (keyboardState.IsKeyDown(Keys.Enter))
+        {
+            if (_selectedOption == 0) 
+            {
+                _showPauseMenu = false;
+                isPaused = false;
+            }
+            else if (_selectedOption == 1) 
+            {
+                Exit();
+            }
+        }
+    }
+    
+    private void DrawPauseMenu()
+    {
+        Vector2 menuPosition = new Vector2(ScreenSize.X / 2 - 50, ScreenSize.Y / 2 - 50);
+
+        for (int i = 0; i < _menuOptions.Length; i++)
+        {
+            Color color = (i == _selectedOption) ? Color.Yellow : Color.White;
+            _spriteBatch.DrawString(_menuFont, _menuOptions[i], menuPosition, color);
+            menuPosition.Y += 40; 
+        }
+    }
+
+
 }
