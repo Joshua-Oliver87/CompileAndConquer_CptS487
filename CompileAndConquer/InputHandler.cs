@@ -45,20 +45,20 @@ public class InputHandler
         return isPaused;
     }
 
-    public static int HandlePauseMenuInput()
+    public static int HandlePauseMenuInput(ref int selectedOption)
     {
         KeyboardState keyboardState = Keyboard.GetState();
-        int _selectedOption = 0;
-        string[] _menuOptions = { "Resume", "Quit" };
+        //int _selectedOption = 0;
+        string[] menuOptions = { "Resume", "Quit" };
 
 
         if (keyboardState.IsKeyDown(Keys.Up))
         {
-            _selectedOption = (_selectedOption - 1 + _menuOptions.Length) % _menuOptions.Length;
+            selectedOption = (selectedOption - 1 + menuOptions.Length) % menuOptions.Length;
         }
         else if (keyboardState.IsKeyDown(Keys.Down))
         {
-            _selectedOption = (_selectedOption + 1) % _menuOptions.Length;
+            selectedOption = (selectedOption + 1) % menuOptions.Length;
         }
         else if (keyboardState.IsKeyDown(Keys.Enter))
         {
@@ -71,9 +71,9 @@ public class InputHandler
             // {
             //     Exit();
             // }
-            return _selectedOption;
+            return selectedOption;
         }
-        return _selectedOption;
+        return -1;
     }
     
     public static bool GetFire() { return kstate.IsKeyDown(Keys.Space); }

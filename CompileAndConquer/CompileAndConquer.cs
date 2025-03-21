@@ -10,21 +10,23 @@ namespace CompileAndConquer;
 
 public class CompileAndConquer : Game
 {
-    private static bool isPaused = false; //if the game is paused, do not update or redraw.
+    //private static bool isPaused = false; //if the game is paused, do not update or redraw.
 
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    public SpriteFont screenFont { get; private set; }
+
     private double spawnTimer = 0;
     private int spawnPhase = 0;
     
-    private SpriteFont _menuFont;
+    ///private SpriteFont _menuFont;
     // private string[] _menuOptions = { "Resume", "Quit" };
     // private int _selectedOption = 0;
 
     //REPLACE WITH SCREEN HANDLER
-    private PauseMenuScreen pauseScreen;
+    private readonly PauseMenuScreen pauseScreen = PauseMenuScreen.Instance;
 
 
     public static Vector2 ScreenSize;
@@ -43,6 +45,7 @@ public class CompileAndConquer : Game
     protected override void Initialize()
     {
         this.Content.RootDirectory = "Content";
+        PauseMenuScreen.Instance.OnExitGame = Exit;
         base.Initialize();
     }
 
@@ -51,7 +54,9 @@ public class CompileAndConquer : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         TextureHandler.Load(Content);
 
-        _menuFont = Content.Load<SpriteFont>("MenuFont");
+        screenFont = Content.Load<SpriteFont>("MenuFont");
+        PauseMenuScreen.Instance.Initialize(screenFont);
+
 
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
@@ -69,12 +74,14 @@ public class CompileAndConquer : Game
         {
             // _showPauseMenu = !_showPauseMenu;
             // isPaused = _showPauseMenu;
-            isPaused = !isPaused;
+            //isPaused = !isPaused;
+            PauseMenuScreen.Instance.isPaused = !PauseMenuScreen.Instance.isPaused;
         }
         
         //if (_showPauseMenu)
-        if (isPaused)
+        if (PauseMenuScreen.Instance.isPaused)
         {
+            pauseScreen.Update();
             return; 
         }
 
@@ -150,18 +157,25 @@ public class CompileAndConquer : Game
 
     protected override void Draw(GameTime gameTime)
     {
-
-
         GraphicsDevice.Clear(Color.Black);
-
-
         // Add drawing code here
+
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
-        //if (_showPauseMenu) //if not paused then draw
-        if (isPaused)
+        if (screenFont != null)
         {
-            pauseScreen.Draw(_spriteBatch);
+            //spriteBatch.DrawString(font, "Paused", new Vector2(100, 100), Color.White);
+        }
+        else
+        {
+            Console.WriteLine("Font is null!");
+        }
+
+        //if (_showPauseMenu) //if not paused then draw
+        if (PauseMenuScreen.Instance.isPaused)
+        {
+            
+            PauseMenuScreen.Instance.Draw(_spriteBatch);
         }
         else
         {
@@ -172,44 +186,5 @@ public class CompileAndConquer : Game
 
         base.Draw(gameTime);
     }
-    
-    // private void HandlePauseMenuInput()
-    // {
-    //     KeyboardState keyboardState = Keyboard.GetState();
-
-    //     if (keyboardState.IsKeyDown(Keys.Up))
-    //     {
-    //         _selectedOption = (_selectedOption - 1 + _menuOptions.Length) % _menuOptions.Length;
-    //     }
-    //     else if (keyboardState.IsKeyDown(Keys.Down))
-    //     {
-    //         _selectedOption = (_selectedOption + 1) % _menuOptions.Length;
-    //     }
-    //     else if (keyboardState.IsKeyDown(Keys.Enter))
-    //     {
-    //         if (_selectedOption == 0) 
-    //         {
-    //             //_showPauseMenu = false;
-    //             isPaused = false;
-    //         }
-    //         else if (_selectedOption == 1) 
-    //         {
-    //             Exit();
-    //         }
-    //     }
-    // }
-    
-    // private void DrawPauseMenu()
-    // {
-    //     Vector2 menuPosition = new Vector2(ScreenSize.X / 2 - 50, ScreenSize.Y / 2 - 50);
-
-    //     for (int i = 0; i < _menuOptions.Length; i++)
-    //     {
-    //         Color color = (i == _selectedOption) ? Color.Yellow : Color.White;
-    //         _spriteBatch.DrawString(_menuFont, _menuOptions[i], menuPosition, color);
-    //         menuPosition.Y += 40; 
-    //     }
-    // }
-
 
 }

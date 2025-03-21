@@ -11,7 +11,7 @@ namespace CompileAndConquer.Screens;
 
 public abstract class Screen
 {
-    protected SpriteFont menuFont;
+    protected SpriteFont font;
     private bool show = false; // is it visible on screen?
     
     public virtual void Draw(SpriteBatch spriteBatch)
