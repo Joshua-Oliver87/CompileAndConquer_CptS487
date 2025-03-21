@@ -35,15 +35,6 @@ public class PauseMenuScreen : Screen
     {
         Vector2 menuPosition = new Vector2(CompileAndConquer.ScreenSize.X / 2 - 50, CompileAndConquer.ScreenSize.Y / 2 - 50);
 
-        if (font != null)
-        {
-            //spriteBatch.DrawString(font, "Paused", new Vector2(100, 100), Color.White);
-        }
-        else
-        {
-            Console.WriteLine("Font is null!");
-        }
-
         for (int i = 0; i < menuOptions.Length; i++)
         {
             Color color;

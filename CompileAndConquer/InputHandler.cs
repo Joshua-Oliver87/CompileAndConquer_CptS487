@@ -7,9 +7,11 @@ namespace CompileAndConquer;
 public class InputHandler
 {
     private static KeyboardState kstate;
+    private static KeyboardState prevkstate;
 
     public static void Update()
     {
+        prevkstate = kstate;
         kstate = Keyboard.GetState();
     }
 
@@ -47,30 +49,18 @@ public class InputHandler
 
     public static int HandlePauseMenuInput(ref int selectedOption)
     {
-        KeyboardState keyboardState = Keyboard.GetState();
-        //int _selectedOption = 0;
         string[] menuOptions = { "Resume", "Quit" };
 
-
-        if (keyboardState.IsKeyDown(Keys.Up))
+        if (kstate.IsKeyDown(Keys.Up))
         {
             selectedOption = (selectedOption - 1 + menuOptions.Length) % menuOptions.Length;
         }
-        else if (keyboardState.IsKeyDown(Keys.Down))
+        else if (kstate.IsKeyDown(Keys.Down))
         {
             selectedOption = (selectedOption + 1) % menuOptions.Length;
         }
-        else if (keyboardState.IsKeyDown(Keys.Enter))
+        else if (kstate.IsKeyDown(Keys.Enter))
         {
-            // if (_selectedOption == 0) 
-            // {
-            //     //_showPauseMenu = false;
-            //     isPaused = false;
-            // }
-            // else if (_selectedOption == 1) 
-            // {
-            //     Exit();
-            // }
             return selectedOption;
         }
         return -1;

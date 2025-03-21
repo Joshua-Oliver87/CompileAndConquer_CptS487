@@ -10,6 +10,8 @@ namespace CompileAndConquer;
 
 public class CompileAndConquer : Game
 {
+    private KeyboardState prevKeyboardState;
+
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -65,15 +67,16 @@ public class CompileAndConquer : Game
     {
         KeyboardState keyboardState = Keyboard.GetState();
 
-        if (keyboardState.IsKeyDown(Keys.Escape))
+
+        if (keyboardState.IsKeyDown(Keys.Escape)&& prevKeyboardState.IsKeyUp(Keys.Escape))
         {
-            // _showPauseMenu = !_showPauseMenu;
-            // isPaused = _showPauseMenu;
-            //isPaused = !isPaused;
             PauseMenuScreen.Instance.isPaused = !PauseMenuScreen.Instance.isPaused;
         }
         
-        //if (_showPauseMenu)
+        prevKeyboardState = keyboardState;
+
+        InputHandler.Update();
+
         if (PauseMenuScreen.Instance.isPaused)
         {
             pauseScreen.Update();
@@ -88,7 +91,6 @@ public class CompileAndConquer : Game
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
-        InputHandler.Update();
         EntityHandler.Update();
 
         spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
@@ -157,19 +159,8 @@ public class CompileAndConquer : Game
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
-        if (screenFont != null)
-        {
-            //spriteBatch.DrawString(font, "Paused", new Vector2(100, 100), Color.White);
-        }
-        else
-        {
-            Console.WriteLine("Font is null!");
-        }
-
-        //if (_showPauseMenu) //if not paused then draw
         if (PauseMenuScreen.Instance.isPaused)
         {
-            
             PauseMenuScreen.Instance.Draw(_spriteBatch);
         }
         else
