@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,6 +14,7 @@ public abstract class Enemy : Entity
         this.Position = position;
         this.Speed = speed;
         this.health = 100; // default
+        Damage = 10;
         
         // ScaleFactor for enemies relative to player size
         this.ScaleFactor = scalePercentage * (Player.Instance.Size.X / texture.Width);

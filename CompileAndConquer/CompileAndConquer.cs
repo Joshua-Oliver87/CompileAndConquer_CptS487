@@ -10,8 +10,6 @@ namespace CompileAndConquer;
 
 public class CompileAndConquer : Game
 {
-    //private static bool isPaused = false; //if the game is paused, do not update or redraw.
-
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -20,10 +18,7 @@ public class CompileAndConquer : Game
 
     private double spawnTimer = 0;
     private int spawnPhase = 0;
-    
-    ///private SpriteFont _menuFont;
-    // private string[] _menuOptions = { "Resume", "Quit" };
-    // private int _selectedOption = 0;
+
 
     //REPLACE WITH SCREEN HANDLER
     private readonly PauseMenuScreen pauseScreen = PauseMenuScreen.Instance;

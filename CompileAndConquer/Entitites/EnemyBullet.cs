@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.Xna.Framework;
 
 namespace CompileAndConquer.Content;
@@ -15,6 +16,8 @@ public class EnemyBullet : Entity
         DebugMode = false;
         Collidable = true;
         health = 1;
+
+        Damage = 10;
     }
 
     public override void Update()

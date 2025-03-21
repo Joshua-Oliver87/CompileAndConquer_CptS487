@@ -15,6 +15,8 @@ public class Player : Entity
     
     
     private float speed = 4.0f;
+
+    public int Lives = 3;
     
     // Copied
     private static Player instance;
@@ -38,7 +40,8 @@ public class Player : Entity
         CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, texture.Width * (int)Scale, texture.Height * (int)Scale);
         DebugMode = true;
         Collidable = true;
-        health = 3;
+        health = 100;
+        Damage = 10;
     }
 
     public override void Update()
@@ -96,5 +99,25 @@ public class Player : Entity
             EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f)));
             bulletCooldown = maxBulletCooldown;
         }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        Console.WriteLine($"Player took {damage} damage. Current health is {health}");
+
+        if (Lives == 0 && health <= 0)
+        {
+            Die();
+        }
+        else if (health <= 0)
+        {
+            Lives -= 1;
+        }
+    }
+
+    public void Die()
+    {
+        Console.WriteLine("Player has been defeated");
     }
 }

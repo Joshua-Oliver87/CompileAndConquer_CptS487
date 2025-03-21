@@ -73,6 +73,17 @@ public class EntityHandler
                     {
                         Console.WriteLine("Bullet & Enemy Collision");
                     }
+
+                    if ((toCheck is EnemyBullet && checking is Player) || (toCheck is Player && checking is EnemyBullet))
+                    {
+                        Console.WriteLine("Enemy Bullet & Player Collision");
+
+                        EnemyBullet bullet = (toCheck is Enemy) ? (EnemyBullet)toCheck : (EnemyBullet)checking;
+
+                        Player.Instance.TakeDamage(bullet.Damage);
+
+                        RemoveEntity(bullet);
+                    }
                 }
             }
         }

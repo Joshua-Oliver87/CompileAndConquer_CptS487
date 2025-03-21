@@ -16,6 +16,7 @@ public class PlayerBullet : Entity
         DebugMode = false;
         Collidable = true;
         health = 1;
+        Damage = 10;
     }
 
     public override void Update()

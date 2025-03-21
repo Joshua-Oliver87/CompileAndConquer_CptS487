@@ -16,6 +16,8 @@ public abstract class Entity
     public int health;
     public float Scale = 1.0f;
 
+    public int Damage;
+
     // Collisions
     public bool Collidable = false;
     public Rectangle CollisionRectangle;
