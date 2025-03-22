@@ -37,8 +37,7 @@ public class Player : Entity
         texture = TextureHandler.Player;
         Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y / 2);
         Scale = 2.0f;
-        CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, texture.Width * (int)Scale, texture.Height * (int)Scale);
-        DebugMode = true;
+        ColliderDebugMode = true;
         Collidable = true;
         health = 100;
         Damage = 10;
@@ -54,26 +53,10 @@ public class Player : Entity
         if (InputHandler.GetSlowMode())
         {
             Velocity += speed * InputHandler.GetMovement() * 0.5f;
-            CollisionRectangle.Width = texture.Width * (int)(Scale * 0.5);
-            CollisionRectangle.Height = texture.Height * (int)(Scale * 0.5);
-            
-            // Update collider
-            CollisionRectangle.X = (int)Position.X - (texture.Width / 2 * (int)(Scale * 0.5));
-            CollisionRectangle.Y = (int)Position.Y - (texture.Height / 2 * (int)(Scale * 0.5));
-            
-            DebugMode = true;
         }
         else
         {
             Velocity += speed * InputHandler.GetMovement();
-            CollisionRectangle.Width = texture.Width * (int)(Scale);
-            CollisionRectangle.Height = texture.Height * (int)(Scale);
-            
-            // Update collider
-            CollisionRectangle.X = (int)Position.X - (texture.Width / 2 * (int)Scale);
-            CollisionRectangle.Y = (int)Position.Y - (texture.Height / 2 * (int)Scale);
-            
-            DebugMode = false;
         }
 
         this.Position += Velocity;
@@ -90,8 +73,6 @@ public class Player : Entity
         
         Velocity = Vector2.Zero;
         
-        
-
         // Fire Controls
         if (InputHandler.GetFire() && bulletCooldown == 0)
         {
