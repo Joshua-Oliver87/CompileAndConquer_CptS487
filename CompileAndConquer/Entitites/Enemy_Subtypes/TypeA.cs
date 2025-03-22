@@ -24,10 +24,6 @@ public class TypeA : Enemy
         }
 
         this.Position += direction * Speed;
-        
-        // Update collider will change later
-        CollisionRectangle.X = (int)Position.X - (texture.Width / 2 * (int)ScaleFactor);
-        CollisionRectangle.Y = (int)Position.Y - (texture.Height / 2 * (int)ScaleFactor);
 
         if (attackCooldown > 0)
             attackCooldown--;

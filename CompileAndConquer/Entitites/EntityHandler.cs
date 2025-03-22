@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 
@@ -13,8 +14,6 @@ public class EntityHandler
     static List<Entity> toAddList = new List<Entity>();
     static List<Entity> toRemoveList = new List<Entity>();  
     static bool clearEnemiesScheduled = false;
-
-    static List<Entity> Collisions = new List<Entity>();
     
     static bool isUpdating = false;
 
@@ -37,9 +36,6 @@ public class EntityHandler
     private static void AddEntity(Entity entity)
     {
         entities.Add(entity);
-
-        if (entity.Collidable)
-            Collisions.Add(entity);
     }
 
     public static void Update(GameTime gameTime)
@@ -48,36 +44,12 @@ public class EntityHandler
         isUpdating = true;
 
         foreach (var entity in entities)
-            entity.Update(gameTime);
-        
-        // Check collisions
-        Stack<Entity> col = new Stack<Entity>();
-
-        foreach (Entity collider in Collisions)
-            col.Push(collider);
-        
-        while (col.Count > 0)
         {
-            Entity checking = col.Pop();
-            foreach (Entity toCheck in col)
-            {
-                if (checking.CollisionRectangle.Intersects(toCheck.CollisionRectangle))
-                {
-                    // COLLISIONS HERE WILL MOVE LATER
-                    // Player and Enemy collision
-                    if ((toCheck is Player && checking is Enemy) || (toCheck is Enemy && checking is Player))
-                    {
-                        Console.WriteLine("Player & Enemy Collision");
-                    }
-                    
-                    // Bullet and Enemy collision
-                    if ((toCheck is PlayerBullet && checking is Enemy) || (toCheck is Enemy && checking is PlayerBullet))
-                    {
-                        Console.WriteLine("Bullet & Enemy Collision");
-                    }
-                }
-            }
+            entity.Update(GameTime gameTime);
+            entity.UpdateCollider();
         }
+        
+            
         
         isUpdating = false;
 
