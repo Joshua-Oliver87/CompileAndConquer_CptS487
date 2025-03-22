@@ -10,7 +10,7 @@ public class TypeA : Enemy
     private int maxAttackCooldown = 120; // Fires every 2 seconds
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public TypeA(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.5f, new LinearMovement(startRight: false, initialSpeed: 300f))
+    public TypeA(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.5f, new CurvedMovement())
     {
         this.health = 80;
     }

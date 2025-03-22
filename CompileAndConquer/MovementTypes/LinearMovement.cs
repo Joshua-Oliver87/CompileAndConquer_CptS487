@@ -23,8 +23,7 @@ namespace CompileAndConquer.Content
         public void Move(Entity entity, GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            // Update position
+            
             float movement = speed * deltaTime * (movingRight ? 1 : -1);
             entity.Position.X += movement;
 
@@ -43,7 +42,7 @@ namespace CompileAndConquer.Content
                 movingRight = false;
             }
 
-            // Randomize speed occasionally
+            // random speed occasionally
             timeSinceLastChange += deltaTime;
             if (timeSinceLastChange >= changeInterval)
             {
