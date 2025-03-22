@@ -56,7 +56,7 @@ public abstract class Entity
         }
     }
 
-    public abstract void Update();
+    public abstract void Update(GameTime gameTime);
 
     // Collision methods
     public void UpdateCollider()

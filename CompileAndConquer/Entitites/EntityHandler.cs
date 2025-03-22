@@ -45,7 +45,7 @@ public class EntityHandler
 
         foreach (var entity in entities)
         {
-            entity.Update(GameTime gameTime);
+            entity.Update(gameTime);
             entity.UpdateCollider();
         }
         

@@ -18,17 +18,14 @@ public class MiniBoss : Enemy
 
     public override void Update(GameTime gameTime)
     {
+		base.Update(gameTime);
 		lifetime -= 1.0 / 60.0;
 		if (lifetime <= 0)
 		{
             EntityHandler.ScheduleClearEnemies();
             EntityHandler.RemoveEntity(this);
 		}
-        Vector2 direction = Player.Instance.Position - this.Position;
-        if (direction.Length() > 0)
-            direction.Normalize();
-
-        this.Position += direction * Speed;
+       
 
         attackTimer++;
         if (attackTimer % 200 == 0)

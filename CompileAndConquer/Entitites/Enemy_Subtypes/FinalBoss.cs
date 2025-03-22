@@ -9,9 +9,6 @@ public class FinalBoss : Enemy
 {
     private int attackTimer = 0;
     private double lifetime = 15.0;
-    private bool movingDown = true;
-    private float topBound = 50;
-    private float bottomBound = CompileAndConquer.ScreenSize.Y - 100;
 
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
@@ -22,16 +19,7 @@ public class FinalBoss : Enemy
 
     public override void Update(GameTime gameTime)
     {
-        if (movingDown)
-        {
-            this.Position.Y += Speed;
-            if (this.Position.Y >= bottomBound) movingDown = false; // Reverse direction
-        }
-        else
-        {
-            this.Position.Y -= Speed;
-            if (this.Position.Y <= topBound) movingDown = true; // Reverse direction
-        }
+        base.Update(gameTime);
 
         attackTimer++;
         if (attackTimer % 150 == 0)

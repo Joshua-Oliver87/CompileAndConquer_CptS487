@@ -20,19 +20,7 @@ public class TypeB : Enemy
 
     public override void Update(GameTime gameTime)
     {
-		this.Position.Y = 50;
-        if (movingRight)
-        { 
-            this.Position.X += Speed;
-            if (Position.X >= rightBound)
-                movingRight = false;
-        }
-        else
-        {
-            this.Position.X -= Speed;
-            if (Position.X <= leftBound)
-                movingRight = true;
-        }
+		base.Update(gameTime);
 
         if (attackCooldown > 0)
             attackCooldown--;
