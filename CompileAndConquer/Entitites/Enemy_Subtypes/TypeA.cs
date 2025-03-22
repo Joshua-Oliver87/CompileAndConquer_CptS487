@@ -13,6 +13,7 @@ public class TypeA : Enemy
     public TypeA(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.5f, new CurvedMovement())
     {
         this.health = 80;
+		this.AIComponent = new AIComponent(BehaviorType.SpawnAlliesWhenAlone);
     }
 
     public override void Update(GameTime gameTime)

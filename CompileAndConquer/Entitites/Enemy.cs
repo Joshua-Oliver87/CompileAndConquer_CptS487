@@ -7,7 +7,9 @@ public abstract class Enemy : Entity
 {
     public float Speed { get; protected set; } = 2.0f;    //default speed for enemies
 
-	private IMovementStrategy movementStrategy;
+	public AIComponent AIComponent { get; set; }
+
+	public IMovementStrategy movementStrategy;
 
     public Enemy(Texture2D texture, Vector2 position, float speed, float scalePercentage, IMovementStrategy movementStrategy)
     {
