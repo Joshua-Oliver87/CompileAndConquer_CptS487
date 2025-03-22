@@ -11,7 +11,11 @@ public class MiniBoss : Enemy
 	private double lifetime = 15.0;
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public MiniBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.5f, 1.75f, new ZigZagMovement(30, 3000, 4.5f))
+    public MiniBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.5f, 1.75f, new ZigZagMovement(
+    leftBound: 100,
+    rightBound: 800,
+    topBound: 100,
+    bottomBound: CompileAndConquer.ScreenSize.Y * 0.25f))
     {
         this.health = 300;
     }

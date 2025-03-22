@@ -5,30 +5,71 @@ namespace CompileAndConquer.Content
     public class ZigZagMovement : IMovementStrategy
     {
         private bool movingRight = true;
+        private bool movingDown = true;
+
         private float leftBound;
         private float rightBound;
-        private float speed;
+        private float topBound;
+        private float bottomBound;
 
-        public ZigZagMovement(float leftBound, float rightBound, float speed)
+        private float horizontalSpeed;
+        private float verticalSpeed;
+
+        public ZigZagMovement(
+            float leftBound, float rightBound,
+            float topBound, float bottomBound,
+            float horizontalSpeed = 150f, float verticalSpeed = 75f)
         {
             this.leftBound = leftBound;
             this.rightBound = rightBound;
-            this.speed = speed;
+            this.topBound = topBound;
+            this.bottomBound = bottomBound;
+            this.horizontalSpeed = horizontalSpeed;
+            this.verticalSpeed = verticalSpeed;
         }
 
         public void Move(Entity entity, GameTime gameTime)
         {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            // Horizontal bounce
             if (movingRight)
             {
-                entity.Position.X += speed;
+                entity.Position.X += horizontalSpeed * deltaTime;
                 if (entity.Position.X >= rightBound)
+                {
+                    entity.Position.X = rightBound;
                     movingRight = false;
+                }
             }
             else
             {
-                entity.Position.X -= speed;
+                entity.Position.X -= horizontalSpeed * deltaTime;
                 if (entity.Position.X <= leftBound)
+                {
+                    entity.Position.X = leftBound;
                     movingRight = true;
+                }
+            }
+
+            // Vertical bounce
+            if (movingDown)
+            {
+                entity.Position.Y += verticalSpeed * deltaTime;
+                if (entity.Position.Y >= bottomBound)
+                {
+                    entity.Position.Y = bottomBound;
+                    movingDown = false;
+                }
+            }
+            else
+            {
+                entity.Position.Y -= verticalSpeed * deltaTime;
+                if (entity.Position.Y <= topBound)
+                {
+                    entity.Position.Y = topBound;
+                    movingDown = true;
+                }
             }
         }
     }

@@ -12,7 +12,11 @@ public class FinalBoss : Enemy
 
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public FinalBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.0f, 2.0f, new ZigZagMovement(20, 2000, 1.5f))
+    public FinalBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.0f, 2.0f, new ZigZagMovement(
+    leftBound: 100,
+    rightBound: 800,
+    topBound: 100,
+    bottomBound: CompileAndConquer.ScreenSize.Y * 0.25f))
     {
         this.health = 1000;
     }
