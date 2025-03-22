@@ -14,10 +14,10 @@ namespace CompileAndConquer.Content
         private double changeInterval = 1.5; // seconds
         private Random rng = new Random();
 
-        public LinearMovement(bool startRight = true, float initialSpeed = 200f)
+        public LinearMovement(bool startRight, float initialSpeed = 150f)
         {
-            this.speed = initialSpeed;
             this.movingRight = startRight;
+            this.speed = initialSpeed;
         }
 
         public void Move(Entity entity, GameTime gameTime)

@@ -4,11 +4,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Linq;
+using CompileAndConquer.Content.WaveManager;
 
 namespace CompileAndConquer;
 
 public class CompileAndConquer : Game
 {
+    private WaveManager waveManager;
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -40,14 +42,16 @@ public class CompileAndConquer : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         TextureHandler.Load(Content);
 
+        waveManager = new WaveManager();
+        waveManager.AddWave(new LinearWave(15));
+        waveManager.AddWave(new SpiralEntryWave(20));
+
         // Set our screen size
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
-
-        // spawn enemies
-        SpawnTypeAEnemies();
+        
     }
 
     protected override void Update(GameTime gameTime)
@@ -55,6 +59,8 @@ public class CompileAndConquer : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+
+        waveManager.Update(gameTime);
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
@@ -67,19 +73,18 @@ public class CompileAndConquer : Game
         {
             spawnTimer = 0;
             DespawnAllEnemies();
-            SpawnNextEnemy();
         }
 
         base.Update(gameTime);
     }
 
+    /*
     private void SpawnNextEnemy()
     {
         switch (spawnPhase)
         {
             case 0:
-                var enemyA = new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200));
-                enemyA.AIComponent = new AIComponent(BehaviorType.SpawnAlliesWhenAlone);
+                var enemyA = new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200), new CurvedMovement());
                 EntityHandler.Add(enemyA);
                 break;
             case 1:
@@ -95,6 +100,7 @@ public class CompileAndConquer : Game
 
         spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
     }
+    */
 
     private void DespawnAllEnemies()
     {
@@ -104,20 +110,7 @@ public class CompileAndConquer : Game
                 EntityHandler.RemoveEntity(entity);
         }
     }
-
-    private void SpawnTypeAEnemies()
-    {
-        Console.WriteLine("Spawning Type A Enemies");
-        var enemyA = new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200));
-        enemyA.AIComponent = new AIComponent(BehaviorType.SpawnAlliesWhenAlone);
-        EntityHandler.Add(enemyA);
-    }
-
-    private void SpawnTypeBEnemies()
-    {
-        Console.WriteLine("Spawning Type B Enemies");
-        EntityHandler.Add(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
-    }
+    
 
     private void DespawnEnemies()
     {

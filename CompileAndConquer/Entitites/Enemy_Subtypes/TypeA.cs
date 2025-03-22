@@ -10,12 +10,11 @@ public class TypeA : Enemy
     private int maxAttackCooldown = 120; // Fires every 2 seconds
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public TypeA(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.5f, new CurvedMovement())
-    {
-        this.health = 80;
-		this.AIComponent = new AIComponent(BehaviorType.SpawnAlliesWhenAlone);
-    }
-
+    public TypeA(Texture2D texture, Vector2 position, IMovementStrategy strategy)
+    	: base(texture, position, 2.5f, 0.5f, strategy)
+	{
+    	this.health = 80;
+	}
     public override void Update(GameTime gameTime)
     {
         base.Update(gameTime);

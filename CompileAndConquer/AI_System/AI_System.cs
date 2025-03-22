@@ -21,8 +21,7 @@ public static class AISystem
                     case BehaviorType.SpawnAlliesWhenAlone:
                         if (EntityHandler.entities.Count(e => e is Enemy && e != enemy) < 2)
                         {
-                            var newAlly = new TypeA(TextureHandler.TypeAEnemy, enemy.Position + new Vector2(50, 0));
-                            newAlly.movementStrategy = new CurvedMovement();    // can override type of movement here if needed
+                            var newAlly = new TypeA(TextureHandler.TypeAEnemy, enemy.Position + new Vector2(50, 0), new CurvedMovement()); // can override movement here if needed
                             EntityHandler.Add(newAlly);
                         }
                         break;
