@@ -23,6 +23,7 @@ public class CompileAndConquer : Game
 
 
     //REPLACE WITH SCREEN HANDLER
+    private readonly StartScreen startScreen = StartScreen.Instance;
     private readonly PauseMenuScreen pauseScreen = PauseMenuScreen.Instance;
     private readonly EndScreen endScreen = EndScreen.Instance;
     private readonly SideBarScreen sidebar= SideBarScreen.Instance;
@@ -44,7 +45,11 @@ public class CompileAndConquer : Game
     {
         this.Content.RootDirectory = "Content";
         PauseMenuScreen.Instance.OnExitGame = Exit;
+        EndScreen.Instance.OnExitGame = Exit;
+        StartScreen.Instance.OnExitGame = Exit;
         Player.Instance.OnLoseLife = LoseLife;
+        
+        StartScreen.Instance.Initialize(screenFont);
         base.Initialize();
     }
 
@@ -61,9 +66,6 @@ public class CompileAndConquer : Game
 
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
-
-        EntityHandler.Add(Player.Instance);
-        SpawnTypeAEnemies();
     }
 
 
@@ -79,6 +81,14 @@ public class CompileAndConquer : Game
         prevKeyboardState = keyboardState;
 
         InputHandler.Update();
+
+        if (startScreen.gameStart == false)
+        {
+            startScreen.Update();
+            return;
+        }
+        
+        StartGame();
 
         if (PauseMenuScreen.Instance.isPaused)
         {
@@ -113,6 +123,12 @@ public class CompileAndConquer : Game
         }
 
         base.Update(gameTime);
+    }
+
+    public void StartGame()
+    {
+        EntityHandler.Add(Player.Instance);
+        SpawnTypeAEnemies();
     }
 
 
