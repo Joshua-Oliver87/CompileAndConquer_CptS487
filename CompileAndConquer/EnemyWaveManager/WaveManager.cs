@@ -14,7 +14,12 @@ namespace CompileAndConquer.Content.WaveManager
             waves.Add(wave);
         }
 
-        public void Update(GameTime gameTime)
+        public void LoadWaves()
+        {
+
+        }
+
+        public void UpdateWave(GameTime gameTime)
         {
             if (currentWaveIndex >= waves.Count)
                 return; // No more waves
@@ -29,6 +34,20 @@ namespace CompileAndConquer.Content.WaveManager
                 currentWaveIndex++;
                 waveTimer = 0;
             }
+        }
+
+        public struct WaveEvent
+        {
+            public int EnemyCount;
+            public Enemy EnemyType;
+            // All neccesary input for enemy builder
+            // Need to generalize to include text/powerup spawns
+        }
+
+        public struct Wave
+        {
+            public List<WaveEvent> WaveEvents;
+            public int waveDuration;
         }
     }
 }

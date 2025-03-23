@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace CompileAndConquer.Content.WaveManager
 {
