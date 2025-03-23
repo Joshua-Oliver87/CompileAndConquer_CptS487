@@ -44,7 +44,7 @@ public class CompileAndConquer : Game
     {
         this.Content.RootDirectory = "Content";
         PauseMenuScreen.Instance.OnExitGame = Exit;
-        //Player.Instance.OnLoseLife = ;
+        Player.Instance.OnLoseLife = LoseLife;
         base.Initialize();
     }
 
@@ -187,5 +187,12 @@ public class CompileAndConquer : Game
         _spriteBatch.End();
 
         base.Draw(gameTime);
+    }
+
+    protected void LoseLife()
+    {
+        
+        SideBarScreen.Instance.LoseLife();
+        
     }
 }
