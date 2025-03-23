@@ -20,4 +20,11 @@ public class PlayerBullet : Entity
     {
         Position += Velocity;
     }
+
+    public override void OnCollide(Entity collision)
+    {
+        // Delete bullet on collision with enemy
+        if (collision is Enemy)
+            this.isAlive = false;
+    }
 }

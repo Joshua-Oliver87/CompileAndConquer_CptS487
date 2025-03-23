@@ -15,13 +15,11 @@ public abstract class Enemy : Entity
         this.health = 100; // default
         Damage = 10;
         
-        ColliderDebugMode = true;
         Collidable = true;
         
         // ScaleFactor for enemies relative to player size
         this.Scale = scalePercentage * (Player.Instance.Size.X / texture.Width);
         
-        // Collision logic to change later
         health = 1;
     }
 
