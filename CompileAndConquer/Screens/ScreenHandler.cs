@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Media;
 
-namespace CompileAndConquer.Screens;
+namespace CompileAndConquer.Content;
 
 public class ScreenHandler
 {

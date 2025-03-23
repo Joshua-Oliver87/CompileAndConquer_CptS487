@@ -1,5 +1,4 @@
 ﻿using CompileAndConquer.Content;
-using CompileAndConquer.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -24,7 +23,7 @@ public class CompileAndConquer : Game
 
     //REPLACE WITH SCREEN HANDLER
     private readonly PauseMenuScreen pauseScreen = PauseMenuScreen.Instance;
-
+    private readonly SideBarScreen sidebar= SideBarScreen.Instance;
 
     public static Vector2 ScreenSize;
 
@@ -52,8 +51,9 @@ public class CompileAndConquer : Game
         TextureHandler.Load(Content);
 
         screenFont = Content.Load<SpriteFont>("MenuFont");
+        //replace with screen manager screenmanager
         PauseMenuScreen.Instance.Initialize(screenFont);
-
+        SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
 
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;

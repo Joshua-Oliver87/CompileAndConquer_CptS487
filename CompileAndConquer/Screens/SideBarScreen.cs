@@ -4,30 +4,40 @@ using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Media;
 
-namespace CompileAndConquer.Screens;
+namespace CompileAndConquer.Content;
 
 public class SideBarScreen : Screen
 {
     private static SideBarScreen instance;
     private Rectangle sideBarRectangle;
+    private Texture2D starTexture;
 
-    public void Initialize(SpriteFont font)
+
+    public void Initialize(SpriteFont font, GraphicsDevice graphicsDevice)
     {
         this.font = font;
-        // this.sideBarRectangle = new Rectangle()
+        starTexture = TextureHandler.SideBarStar;
+        this.sideBarRectangle = new Rectangle(0, 0, graphicsDevice.Viewport.Width/4, graphicsDevice.Viewport.Height);
     }
 
-    // public static PauseMenuScreen Instance
-    // {
-    //     get{
-    //         if (instance == null)
-    //         {
-    //             instance = new PauseMenuScreen();
-    //         }
-    //         return instance;
-    //     }
-        
-    // }
+    public static SideBarScreen Instance
+    {
+        get{
+            if (instance == null)
+            {
+                instance = new SideBarScreen();
+            }
+            return instance;
+        }
+    }
 
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        throw new NotImplementedException();
+    }
 
+    public override void Update()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -4,7 +4,7 @@ using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Media;
 
-namespace CompileAndConquer.Screens;
+namespace CompileAndConquer.Content;
 
 public class PauseMenuScreen : Screen
 {
@@ -40,7 +40,7 @@ public class PauseMenuScreen : Screen
             Color color;
             if (i == selectedOption)
             {
-                color = Color.Yellow;
+                color = Color.Peru;
             }
             else
             {
