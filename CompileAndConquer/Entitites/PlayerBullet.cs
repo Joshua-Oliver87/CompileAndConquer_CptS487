@@ -13,6 +13,7 @@ public class PlayerBullet : Entity
         Scale = 2.0f;
         health = 1;
         Damage = 10;
+        Collidable = true;
     }
 
     public override void Update()

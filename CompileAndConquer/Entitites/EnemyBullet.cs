@@ -14,6 +14,7 @@ public class EnemyBullet : Entity
         health = 1;
 
         Damage = 10;
+        Collidable = true;
     }
 
     public override void Update()
