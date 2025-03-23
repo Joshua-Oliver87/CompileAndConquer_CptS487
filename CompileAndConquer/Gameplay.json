@@ -1,16 +1,4 @@
 {
-  "PlayerStats": {
-    "Health": 100,
-    "Lives": 3,
-    "Bombs": 2,
-    "BombEffect": "Heavy damage to enemies and clears bullets"
-  },
-  
-  "BossStats": {
-    "MidBossHealth": 100,
-    "FinalBossHealth": 200
-  },
-  
   "Scoring": {
     "HitEnemy": 500,
     "DefeatEnemy": 10000,
@@ -19,9 +7,92 @@
     "LeftoverLife": 100000
   },
   
-  "Gameplay": {
-    
-  },
-  
-  "GameEnd": "Game stats displayed with buttons for home screen or replay"
+  "entities": [
+    {
+      "type": "Player",
+      "health": 100,
+      "damage": 10,
+      "lives": 3,
+      "bullets": [
+        {
+          "type": "PlayerBullet",
+          "health": 1,
+          "damage": 10
+        }
+      ]
+    },
+    {
+      "type": "TypeA",
+      "health": 80,
+      "damage": 10,
+      "speed": 2.5,
+      "bullets": [
+        {
+          "type": "EnemyBullet",
+          "health": 1,
+          "damage": 10
+        }
+      ]
+    },
+    {
+      "type": "TypeB",
+      "health": 120,
+      "damage": 10,
+      "speed": 2.5,
+      "bullets": [
+        {
+          "type": "EnemyBullet",
+          "health": 1,
+          "damage": 10
+        }
+      ]
+    },
+    {
+      "type": "MiniBoss",
+      "health": 300,
+      "damage": 10,
+      "speed": 1.5,
+      "bullets": [
+        {
+          "type": "EnemyBullet",
+          "health": 1,
+          "damage": 10
+        }
+      ]
+    },
+    {
+      "type": "FinalBoss",
+      "health": 1000,
+      "damage": 10,
+      "speed": 1.0,
+      "bullets": [
+        {
+          "type": "EnemyBullet",
+          "health": 1,
+          "damage": 10
+        }
+      ]
+    }
+  ],
+
+  "gameplay": {
+    "spawnTimes": [
+      {
+        "time": 0,
+        "enemyType": "typeA"
+      },
+      {
+        "time": 55,
+        "enemyType": "typeB"
+      },
+      {
+        "time": 30,
+        "enemyType": "miniBoss"
+      },
+      {
+        "time": 100,
+        "enemyType": "finalBoss"
+      }
+    ]
+  }
 }

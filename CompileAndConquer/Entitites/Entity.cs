@@ -24,6 +24,7 @@ public abstract class Entity
 
     // Entity Information
     public int health;
+    public int Damage;
     
     private Vector2 size
     {
