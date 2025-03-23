@@ -42,7 +42,13 @@ public class EntityHandler
         isUpdating = true;
 
         foreach (var entity in entities)
+        {
             entity.Update();
+            
+            // check if the entity is alive
+            if (!entity.isAlive)
+                RemoveEntity(entity);
+        }
 
         UpdateCollisions();
         

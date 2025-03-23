@@ -28,6 +28,9 @@ public abstract class Entity
     public int health;
     public int Damage;
     
+    // Removal flag (if this is set to fall the entity will be deleted in the next update)
+    public bool isAlive = true;
+    
     private Vector2 size
     {
         get
@@ -99,6 +102,6 @@ public abstract class Entity
 
     public virtual void OnCollide(Entity collision)
     {
-        Console.WriteLine(collision.GetType());
+        // Generic Entity collision
     }
 }
