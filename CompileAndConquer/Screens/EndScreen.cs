@@ -56,7 +56,7 @@ public class EndScreen : Screen
         if (enter == 0)
         {
             gameEnd = false;
-
+            // switch to main menu when created
         }
         else if(enter == 1)
         {
