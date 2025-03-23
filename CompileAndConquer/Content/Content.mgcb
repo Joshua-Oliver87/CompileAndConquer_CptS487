@@ -1,4 +1,5 @@
 
+
 #----------------------------- Global Properties ----------------------------#
 
 /outputDir:bin/$(Platform)
@@ -84,3 +85,9 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:finalBoss.png
+
+#begin MenuFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:MenuFont.spritefont

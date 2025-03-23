@@ -1,4 +1,5 @@
 ﻿using CompileAndConquer.Content;
+using CompileAndConquer.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,12 +10,21 @@ namespace CompileAndConquer;
 
 public class CompileAndConquer : Game
 {
+    private KeyboardState prevKeyboardState;
+
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    public SpriteFont screenFont { get; private set; }
+
     private double spawnTimer = 0;
     private int spawnPhase = 0;
+
+
+    //REPLACE WITH SCREEN HANDLER
+    private readonly PauseMenuScreen pauseScreen = PauseMenuScreen.Instance;
+
 
     public static Vector2 ScreenSize;
 
@@ -32,6 +42,7 @@ public class CompileAndConquer : Game
     protected override void Initialize()
     {
         this.Content.RootDirectory = "Content";
+        PauseMenuScreen.Instance.OnExitGame = Exit;
         base.Initialize();
     }
 
@@ -39,31 +50,51 @@ public class CompileAndConquer : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         TextureHandler.Load(Content);
-        
-        // Set our screen size
+
+        screenFont = Content.Load<SpriteFont>("MenuFont");
+        PauseMenuScreen.Instance.Initialize(screenFont);
+
+
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
-        
-        // spawn enemies
-		
-		SpawnTypeAEnemies();
+        SpawnTypeAEnemies();
     }
+
 
     protected override void Update(GameTime gameTime)
     {
+        KeyboardState keyboardState = Keyboard.GetState();
+
+
+        if (keyboardState.IsKeyDown(Keys.Escape)&& prevKeyboardState.IsKeyUp(Keys.Escape))
+        {
+            PauseMenuScreen.Instance.isPaused = !PauseMenuScreen.Instance.isPaused;
+        }
+        
+        prevKeyboardState = keyboardState;
+
+        InputHandler.Update();
+
+        if (PauseMenuScreen.Instance.isPaused)
+        {
+            pauseScreen.Update();
+            return; 
+        }
+
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
+            keyboardState.IsKeyDown(Keys.Delete))
+        {
             Exit();
+        }
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
-        InputHandler.Update();
         EntityHandler.Update();
-        
+
         spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
-        if (spawnTimer >= 10)  // Every 10 seconds cycle to next enemy
+        if (spawnTimer >= 10) 
         {
             spawnTimer = 0;
             DespawnAllEnemies();
@@ -72,6 +103,7 @@ public class CompileAndConquer : Game
 
         base.Update(gameTime);
     }
+
 
     private void SpawnNextEnemy()
     {
@@ -123,14 +155,22 @@ public class CompileAndConquer : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.Black);
+        // Add drawing code here
 
-        // TODO: Add your drawing code here
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        
-        EntityHandler.Draw(_spriteBatch);
-        
+
+        if (PauseMenuScreen.Instance.isPaused)
+        {
+            PauseMenuScreen.Instance.Draw(_spriteBatch);
+        }
+        else
+        {
+            EntityHandler.Draw(_spriteBatch);
+        }
+
         _spriteBatch.End();
 
         base.Draw(gameTime);
     }
+
 }

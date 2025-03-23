@@ -7,9 +7,11 @@ namespace CompileAndConquer;
 public class InputHandler
 {
     private static KeyboardState kstate;
+    private static KeyboardState prevkstate;
 
     public static void Update()
     {
+        prevkstate = kstate;
         kstate = Keyboard.GetState();
     }
 
@@ -33,6 +35,35 @@ public class InputHandler
         }
 
         return movement;
+    }
+
+    public static bool PauseGame()
+    {
+        bool isPaused = false;
+        if (kstate.IsKeyDown(Keys.Escape)) //update the pause state if escape pressed
+        {
+            isPaused = true;
+        }
+        return isPaused;
+    }
+
+    public static int HandlePauseMenuInput(ref int selectedOption)
+    {
+        string[] menuOptions = { "Resume", "Quit" };
+
+        if (kstate.IsKeyDown(Keys.Up))
+        {
+            selectedOption = (selectedOption - 1 + menuOptions.Length) % menuOptions.Length;
+        }
+        else if (kstate.IsKeyDown(Keys.Down))
+        {
+            selectedOption = (selectedOption + 1) % menuOptions.Length;
+        }
+        else if (kstate.IsKeyDown(Keys.Enter))
+        {
+            return selectedOption;
+        }
+        return -1;
     }
     
     public static bool GetFire() { return kstate.IsKeyDown(Keys.Space); }
