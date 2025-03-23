@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
+using CompileAndConquer.Screens;
 using Microsoft.Xna.Framework.Media;
 
 namespace CompileAndConquer.Content;
@@ -118,5 +119,7 @@ public class Player : Entity
         Console.WriteLine("Player has been defeated");
         
         // show end screen
+        EndScreen.Instance.gameEnd = true;
+        EndScreen.Instance.Update();
     }
 }
