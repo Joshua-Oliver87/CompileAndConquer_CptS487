@@ -43,13 +43,14 @@ public class CompileAndConquer : Game
 
     protected override void Initialize()
     {
-        this.Content.RootDirectory = "Content";
+        Content.RootDirectory = "Content";
+
         PauseMenuScreen.Instance.OnExitGame = Exit;
         EndScreen.Instance.OnExitGame = Exit;
         StartScreen.Instance.OnExitGame = Exit;
-        Player.Instance.OnLoseLife = LoseLife;
+
+       //Player.Instance.OnScoreUpdate = UpdateScore(score);
         
-        StartScreen.Instance.Initialize(screenFont);
         base.Initialize();
     }
 
@@ -58,14 +59,21 @@ public class CompileAndConquer : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         TextureHandler.Load(Content);
 
+        Player.Instance.OnLoseLife = LoseLife;
+
         screenFont = Content.Load<SpriteFont>("MenuFont");
         //replace with screen manager screenmanager
+        StartScreen.Instance.Initialize(screenFont);
+
         PauseMenuScreen.Instance.Initialize(screenFont);
         EndScreen.Instance.Initialize(screenFont);
-        SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
+   //     SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
 
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
+
+        EntityHandler.Add(Player.Instance);
+        SpawnTypeAEnemies();
     }
 
 
@@ -82,17 +90,20 @@ public class CompileAndConquer : Game
 
         InputHandler.Update();
 
-        if (startScreen.gameStart == false)
+        if (StartScreen.Instance.gameStart == false)
         {
             startScreen.Update();
+            base.Update(gameTime);
+
             return;
         }
         
-        StartGame();
 
         if (PauseMenuScreen.Instance.isPaused)
         {
             pauseScreen.Update();
+            base.Update(gameTime);
+
             return; 
         }
 
@@ -119,17 +130,14 @@ public class CompileAndConquer : Game
         {
             endScreen.gameEnd = true;
             endScreen.Update();
+            base.Update(gameTime);
+
             return;
         }
 
         base.Update(gameTime);
     }
 
-    public void StartGame()
-    {
-        EntityHandler.Add(Player.Instance);
-        SpawnTypeAEnemies();
-    }
 
 
     private void SpawnNextEnemy()
@@ -195,6 +203,10 @@ public class CompileAndConquer : Game
         {
             EndScreen.Instance.Draw(_spriteBatch);
         }
+        else if (!StartScreen.Instance.gameStart)
+        {
+            StartScreen.Instance.Draw(_spriteBatch);
+        }
         else
         {
             EntityHandler.Draw(_spriteBatch);
@@ -207,8 +219,11 @@ public class CompileAndConquer : Game
 
     protected void LoseLife()
     {
-        
         SideBarScreen.Instance.LoseLife();
-        
     }
+
+    // protected void UpdateScore(int score)
+    // {
+    //     SideBarScreen.Instance.UpdateScore(score);
+    // }
 }

@@ -85,6 +85,7 @@ public class InputHandler
             return selectedOption;
         }
         return -1;
+      //  return 0;
     }
     
     public static bool GetFire() { return kstate.IsKeyDown(Keys.Space); }
