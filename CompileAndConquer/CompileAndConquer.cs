@@ -1,10 +1,10 @@
 ﻿using CompileAndConquer.Content;
-using CompileAndConquer.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Linq;
+using CompileAndConquer.Screens;
 
 namespace CompileAndConquer;
 
@@ -23,8 +23,10 @@ public class CompileAndConquer : Game
 
 
     //REPLACE WITH SCREEN HANDLER
+    private readonly StartScreen startScreen = StartScreen.Instance;
     private readonly PauseMenuScreen pauseScreen = PauseMenuScreen.Instance;
-
+    private readonly EndScreen endScreen = EndScreen.Instance;
+    private readonly SideBarScreen sidebar= SideBarScreen.Instance;
 
     public static Vector2 ScreenSize;
 
@@ -41,8 +43,14 @@ public class CompileAndConquer : Game
 
     protected override void Initialize()
     {
-        this.Content.RootDirectory = "Content";
+        Content.RootDirectory = "Content";
+
         PauseMenuScreen.Instance.OnExitGame = Exit;
+        EndScreen.Instance.OnExitGame = Exit;
+        StartScreen.Instance.OnExitGame = Exit;
+
+       //Player.Instance.OnScoreUpdate = UpdateScore(score);
+        
         base.Initialize();
     }
 
@@ -51,9 +59,15 @@ public class CompileAndConquer : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         TextureHandler.Load(Content);
 
-        screenFont = Content.Load<SpriteFont>("MenuFont");
-        PauseMenuScreen.Instance.Initialize(screenFont);
+        Player.Instance.OnLoseLife = LoseLife;
 
+        screenFont = Content.Load<SpriteFont>("MenuFont");
+        //replace with screen manager screenmanager
+        StartScreen.Instance.Initialize(screenFont);
+
+        PauseMenuScreen.Instance.Initialize(screenFont);
+        EndScreen.Instance.Initialize(screenFont);
+   //     SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
 
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
@@ -67,7 +81,6 @@ public class CompileAndConquer : Game
     {
         KeyboardState keyboardState = Keyboard.GetState();
 
-
         if (keyboardState.IsKeyDown(Keys.Escape)&& prevKeyboardState.IsKeyUp(Keys.Escape))
         {
             PauseMenuScreen.Instance.isPaused = !PauseMenuScreen.Instance.isPaused;
@@ -77,9 +90,20 @@ public class CompileAndConquer : Game
 
         InputHandler.Update();
 
+        if (StartScreen.Instance.gameStart == false)
+        {
+            startScreen.Update();
+            base.Update(gameTime);
+
+            return;
+        }
+        
+
         if (PauseMenuScreen.Instance.isPaused)
         {
             pauseScreen.Update();
+            base.Update(gameTime);
+
             return; 
         }
 
@@ -101,8 +125,19 @@ public class CompileAndConquer : Game
             SpawnNextEnemy();
         }
 
+        // game over (survived)
+        if (spawnPhase == 4)
+        {
+            endScreen.gameEnd = true;
+            endScreen.Update();
+            base.Update(gameTime);
+
+            return;
+        }
+
         base.Update(gameTime);
     }
+
 
 
     private void SpawnNextEnemy()
@@ -123,7 +158,8 @@ public class CompileAndConquer : Game
                 break;
         }
 
-        spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
+        // spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
+        spawnPhase = (spawnPhase + 1) % 5; // logic for end game
     }
 
     private void DespawnAllEnemies()
@@ -163,6 +199,14 @@ public class CompileAndConquer : Game
         {
             PauseMenuScreen.Instance.Draw(_spriteBatch);
         }
+        else if (EndScreen.Instance.gameEnd)
+        {
+            EndScreen.Instance.Draw(_spriteBatch);
+        }
+        else if (!StartScreen.Instance.gameStart)
+        {
+            StartScreen.Instance.Draw(_spriteBatch);
+        }
         else
         {
             EntityHandler.Draw(_spriteBatch);
@@ -173,4 +217,13 @@ public class CompileAndConquer : Game
         base.Draw(gameTime);
     }
 
+    protected void LoseLife()
+    {
+        SideBarScreen.Instance.LoseLife();
+    }
+
+    // protected void UpdateScore(int score)
+    // {
+    //     SideBarScreen.Instance.UpdateScore(score);
+    // }
 }

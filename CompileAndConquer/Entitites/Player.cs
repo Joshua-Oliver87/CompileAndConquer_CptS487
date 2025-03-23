@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
+using CompileAndConquer.Screens;
 using Microsoft.Xna.Framework.Media;
 
 namespace CompileAndConquer.Content;
@@ -17,6 +18,13 @@ public class Player : Entity
     private float speed = 4.0f;
 
     public int Lives = 3;
+
+    public Action OnLoseLife { get; set; }
+
+    public bool Invincible = false;
+    
+    private int invincibleTimer = 0;
+    private int invincibleDuration = 3;
     
     // Copied
     private static Player instance;
@@ -40,7 +48,6 @@ public class Player : Entity
         ColliderDebugMode = true;
         Collidable = true;
         health = 100;
-        Damage = 10;
         ColliderScale = 0.5f;
     }
 
@@ -87,23 +94,37 @@ public class Player : Entity
         }
     }
 
-    public void TakeDamage(int damage)
+    public void LoseLife()
     {
-        health -= damage;
-        Console.WriteLine($"Player took {damage} damage. Current health is {health}");
+        if (Invincible) return;
+        
+        if (Lives > 0)
+        {
+            Lives--;
+            
+            // respawn from center bottom screen
+            // invincible for a few seconds
+            // clear bullets
+            OnLoseLife?.Invoke();
 
-        if (Lives == 0 && health <= 0)
+            Invincible = true;
+            invincibleTimer = invincibleDuration;
+            Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y - 100);
+            EntityHandler.RemoveAllEnemyBullets();
+
+        }
+        else
         {
             Die();
-        }
-        else if (health <= 0)
-        {
-            Lives -= 1;
         }
     }
 
     public void Die()
     {
         Console.WriteLine("Player has been defeated");
+        
+        // show end screen
+        EndScreen.Instance.gameEnd = true;
+        EndScreen.Instance.Update();
     }
 }
