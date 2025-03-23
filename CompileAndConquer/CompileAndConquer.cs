@@ -69,7 +69,6 @@ public class CompileAndConquer : Game
     {
         KeyboardState keyboardState = Keyboard.GetState();
 
-
         if (keyboardState.IsKeyDown(Keys.Escape)&& prevKeyboardState.IsKeyUp(Keys.Escape))
         {
             PauseMenuScreen.Instance.isPaused = !PauseMenuScreen.Instance.isPaused;
@@ -106,7 +105,8 @@ public class CompileAndConquer : Game
         // game over (survived)
         if (spawnPhase == 4)
         {
-            
+            EndScreen.Instance.gameEnd = true;
+            return;
         }
 
         base.Update(gameTime);
@@ -132,7 +132,7 @@ public class CompileAndConquer : Game
         }
 
         // spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
-        spawnPhase++;
+        spawnPhase = (spawnPhase + 1) % 5; // logic for end game
     }
 
     private void DespawnAllEnemies()
