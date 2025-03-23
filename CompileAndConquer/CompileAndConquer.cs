@@ -24,6 +24,7 @@ public class CompileAndConquer : Game
 
     //REPLACE WITH SCREEN HANDLER
     private readonly PauseMenuScreen pauseScreen = PauseMenuScreen.Instance;
+    private readonly EndScreen endScreen = EndScreen.Instance;
     private readonly SideBarScreen sidebar= SideBarScreen.Instance;
 
     public static Vector2 ScreenSize;
@@ -55,6 +56,7 @@ public class CompileAndConquer : Game
         screenFont = Content.Load<SpriteFont>("MenuFont");
         //replace with screen manager screenmanager
         PauseMenuScreen.Instance.Initialize(screenFont);
+        EndScreen.Instance.Initialize(screenFont);
         SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
 
         ScreenSize.X = GraphicsDevice.Viewport.Width;
@@ -105,7 +107,8 @@ public class CompileAndConquer : Game
         // game over (survived)
         if (spawnPhase == 4)
         {
-            EndScreen.Instance.gameEnd = true;
+            endScreen.gameEnd = true;
+            endScreen.Update();
             return;
         }
 

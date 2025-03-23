@@ -16,7 +16,7 @@ public class EndScreen : Screen
     public void Initialize(SpriteFont font)
     {
         this.font = font;
-        MenuOptions = new[] { "Return to Main Menu", "Quit" };
+        MenuOptions = ["Return to Main Menu", "Quit"];
     }
 
     public static EndScreen Instance
