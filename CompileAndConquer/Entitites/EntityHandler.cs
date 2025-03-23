@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace CompileAndConquer.Content;
 
@@ -47,9 +48,9 @@ public class EntityHandler
             entity.UpdateCollider();
         }
         
-            
-        
         isUpdating = false;
+        
+        
 
         foreach (var entity in toRemoveList)
             entities.Remove(entity);
@@ -82,5 +83,10 @@ public class EntityHandler
     public static void ScheduleClearEnemies()
     {
         clearEnemiesScheduled = true;
+    }
+    
+    public static void RemoveAllEnemyBullets()
+    {
+        entities.RemoveAll(entity => entity is EnemyBullet);
     }
 }

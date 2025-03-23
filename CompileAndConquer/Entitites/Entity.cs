@@ -24,7 +24,6 @@ public abstract class Entity
 
     // Entity Information
     public int health;
-    public int Damage;
     
     private Vector2 size
     {
@@ -80,5 +79,10 @@ public abstract class Entity
     public virtual void OnCollide(Entity collision)
     {
         Console.WriteLine(collision.GetType());
+    }
+
+    public bool CollidesWith(Entity entity)
+    {
+        return CollisionRectangle.Intersects(entity.CollisionRectangle);
     }
 }
