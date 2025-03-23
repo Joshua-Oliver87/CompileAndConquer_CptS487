@@ -43,6 +43,7 @@ public class CompileAndConquer : Game
     {
         this.Content.RootDirectory = "Content";
         PauseMenuScreen.Instance.OnExitGame = Exit;
+        //Player.Instance.OnLoseLife = ;
         base.Initialize();
     }
 

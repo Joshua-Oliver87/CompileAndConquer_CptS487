@@ -17,6 +17,9 @@ public class Player : Entity
     private float speed = 4.0f;
 
     public int Lives = 3;
+
+    public Action OnLoseLife { get; set; }
+
     public bool Invincible = false;
     
     private int invincibleTimer = 0;
@@ -96,10 +99,13 @@ public class Player : Entity
             // respawn from center bottom screen
             // invincible for a few seconds
             // clear bullets
+            OnLoseLife?.Invoke();
+
             Invincible = true;
             invincibleTimer = invincibleDuration;
             Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y - 100);
             EntityHandler.RemoveAllEnemyBullets();
+
         }
         else
         {
