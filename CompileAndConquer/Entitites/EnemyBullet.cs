@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.Xna.Framework;
 
 namespace CompileAndConquer.Content;
@@ -11,6 +12,8 @@ public class EnemyBullet : Entity
         this.Velocity = velocity;
         Scale = 2.0f;
         health = 1;
+
+        Damage = 10;
     }
 
     public override void Update()

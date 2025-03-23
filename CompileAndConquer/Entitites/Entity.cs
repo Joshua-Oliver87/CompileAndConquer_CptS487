@@ -16,7 +16,7 @@ public abstract class Entity
     public Vector2 Position;
     public Vector2 Velocity;
     public float Orientation;
-    
+
     // Collisions
     public bool Collidable = false;
     public bool ColliderDebugMode = false;
@@ -24,6 +24,7 @@ public abstract class Entity
 
     // Entity Information
     public int health;
+    public int Damage;
     
     private Vector2 size
     {

@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -12,6 +13,7 @@ public abstract class Enemy : Entity
         this.Position = position;
         this.Speed = speed;
         this.health = 100; // default
+        Damage = 10;
         
         ColliderDebugMode = true;
         Collidable = true;
