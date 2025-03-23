@@ -25,6 +25,9 @@ public class Player : Entity
     
     private int invincibleTimer = 0;
     private int invincibleDuration = 3;
+
+    private Stopwatch startTime;
+    private Stopwatch invincibilityTimer = new Stopwatch();
     
     // Copied
     private static Player instance;
@@ -92,6 +95,21 @@ public class Player : Entity
             EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f)));
             bulletCooldown = maxBulletCooldown;
         }
+
+        if (Invincible && invincibilityTimer.Elapsed.TotalSeconds >= 3)
+        {
+            Invincible = false;
+            invincibilityTimer.Stop();
+        }
+    }
+
+    public override void OnCollide(Entity collision)
+    {
+        if (collision is EnemyBullet || collision is Enemy)
+        {
+            Console.WriteLine("collision");
+            LoseLife();
+        }
     }
 
     public void LoseLife()
@@ -101,6 +119,7 @@ public class Player : Entity
         if (Lives > 0)
         {
             Lives--;
+            Console.WriteLine("lost life");
             
             // respawn from center bottom screen
             // invincible for a few seconds
@@ -108,13 +127,14 @@ public class Player : Entity
             OnLoseLife?.Invoke();
 
             Invincible = true;
-            invincibleTimer = invincibleDuration;
+            invincibilityTimer.Restart();
             Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y - 100);
             EntityHandler.RemoveAllEnemyBullets();
 
         }
         else
         {
+            Console.WriteLine("supposedly dead");
             Die();
         }
     }
@@ -122,9 +142,18 @@ public class Player : Entity
     public void Die()
     {
         Console.WriteLine("Player has been defeated");
+
+        // remove all entities
         
         // show end screen
         EndScreen.Instance.gameEnd = true;
         EndScreen.Instance.Update();
     }
+
+    public void StartTimer()
+    {
+        startTime.Start();
+    }
+
+    public double GetSurvivalTime() => startTime.Elapsed.TotalSeconds;
 }
