@@ -13,6 +13,8 @@ public abstract class Screen
 {
     protected SpriteFont font;
     private bool show = false; // is it visible on screen?
+
+    public string[] MenuOptions;
     
     public abstract void Draw(SpriteBatch spriteBatch);
 

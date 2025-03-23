@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Linq;
+using CompileAndConquer.Screens;
 
 namespace CompileAndConquer;
 
@@ -101,6 +102,12 @@ public class CompileAndConquer : Game
             SpawnNextEnemy();
         }
 
+        // game over (survived)
+        if (spawnPhase == 4)
+        {
+            
+        }
+
         base.Update(gameTime);
     }
 
@@ -123,7 +130,8 @@ public class CompileAndConquer : Game
                 break;
         }
 
-        spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
+        // spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
+        spawnPhase++;
     }
 
     private void DespawnAllEnemies()
@@ -163,6 +171,10 @@ public class CompileAndConquer : Game
         {
             PauseMenuScreen.Instance.Draw(_spriteBatch);
         }
+        else if (EndScreen.Instance.gameEnd)
+        {
+            EndScreen.Instance.Draw(_spriteBatch);
+        }
         else
         {
             EntityHandler.Draw(_spriteBatch);
@@ -172,5 +184,4 @@ public class CompileAndConquer : Game
 
         base.Draw(gameTime);
     }
-
 }

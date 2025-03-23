@@ -1,5 +1,7 @@
 using System;
 using System.Numerics;
+using CompileAndConquer.Content;
+using CompileAndConquer.Screens;
 using Microsoft.Xna.Framework.Input;
 
 namespace CompileAndConquer;
@@ -51,6 +53,25 @@ public class InputHandler
     {
         string[] menuOptions = { "Resume", "Quit" };
 
+        if (kstate.IsKeyDown(Keys.Up))
+        {
+            selectedOption = (selectedOption - 1 + menuOptions.Length) % menuOptions.Length;
+        }
+        else if (kstate.IsKeyDown(Keys.Down))
+        {
+            selectedOption = (selectedOption + 1) % menuOptions.Length;
+        }
+        else if (kstate.IsKeyDown(Keys.Enter))
+        {
+            return selectedOption;
+        }
+        return -1;
+    }
+
+    public static int HandleScreenInput(Screen screen, ref int selectedOption)
+    {
+        string[] menuOptions = screen.MenuOptions;
+        
         if (kstate.IsKeyDown(Keys.Up))
         {
             selectedOption = (selectedOption - 1 + menuOptions.Length) % menuOptions.Length;
