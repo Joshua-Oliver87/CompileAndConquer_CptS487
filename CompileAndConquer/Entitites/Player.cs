@@ -37,6 +37,7 @@ public class Player : Entity
         Scale = 2.0f;
         ColliderDebugMode = true;
         Collidable = true;
+        ColliderScale = 0.5f;
         health = 3;
     }
 
@@ -49,10 +50,14 @@ public class Player : Entity
         // SlowMode Calculations
         if (InputHandler.GetSlowMode())
         {
+            ColliderDebugMode = true;
+            ColliderScalingSeparate = true;
             Velocity += speed * InputHandler.GetMovement() * 0.5f;
         }
         else
         {
+            ColliderDebugMode = false;
+            ColliderScalingSeparate = false;
             Velocity += speed * InputHandler.GetMovement();
         }
 
