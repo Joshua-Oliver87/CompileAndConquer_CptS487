@@ -10,17 +10,19 @@ public abstract class Entity
     // Textures/Size
     protected Texture2D texture;
     protected Color color = Color.White;
-    public float Scale = 1.0f;
+    internal float Scale = 1.0f;
     
     // Position/Movement
-    public Vector2 Position;
-    public Vector2 Velocity;
-    public float Orientation;
-
+    internal Vector2 Position;
+    internal Vector2 Velocity;
+    internal float Orientation;
+    
     // Collisions
-    public bool Collidable = false;
-    public bool ColliderDebugMode = false;
-    public Rectangle CollisionRectangle;
+    internal bool Collidable = false;
+    internal bool ColliderDebugMode = false;
+    internal Rectangle CollisionRectangle;
+    internal bool ColliderScalingSeparate = false;
+    internal float ColliderScale = 1.0f;
 
     // Entity Information
     public int health;
@@ -66,14 +68,32 @@ public abstract class Entity
         // Check if the entity should be collidable and then update the collider rectangle
         if (Collidable)
         {
+            // Create collision rectangle
             CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, texture.Width * (int)Scale, texture.Height * (int)Scale);
+
+            // Scale and position it for having separate collider scaling based on the scale of the object * scale of the collider
+            if (ColliderScalingSeparate)
+            {
+                // Set collider size
+                CollisionRectangle.Width = (int)(texture.Width * (ColliderScale * Scale));
+                CollisionRectangle.Height = (int)(texture.Height * (ColliderScale * Scale));
+                
+                // Update collider
+                CollisionRectangle.X = (int)(Position.X - (texture.Width / 2 * (ColliderScale * Scale)));
+                CollisionRectangle.Y = (int)(Position.Y - (texture.Height / 2 * (ColliderScale * Scale)));
+            }
             
-            CollisionRectangle.Width = (int)(texture.Width * (Scale));
-            CollisionRectangle.Height = (int)(texture.Height * (Scale));
-            
-            // Update collider
-            CollisionRectangle.X = (int)(Position.X - (texture.Width / 2 * (Scale)));
-            CollisionRectangle.Y = (int)(Position.Y - (texture.Height / 2 * (Scale)));
+            // Scale and position it for having the same scale as the entity (matching the size of the sprite)
+            else
+            {
+                // Set collider size
+                CollisionRectangle.Width = (int)(texture.Width * (Scale));
+                CollisionRectangle.Height = (int)(texture.Height * (Scale));
+                
+                // Update collider
+                CollisionRectangle.X = (int)(Position.X - (texture.Width / 2 * (Scale)));
+                CollisionRectangle.Y = (int)(Position.Y - (texture.Height / 2 * (Scale)));
+            }
         }
     }
 

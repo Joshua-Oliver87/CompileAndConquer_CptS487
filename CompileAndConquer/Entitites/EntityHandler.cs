@@ -42,12 +42,9 @@ public class EntityHandler
         isUpdating = true;
 
         foreach (var entity in entities)
-        {
             entity.Update();
-            entity.UpdateCollider();
-        }
-        
-            
+
+        UpdateCollisions();
         
         isUpdating = false;
 
@@ -64,6 +61,39 @@ public class EntityHandler
         foreach (var entity in toAddList)
             AddEntity(entity);
         toAddList.Clear();
+    }
+
+    public static void UpdateCollisions()
+    {
+        Stack<Entity> collisionCheck = new Stack<Entity>();
+
+        foreach (var entity in entities)
+        {
+            entity.UpdateCollider();
+            if (entity.Collidable)
+            {
+                collisionCheck.Push(entity);
+            }
+        } 
+        
+        // Check collisions
+        while (collisionCheck.Count > 0)
+        {
+            Entity checkingCollisionEntity = collisionCheck.Pop();
+            foreach (var checkingAgainstEntity in collisionCheck)
+            {
+                // Make sure we don't check the same enemy in the double for loop
+                if (checkingAgainstEntity != checkingCollisionEntity)
+                {
+                    // Check if they intersect
+                    if (checkingCollisionEntity.CollisionRectangle.Intersects(checkingAgainstEntity.CollisionRectangle))
+                    {
+                        checkingCollisionEntity.OnCollide(checkingAgainstEntity);
+                        checkingAgainstEntity.OnCollide(checkingCollisionEntity);
+                    }
+                }
+            }
+        }
     }
 
     public static void Draw(SpriteBatch spriteBatch)

@@ -41,6 +41,7 @@ public class Player : Entity
         Collidable = true;
         health = 100;
         Damage = 10;
+        ColliderScale = 0.5f;
     }
 
     public override void Update()
@@ -52,10 +53,14 @@ public class Player : Entity
         // SlowMode Calculations
         if (InputHandler.GetSlowMode())
         {
+            ColliderDebugMode = true;
+            ColliderScalingSeparate = true;
             Velocity += speed * InputHandler.GetMovement() * 0.5f;
         }
         else
         {
+            ColliderDebugMode = false;
+            ColliderScalingSeparate = false;
             Velocity += speed * InputHandler.GetMovement();
         }
 
