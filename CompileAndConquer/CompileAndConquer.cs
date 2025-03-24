@@ -143,6 +143,7 @@ public class CompileAndConquer : Game
         if (spawnPhase == 4)
         {
             endScreen.gameEnd = true;
+            endScreen.win = true;
             endScreen.Update();
             base.Update(gameTime);
 
