@@ -30,6 +30,8 @@ public class CompileAndConquer : Game
 
     public static Vector2 ScreenSize;
 
+    private bool death = false;
+
     public CompileAndConquer()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -60,6 +62,8 @@ public class CompileAndConquer : Game
         TextureHandler.Load(Content);
 
         Player.Instance.OnLoseLife = LoseLife;
+        Player.Instance.OnDeath = Death;
+
 
         screenFont = Content.Load<SpriteFont>("MenuFont");
         //replace with screen manager screenmanager
@@ -79,6 +83,7 @@ public class CompileAndConquer : Game
 
     protected override void Update(GameTime gameTime)
     {
+
         KeyboardState keyboardState = Keyboard.GetState();
 
         if (keyboardState.IsKeyDown(Keys.Escape)&& prevKeyboardState.IsKeyUp(Keys.Escape))
@@ -89,6 +94,13 @@ public class CompileAndConquer : Game
         prevKeyboardState = keyboardState;
 
         InputHandler.Update();
+
+        if (EndScreen.Instance.gameEnd == true)
+        {
+            endScreen.Update();
+            base.Update(gameTime);
+            return;
+        }
 
         if (StartScreen.Instance.gameStart == false)
         {
@@ -217,6 +229,11 @@ public class CompileAndConquer : Game
         base.Draw(gameTime);
     }
 
+    protected void Death()
+    {
+        this.death = true;
+        EntityHandler.RemoveAll();
+    }
     protected void LoseLife()
     {
         SideBarScreen.Instance.LoseLife();

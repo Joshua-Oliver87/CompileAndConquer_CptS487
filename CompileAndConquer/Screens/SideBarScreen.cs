@@ -68,7 +68,9 @@ public class SideBarScreen
     // }
 
     public void LoseLife()
-    {lives = lives - 1;}
+    {
+        lives = lives - 1;
+    }
 
     public void UpdateScore(int score)
     {

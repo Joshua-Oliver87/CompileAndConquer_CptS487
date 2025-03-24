@@ -20,6 +20,8 @@ public class Player : Entity
     public int Lives = 3;
 
     public Action OnLoseLife { get; set; }
+    public Action OnDeath { get; set; }
+
 
     public bool Invincible = false;
     
@@ -144,10 +146,12 @@ public class Player : Entity
         Console.WriteLine("Player has been defeated");
 
         // remove all entities
-        
+        OnDeath?.Invoke();
+
         // show end screen
         EndScreen.Instance.gameEnd = true;
         EndScreen.Instance.Update();
+
     }
 
     public void StartTimer()
