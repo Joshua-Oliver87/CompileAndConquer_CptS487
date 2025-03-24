@@ -10,7 +10,7 @@ namespace CompileAndConquer;
 
 public class CompileAndConquer : Game
 {
-    private WaveManager waveManager;
+    private WaveManager waveManager = new WaveManager();
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -42,9 +42,7 @@ public class CompileAndConquer : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         TextureHandler.Load(Content);
 
-        waveManager = new WaveManager();
-        waveManager.AddWave(new LinearWave(15));
-        waveManager.AddWave(new SpiralEntryWave(20));
+        this.waveManager.LoadWaves();
 
         // Set our screen size
         ScreenSize.X = GraphicsDevice.Viewport.Width;
@@ -60,7 +58,7 @@ public class CompileAndConquer : Game
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        waveManager.Update(gameTime);
+        this.waveManager.UpdateWave(gameTime);
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 

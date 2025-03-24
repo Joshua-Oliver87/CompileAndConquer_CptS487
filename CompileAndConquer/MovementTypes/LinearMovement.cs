@@ -9,7 +9,6 @@ namespace CompileAndConquer.Content
         private bool movingRight;
         private float minSpeed = 100f;
         private float maxSpeed = 300f;
-
         private double timeSinceLastChange = 0;
         private double changeInterval = 1.5; // seconds
         private Random rng = new Random();
