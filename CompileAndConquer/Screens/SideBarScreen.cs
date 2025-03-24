@@ -47,15 +47,15 @@ public class SideBarScreen
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (PeruBackground == null)
-        {
-            Console.WriteLine("background texture is null");
-        }
-        else
-        {
-            spriteBatch.Draw(PeruBackground, sideBarRectangle, Color.Peru);
-            spriteBatch.DrawString(font, $"SCORE: {score}", new Vector2(10, 10), Color.Black);
-        }
+        // if (PeruBackground == null)
+        // {
+        //     Console.WriteLine("background texture is null");
+        // }
+        // else
+        // {
+        //     spriteBatch.Draw(PeruBackground, sideBarRectangle, Color.Peru);
+        spriteBatch.DrawString(font, $"SCORE: {score}", new Vector2(10, 10), Color.White);
+        // }
         if (TextureHandler.SideBarStar == null)
         {
             Console.WriteLine("star texture is null");
