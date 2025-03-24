@@ -9,6 +9,8 @@ public class EndScreen : Screen
 {
     private static EndScreen instance;
     public  bool gameEnd { get; set; } = false;
+
+    public bool win {get;set;} = false;
     public Action OnExitGame { get; set; }
 
     private int selectedOption;
@@ -33,6 +35,18 @@ public class EndScreen : Screen
     public override void Draw(SpriteBatch spriteBatch)
     {
         Vector2 menuPosition = new Vector2(CompileAndConquer.ScreenSize.X / 2 - 50, CompileAndConquer.ScreenSize.Y / 2 - 50);
+        if (this.win == true)
+        {
+            spriteBatch.DrawString(font, "You Win!", menuPosition, Color.White);
+
+        }
+        else
+        {
+            spriteBatch.DrawString(font, "Game Over", menuPosition, Color.White);
+
+        }
+        
+        menuPosition.Y += 40; 
 
         for (int i = 0; i < MenuOptions.Length; i++)
         {
