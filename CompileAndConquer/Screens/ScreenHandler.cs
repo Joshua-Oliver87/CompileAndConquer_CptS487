@@ -12,10 +12,6 @@ public class ScreenHandler
     public static PauseMenuScreen menuScreen;
     public static void Update()
     {
-        if (InputHandler.PauseGame())
-        {
-            // menuScreen.ShowScreen();
-
-        }
+        //future implemenation
     }
 }

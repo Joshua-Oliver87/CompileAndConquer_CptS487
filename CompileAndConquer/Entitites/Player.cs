@@ -9,22 +9,13 @@ namespace CompileAndConquer.Content;
 
 public class Player : Entity
 {
-
-    // 
     private int bulletCooldown = 0;
     private int maxBulletCooldown = 12;
-    
-    
     private float speed = 4.0f;
-
     public int Lives = 3;
-
     public Action OnLoseLife { get; set; }
     public Action OnDeath { get; set; }
-
-
     public bool Invincible = false;
-    
     private int invincibleTimer = 0;
     private int invincibleDuration = 3;
 
@@ -110,12 +101,6 @@ public class Player : Entity
             EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f), damage));
             bulletCooldown = maxBulletCooldown;
         }
-
-        if (Invincible && invincibilityTimer.Elapsed.TotalSeconds >= 3)
-        {
-            Invincible = false;
-            invincibilityTimer.Stop();
-        }
     }
 
     public override void OnCollide(Entity collision)
@@ -129,6 +114,11 @@ public class Player : Entity
 
     public override void Update()
     {
+        if (Invincible && invincibilityTimer.Elapsed.TotalSeconds >= 3)
+        {
+            Invincible = false;
+            invincibilityTimer.Stop();
+        }
         // Iterate bulletCooldown down
         if (bulletCooldown > 0)
             bulletCooldown--;
