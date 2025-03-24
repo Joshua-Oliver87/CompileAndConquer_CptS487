@@ -18,11 +18,16 @@ namespace CompileAndConquer.Content.WaveManager
         private double waveTimer = 0;
         private int currentWaveIndex = 0;
 
-        public struct Wave
+        public class Wave
         {
             public List<WaveEvent> WaveEvents;
             //public double TriggerTime;
             public int waveDuration;
+
+            public Wave()
+            {
+                WaveEvents = new List<WaveEvent>();
+            }
         }
 
         /// <summary>
@@ -45,12 +50,11 @@ namespace CompileAndConquer.Content.WaveManager
             public double spawnTime;
             public int duration;
             public int spawnCount;
-            public IEnemyFactory Type; // Modularize Factory to EntityFactory later for more flexibility  
+            public IEnemyFactory Type;
             public IEntry entryType;
             public IExit exitType;
-            public bool IsSpawned = false;
+            public bool IsSpawned;
             public List<Entity> EventEntities;
-            // Need to generalize to include text/powerup spawns  
         }
 
         /// <summary>
@@ -63,11 +67,11 @@ namespace CompileAndConquer.Content.WaveManager
                 WaveEvents = new List<WaveEvent>
                 {
                     new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 
-                    /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(0), new fromTopExit(0)),
+                    /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(150), new fromTopExit(800)),
                     new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), //Tonight update spawn locations
-                    /*SpawnCount*/ 4, /*SpawnTime*/ 11, /*Duration*/ 10, new FromTopEntry(0), new fromTopExit(0)),
+                    /*SpawnCount*/ 4, /*SpawnTime*/ 11, /*Duration*/ 10, new FromTopEntry(150), new fromTopExit(800)),
                     new WaveEvent(new MiniBossFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), 
-                    /*SpawnCount*/ 1, /*SpawnTime*/ 15, /*Duration*/ 5, new FromTopEntry(0), new fromTopExit(0))
+                    /*SpawnCount*/ 1, /*SpawnTime*/ 15, /*Duration*/ 5, new FromTopEntry(150), new fromTopExit(800))
                 },
                 //TriggerTime = 1,
                 waveDuration = 30
@@ -116,7 +120,6 @@ namespace CompileAndConquer.Content.WaveManager
 
         public void EndEvent(WaveEvent currentEvent)
         {
-            // Despawn all enemies
             foreach (var entity in currentEvent.EventEntities)
             {
                 if (entity.isAlive)
@@ -165,12 +168,10 @@ namespace CompileAndConquer.Content.WaveManager
         {
             for (int i = 0; i < currentEvent.spawnCount; i++)
             {
-                var position = new Vector2(200 + i * 60, -100);
                 var enemy = currentEvent.Type.CreateEnemy();
                 EntityHandler.Add(enemy);
                 currentEvent.EventEntities.Add(enemy);
             }
         }
-
     }
 }

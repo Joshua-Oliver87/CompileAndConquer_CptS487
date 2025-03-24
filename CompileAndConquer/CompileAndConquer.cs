@@ -79,7 +79,6 @@ public class CompileAndConquer : Game
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
-        SpawnTypeAEnemies();
     }
 
 
@@ -94,7 +93,7 @@ public class CompileAndConquer : Game
         
         prevKeyboardState = keyboardState;
 
-        InputHandler.Update();
+        InputHandler.Update(gameTime);
 
         if (StartScreen.Instance.gameStart == false)
         {

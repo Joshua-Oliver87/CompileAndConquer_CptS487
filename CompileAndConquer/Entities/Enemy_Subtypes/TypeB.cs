@@ -2,6 +2,8 @@ using CompileAndConquer.Content;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using CompileAndConquer.Content;
+
 
 namespace CompileAndConquer.Entities.Enemy_Subtypes;
 
