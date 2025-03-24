@@ -80,43 +80,23 @@ public class InputHandler
         return isPaused;
     }
 
-    public static int HandlePauseMenuInput(ref int selectedOption)
-    {
-        string[] menuOptions = { "Resume", "Quit" };
-
-        if (kstate.IsKeyDown(Keys.Up))
-        {
-            selectedOption = (selectedOption - 1 + menuOptions.Length) % menuOptions.Length;
-        }
-        else if (kstate.IsKeyDown(Keys.Down))
-        {
-            selectedOption = (selectedOption + 1) % menuOptions.Length;
-        }
-        else if (kstate.IsKeyDown(Keys.Enter))
-        {
-            return selectedOption;
-        }
-        return -1;
-    }
-
     public static int HandleScreenInput(Screen screen, ref int selectedOption)
     {
         string[] menuOptions = screen.MenuOptions;
-        
-        if (kstate.IsKeyDown(Keys.Up))
+        if (kstate.IsKeyDown(Keys.Up) && prevkstate.IsKeyUp(Keys.Up))
         {
             selectedOption = (selectedOption - 1 + menuOptions.Length) % menuOptions.Length;
         }
-        else if (kstate.IsKeyDown(Keys.Down))
+        else if (kstate.IsKeyDown(Keys.Down) && prevkstate.IsKeyUp(Keys.Down))
         {
             selectedOption = (selectedOption + 1) % menuOptions.Length;
         }
-        else if (kstate.IsKeyDown(Keys.Enter))
+        else if (kstate.IsKeyDown(Keys.Enter) && prevkstate.IsKeyUp(Keys.Enter))
         {
             return selectedOption;
         }
         return -1;
-      //  return 0;
+      //  return 0; // for debugging
     }
 
     public static void PlayerFire()
