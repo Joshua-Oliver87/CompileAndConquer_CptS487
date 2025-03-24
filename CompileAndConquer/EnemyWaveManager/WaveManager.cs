@@ -35,7 +35,7 @@ namespace CompileAndConquer.Content.WaveManager
         /// </summary>
         public class WaveEvent
         {
-            public WaveEvent(IEnemyFactory spawnType, int spawnCount, double spawnTime, int duration, IEntry entryType, IExit exitType)
+            public WaveEvent(IEnemyFactory spawnType, int spawnCount, double spawnTime, int duration, IEntry entryType, IExit exitType, bool shouldExpire = true)
             {
                 this.Type = spawnType;
                 this.spawnTime = spawnTime;
@@ -45,6 +45,7 @@ namespace CompileAndConquer.Content.WaveManager
                 this.exitType = exitType;
                 this.IsSpawned = false;
                 this.EventEntities = new List<Entity>();
+                this.ShouldExpire = shouldExpire;
             }
 
             public double spawnTime;
@@ -54,6 +55,7 @@ namespace CompileAndConquer.Content.WaveManager
             public IEntry entryType;
             public IExit exitType;
             public bool IsSpawned;
+            public bool ShouldExpire;
             public List<Entity> EventEntities;
         }
 
@@ -67,14 +69,22 @@ namespace CompileAndConquer.Content.WaveManager
                 WaveEvents = new List<WaveEvent>
                 {
                     new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 
-                    /*SpawnCount*/ 5, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(150), new fromTopExit(800)),
+                    /*SpawnCount*/ 5, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
                     new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), //Tonight update spawn locations
-                    /*SpawnCount*/ 4, /*SpawnTime*/ 11, /*Duration*/ 10, new FromTopEntry(150), new fromTopExit(800)),
-                    new WaveEvent(new MiniBossFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), 
-                    /*SpawnCount*/ 1, /*SpawnTime*/ 15, /*Duration*/ 5, new FromTopEntry(150), new fromTopExit(800))
+                    /*SpawnCount*/ 4, /*SpawnTime*/ 11, /*Duration*/ 10, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
+                    new WaveEvent(new MiniBossFactory(TextureHandler.MiniBoss, new Vector2(0,0)), 
+                    /*SpawnCount*/ 1, /*SpawnTime*/ 22, /*Duration*/ 12, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
+                    new WaveEvent(
+                        new FinalBossFactory(TextureHandler.FinalBoss, new Vector2(0, 0)), 
+                        spawnCount: 1,
+                        spawnTime: 35,
+                        duration: 9999,
+                        new FromTopEntry(150, speed: 50f),
+                        new fromTopExit(targetY: -100, speed: 75f),
+                        shouldExpire: false 
+                    )
                 },
-                //TriggerTime = 1,
-                waveDuration = 30
+                waveDuration = 45
             });
             currentWave = waveQueue.Peek();
         }
@@ -97,7 +107,10 @@ namespace CompileAndConquer.Content.WaveManager
             {
                 foreach (var waveEvent in currentWave.WaveEvents)
                 {
-                    EndEvent(waveEvent);
+                    if (waveEvent.ShouldExpire)
+                    {
+                        EndEvent(waveEvent);
+                    }
                 }
                 waveQueue.Dequeue();
 
@@ -109,6 +122,7 @@ namespace CompileAndConquer.Content.WaveManager
         }
 
 
+
         public void StartEvent(WaveEvent currentEvent, int currentWaveIndex)
         {
             // Event duration timeout
@@ -116,47 +130,79 @@ namespace CompileAndConquer.Content.WaveManager
             {
                 SpawnEvent(currentEvent);
                 currentEvent.IsSpawned = true;
+                
             }
         }
 
         public void EndEvent(WaveEvent currentEvent)
         {
+            if (!currentEvent.ShouldExpire)
+                return;
             foreach (var entity in currentEvent.EventEntities)
             {
-                if (entity.isAlive)
+                if (entity.isAlive && !entity.IsExiting)
                 {
-                    // TODO: Add exit movement and despawn
+                    entity.IsExiting = true;
                 }
             }
         }
 
+
         public void UpdateWave(GameTime gameTime)
         {
-            // No more waves TODO: End Level
             if (waveQueue.Count == 0)
-                return; 
+                return;
 
-            // Increment timer for wave
             waveTimer += gameTime.ElapsedGameTime.TotalSeconds;
+            List<WaveEvent> eventsToRemove = new();
 
-            List<WaveEvent> eventsToRemove = new List<WaveEvent>();
-
-            // Update each wave event
             foreach (var curEvent in currentWave.WaveEvents)
             {
-                // Check if event is ready to spawn
-                if (curEvent.IsSpawned == false && waveTimer >= curEvent.spawnTime)
+                if (!curEvent.IsSpawned && waveTimer >= curEvent.spawnTime)
                 {
                     StartEvent(curEvent, currentWaveIndex);
                     Console.WriteLine("Event Started");
                 }
-                // Check if event is ready to despawn
-                if (curEvent.IsSpawned == true && (waveTimer - curEvent.spawnTime) >= curEvent.duration)
+                
+                if (curEvent.ShouldExpire && curEvent.IsSpawned && (waveTimer - curEvent.spawnTime) >= curEvent.duration)
                 {
                     EndEvent(curEvent);
                     eventsToRemove.Add(curEvent);
                     Console.WriteLine("Event Ended");
                 }
+
+                
+                foreach (var entity in curEvent.EventEntities)
+                {
+                    if (entity.IsEntering && curEvent.entryType != null)
+                    {
+                        curEvent.entryType.Enter(entity, gameTime);
+
+                        if (curEvent.entryType.HasEntered(entity))
+                        {
+                            entity.IsEntering = false;
+                        }
+
+                        continue; // prevent movement and exit logic during entry
+                    }
+
+                    if (curEvent.ShouldExpire && entity.IsExiting && curEvent.exitType != null)
+                    {
+                        curEvent.exitType.Exit(entity, gameTime);
+
+                        if (entity.Position.Y < -entity.Size.Y || entity.Position.Y > CompileAndConquer.ScreenSize.Y)
+                        {
+                            EntityHandler.RemoveEntity(entity);
+                            entity.isAlive = false;
+                        }
+
+                        continue;
+                    }
+
+
+
+                }
+                
             }
 
             foreach (var eventToRemove in eventsToRemove)
@@ -171,15 +217,30 @@ namespace CompileAndConquer.Content.WaveManager
                 Console.WriteLine("Wave Ended");
             }
         }
-
         private void SpawnEvent(WaveEvent currentEvent)
         {
-            for (int i = 0; i < currentEvent.spawnCount; i++)
+            int totalEnemies = currentEvent.spawnCount;
+            float spacing = CompileAndConquer.ScreenSize.X / (totalEnemies + 1);
+
+            for (int i = 0; i < totalEnemies; i++)
             {
                 var enemy = currentEvent.Type.CreateEnemy();
+
+                // Assign new position after creation
+                enemy.Position = new Vector2(spacing * (i + 1), 0);
+                enemy.IsEntering = true;
+
+                // Only assign exit behavior if it should expire
+                if (currentEvent.ShouldExpire)
+                    enemy.ExitBehavior = currentEvent.exitType;
+                else
+                    enemy.ExitBehavior = null;
+
                 EntityHandler.Add(enemy);
                 currentEvent.EventEntities.Add(enemy);
             }
+
+            currentEvent.IsSpawned = true;
         }
     }
 }
