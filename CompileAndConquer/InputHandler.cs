@@ -13,7 +13,7 @@ public class InputHandler
     private static KeyboardState prevkstate;
 
     // Player instance
-    private Player player = Player.Instance;
+    private static Player player = Player.Instance;
 
     /*
     Keybindings
@@ -41,9 +41,11 @@ public class InputHandler
     {
         prevkstate = kstate;
         kstate = Keyboard.GetState();
+        SendPlayerMovement();
+        PlayerFire();
     }
 
-    public static Vector2 GetMovement()
+    private static void SendPlayerMovement()
     {
         Vector2 movement = new Vector2();
         
@@ -61,8 +63,11 @@ public class InputHandler
         {
             movement = Vector2.Normalize(movement);
         }
-
-        return movement;
+        if (GetSlowMode())
+            player.MoveSlow(movement);
+        
+        else
+            player.Move(movement);
     }
 
     public static bool PauseGame()
@@ -113,8 +118,12 @@ public class InputHandler
         return -1;
       //  return 0;
     }
-    
-    public static bool GetFire() { return kstate.IsKeyDown(fire); }
+
+    public static void PlayerFire()
+    {
+        if (kstate.IsKeyDown(fire))
+            player.Fire();
+    }
     
     public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode) || kstate.IsKeyDown(altSlowMode)); }
 }
