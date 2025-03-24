@@ -7,16 +7,16 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 
-namespace CompileAndConquer.Screens;
+namespace CompileAndConquer.Content;
 
 public abstract class Screen
 {
     protected SpriteFont font;
     private bool show = false; // is it visible on screen?
-    
-    public virtual void Draw(SpriteBatch spriteBatch)
-    {}
 
-    public virtual void Update()
-    {}
+    public string[] MenuOptions;
+    
+    public abstract void Draw(SpriteBatch spriteBatch);
+
+    public abstract void Update();
 }

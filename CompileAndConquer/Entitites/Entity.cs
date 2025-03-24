@@ -26,7 +26,6 @@ public abstract class Entity
 
     // Entity Information
     public int health;
-    public int Damage;
     
     // Removal flag (if this is set to fall the entity will be deleted in the next update)
     public bool isAlive = true;
@@ -103,5 +102,10 @@ public abstract class Entity
     public virtual void OnCollide(Entity collision)
     {
         // Generic Entity collision
+    }
+
+    public bool CollidesWith(Entity entity)
+    {
+        return CollisionRectangle.Intersects(entity.CollisionRectangle);
     }
 }

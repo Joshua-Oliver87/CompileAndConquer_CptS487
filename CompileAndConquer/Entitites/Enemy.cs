@@ -13,7 +13,6 @@ public abstract class Enemy : Entity
         this.Position = position;
         this.Speed = speed;
         this.health = 100; // default
-        Damage = 10;
         
         Collidable = true;
         

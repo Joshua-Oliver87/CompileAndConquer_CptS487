@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace CompileAndConquer.Content;
 
@@ -44,7 +45,8 @@ public class EntityHandler
         foreach (var entity in entities)
         {
             entity.Update();
-            
+            entity.UpdateCollider();
+          
             // check if the entity is alive
             if (!entity.isAlive)
                 RemoveEntity(entity);
@@ -53,6 +55,8 @@ public class EntityHandler
         UpdateCollisions();
         
         isUpdating = false;
+        
+        
 
         foreach (var entity in toRemoveList)
             entities.Remove(entity);
@@ -118,5 +122,10 @@ public class EntityHandler
     public static void ScheduleClearEnemies()
     {
         clearEnemiesScheduled = true;
+    }
+    
+    public static void RemoveAllEnemyBullets()
+    {
+        entities.RemoveAll(entity => entity is EnemyBullet);
     }
 }
