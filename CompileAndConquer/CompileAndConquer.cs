@@ -73,6 +73,7 @@ public class CompileAndConquer : Game
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
+        Player.Instance.Position = new Vector2(ScreenSize.X / 2, ScreenSize.Y / 1.25f);
         SpawnTypeAEnemies();
     }
 
