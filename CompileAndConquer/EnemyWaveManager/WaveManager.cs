@@ -33,7 +33,7 @@ namespace CompileAndConquer.Content.WaveManager
         /// <summary>
         /// Holds spawning information for individual entity spawns
         /// </summary>
-        public struct WaveEvent
+        public class WaveEvent
         {
             public WaveEvent(IEnemyFactory spawnType, int spawnCount, double spawnTime, int duration, IEntry entryType, IExit exitType)
             {
@@ -67,7 +67,7 @@ namespace CompileAndConquer.Content.WaveManager
                 WaveEvents = new List<WaveEvent>
                 {
                     new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 
-                    /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(150), new fromTopExit(800)),
+                    /*SpawnCount*/ 5, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(150), new fromTopExit(800)),
                     new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), //Tonight update spawn locations
                     /*SpawnCount*/ 4, /*SpawnTime*/ 11, /*Duration*/ 10, new FromTopEntry(150), new fromTopExit(800)),
                     new WaveEvent(new MiniBossFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), 
@@ -115,6 +115,7 @@ namespace CompileAndConquer.Content.WaveManager
             if (!currentEvent.IsSpawned)
             {
                 SpawnEvent(currentEvent);
+                currentEvent.IsSpawned = true;
             }
         }
 
@@ -127,7 +128,6 @@ namespace CompileAndConquer.Content.WaveManager
                     // TODO: Add exit movement and despawn
                 }
             }
-            currentWave.WaveEvents.Remove(currentEvent);
         }
 
         public void UpdateWave(GameTime gameTime)
@@ -138,6 +138,8 @@ namespace CompileAndConquer.Content.WaveManager
 
             // Increment timer for wave
             waveTimer += gameTime.ElapsedGameTime.TotalSeconds;
+
+            List<WaveEvent> eventsToRemove = new List<WaveEvent>();
 
             // Update each wave event
             foreach (var curEvent in currentWave.WaveEvents)
@@ -152,8 +154,14 @@ namespace CompileAndConquer.Content.WaveManager
                 if (curEvent.IsSpawned == true && (waveTimer - curEvent.spawnTime) >= curEvent.duration)
                 {
                     EndEvent(curEvent);
+                    eventsToRemove.Add(curEvent);
                     Console.WriteLine("Event Ended");
                 }
+            }
+
+            foreach (var eventToRemove in eventsToRemove)
+            {
+                currentWave.WaveEvents.Remove(eventToRemove);
             }
 
             if (waveTimer >= currentWave.waveDuration)

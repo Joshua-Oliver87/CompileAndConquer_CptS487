@@ -117,7 +117,7 @@ public class CompileAndConquer : Game
         {
             Exit();
         }
-
+        
         this.waveManager.UpdateWave(gameTime);
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
