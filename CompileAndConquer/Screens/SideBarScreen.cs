@@ -16,27 +16,23 @@ public class SideBarScreen
     private int score;
     private int lives;
 
+    private float screenWidth;
+    private float screenHeight;
     private Texture2D PeruBackground;
 
-    public void Initialize(SpriteFont font, GraphicsDevice graphicsDevice, int lives)
+    public void Initialize(SpriteFont font, GraphicsDevice graphicsDevice, int lives = 10)
     {
         this.font = font;
         this.score = 0;
         this.lives = lives;
         starTexture = TextureHandler.SideBarStar;
         PeruBackground = new Texture2D(graphicsDevice, 1, 1);
-        PeruBackground.SetData(new[] { Color.Peru }); 
-        this.sideBarRectangle = new Rectangle(0, 0, graphicsDevice.Viewport.Width/4, graphicsDevice.Viewport.Height);
+        PeruBackground.SetData([Color.Peru]); 
+        screenWidth = graphicsDevice.Viewport.Width;
+        screenHeight = graphicsDevice.Viewport.Height;
+        this.sideBarRectangle = new Rectangle(0, 0, (int)screenWidth/4, (int)screenHeight);
     }
 
-    public void Initialize(SpriteFont font, GraphicsDevice graphicsDevice)
-    {
-        this.font = font;
-        this.score = 0;
-        this.lives = 0;
-        starTexture = TextureHandler.SideBarStar;
-        this.sideBarRectangle = new Rectangle(0, 0, graphicsDevice.Viewport.Width/4, graphicsDevice.Viewport.Height);
-    }
 
     public static SideBarScreen Instance
     {
@@ -51,14 +47,38 @@ public class SideBarScreen
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Begin();
-        spriteBatch.Draw(PeruBackground, sideBarRectangle, Color.Peru);
-        spriteBatch.DrawString(font, $"SCORE: {score}", new Vector2(10, 10), Color.Black);
-        for (int i = 0; i < lives; i++)
+        if (PeruBackground == null)
         {
-            spriteBatch.Draw(TextureHandler.SideBarStar, new Vector2(15 + i * 45, 45), Color.White);
+            Console.WriteLine("background texture is null");
         }
-        spriteBatch.End();
+        else
+        {
+            spriteBatch.Draw(PeruBackground, sideBarRectangle, Color.Peru);
+            spriteBatch.DrawString(font, $"SCORE: {score}", new Vector2(10, 10), Color.Black);
+        }
+        if (TextureHandler.SideBarStar == null)
+        {
+            Console.WriteLine("star texture is null");
+        }
+        else
+        {
+            Vector2 basePosition = new Vector2(screenWidth * 0.03f, screenHeight * 0.1f); 
+            float spacing = screenWidth * 0.05f;
+            float scale = ((screenWidth / 50) / basePosition.X/2 ) * 0.5f;  
+            int col = 0;
+            for (int i = 0; i < lives; i++)
+            {
+                if(i % 4 == 0)
+                {
+                    basePosition.Y = screenHeight * 0.1f + (10 * i);
+                    col = 0;
+                }
+                Vector2 position = new Vector2(basePosition.X + col * spacing, basePosition.Y);
+                spriteBatch.Draw(starTexture, position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                col += 1;
+            }
+        }
+
     }
 
     // public void Update(int lives, int score)

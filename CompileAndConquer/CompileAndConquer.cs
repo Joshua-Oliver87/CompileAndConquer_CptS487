@@ -71,7 +71,7 @@ public class CompileAndConquer : Game
 
         PauseMenuScreen.Instance.Initialize(screenFont);
         EndScreen.Instance.Initialize(screenFont);
-   //     SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
+        SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
 
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
@@ -136,6 +136,8 @@ public class CompileAndConquer : Game
             DespawnAllEnemies();
             SpawnNextEnemy();
         }
+
+
 
         // game over (survived)
         if (spawnPhase == 4)
@@ -221,6 +223,7 @@ public class CompileAndConquer : Game
         }
         else
         {
+            SideBarScreen.Instance.Draw(_spriteBatch);
             EntityHandler.Draw(_spriteBatch);
         }
 
