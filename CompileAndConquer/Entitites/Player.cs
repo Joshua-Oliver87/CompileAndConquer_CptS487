@@ -118,7 +118,10 @@ public class Player : Entity
     {
         if (Invincible) return;
         
-        if (Lives > 0)
+        OnLoseLife?.Invoke();
+
+        
+        if (Lives > 1)
         {
             Lives--;
             Console.WriteLine("lost life");
@@ -126,7 +129,6 @@ public class Player : Entity
             // respawn from center bottom screen
             // invincible for a few seconds
             // clear bullets
-            OnLoseLife?.Invoke();
 
             Invincible = true;
             invincibilityTimer.Restart();

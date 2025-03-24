@@ -81,11 +81,6 @@ public class SideBarScreen
 
     }
 
-    // public void Update(int lives, int score)
-    // {
-    //     this.lives = lives;
-    //     this.score = score;
-    // }
 
     public void LoseLife()
     {

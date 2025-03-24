@@ -28,6 +28,8 @@ public class CompileAndConquer : Game
     private readonly EndScreen endScreen = EndScreen.Instance;
     private readonly SideBarScreen sidebar= SideBarScreen.Instance;
 
+    int score = 0;
+
     public static Vector2 ScreenSize;
 
     private bool death = false;
@@ -49,10 +51,7 @@ public class CompileAndConquer : Game
 
         PauseMenuScreen.Instance.OnExitGame = Exit;
         EndScreen.Instance.OnExitGame = Exit;
-        StartScreen.Instance.OnExitGame = Exit;
-
-       //Player.Instance.OnScoreUpdate = UpdateScore(score);
-        
+        StartScreen.Instance.OnExitGame = Exit;        
         base.Initialize();
     }
 
@@ -71,12 +70,13 @@ public class CompileAndConquer : Game
 
         PauseMenuScreen.Instance.Initialize(screenFont);
         EndScreen.Instance.Initialize(screenFont);
-        SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
 
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
+        SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice, Player.Instance.Lives);
+
         SpawnTypeAEnemies();
     }
 
@@ -224,6 +224,7 @@ public class CompileAndConquer : Game
         }
         else
         {
+            this.UpdateScore(this.score);
             SideBarScreen.Instance.Draw(_spriteBatch);
             EntityHandler.Draw(_spriteBatch);
         }
@@ -243,8 +244,10 @@ public class CompileAndConquer : Game
         SideBarScreen.Instance.LoseLife();
     }
 
-    // protected void UpdateScore(int score)
-    // {
-    //     SideBarScreen.Instance.UpdateScore(score);
-    // }
+
+
+    protected void UpdateScore(int score)
+    {
+        SideBarScreen.Instance.UpdateScore(score);
+    }
 }
