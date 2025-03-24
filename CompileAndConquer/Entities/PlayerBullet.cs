@@ -12,10 +12,18 @@ public class PlayerBullet : Entity
         this.Velocity = velocity;
         Scale = 2.0f;
         health = 1;
+        Collidable = true;
     }
 
     public override void Update(GameTime gameTime)
     {
         Position += Velocity;
+    }
+
+    public override void OnCollide(Entity collision)
+    {
+        // Delete bullet on collision with enemy
+        if (collision is Enemy)
+            this.isAlive = false;
     }
 }

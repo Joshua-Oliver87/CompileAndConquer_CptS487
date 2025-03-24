@@ -4,19 +4,31 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Linq;
+using CompileAndConquer.Screens;
 using CompileAndConquer.Content.WaveManager;
 
 namespace CompileAndConquer;
 
 public class CompileAndConquer : Game
 {
+    private KeyboardState prevKeyboardState;
+
     private WaveManager waveManager = new WaveManager();
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    public SpriteFont screenFont { get; private set; }
+
     private double spawnTimer = 0;
     private int spawnPhase = 0;
+
+
+    //REPLACE WITH SCREEN HANDLER
+    private readonly StartScreen startScreen = StartScreen.Instance;
+    private readonly PauseMenuScreen pauseScreen = PauseMenuScreen.Instance;
+    private readonly EndScreen endScreen = EndScreen.Instance;
+    private readonly SideBarScreen sidebar= SideBarScreen.Instance;
 
     public static Vector2 ScreenSize;
 
@@ -33,7 +45,14 @@ public class CompileAndConquer : Game
 
     protected override void Initialize()
     {
-        this.Content.RootDirectory = "Content";
+        Content.RootDirectory = "Content";
+
+        PauseMenuScreen.Instance.OnExitGame = Exit;
+        EndScreen.Instance.OnExitGame = Exit;
+        StartScreen.Instance.OnExitGame = Exit;
+
+       //Player.Instance.OnScoreUpdate = UpdateScore(score);
+        
         base.Initialize();
     }
 
@@ -42,6 +61,17 @@ public class CompileAndConquer : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         TextureHandler.Load(Content);
 
+        Player.Instance.OnLoseLife = LoseLife;
+
+        screenFont = Content.Load<SpriteFont>("MenuFont");
+        //replace with screen manager screenmanager
+        StartScreen.Instance.Initialize(screenFont);
+
+        PauseMenuScreen.Instance.Initialize(screenFont);
+        EndScreen.Instance.Initialize(screenFont);
+   //     SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
+
+
         this.waveManager.LoadWaves();
 
         // Set our screen size
@@ -49,14 +79,45 @@ public class CompileAndConquer : Game
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
-        
+        SpawnTypeAEnemies();
     }
+
 
     protected override void Update(GameTime gameTime)
     {
+        KeyboardState keyboardState = Keyboard.GetState();
+
+        if (keyboardState.IsKeyDown(Keys.Escape)&& prevKeyboardState.IsKeyUp(Keys.Escape))
+        {
+            PauseMenuScreen.Instance.isPaused = !PauseMenuScreen.Instance.isPaused;
+        }
+        
+        prevKeyboardState = keyboardState;
+
+        InputHandler.Update();
+
+        if (StartScreen.Instance.gameStart == false)
+        {
+            startScreen.Update();
+            base.Update(gameTime);
+
+            return;
+        }
+        
+
+        if (PauseMenuScreen.Instance.isPaused)
+        {
+            pauseScreen.Update();
+            base.Update(gameTime);
+
+            return; 
+        }
+
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
+            keyboardState.IsKeyDown(Keys.Delete))
+        {
             Exit();
+        }
 
         this.waveManager.UpdateWave(gameTime);
 
@@ -67,10 +128,20 @@ public class CompileAndConquer : Game
         EntityHandler.Update(gameTime);
 
         spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
-        if (spawnTimer >= 10)  // Every 10 seconds cycle to next enemy
+        if (spawnTimer >= 10) 
         {
             spawnTimer = 0;
             DespawnAllEnemies();
+        }
+
+        // game over (survived)
+        if (spawnPhase == 4)
+        {
+            endScreen.gameEnd = true;
+            endScreen.Update();
+            base.Update(gameTime);
+
+            return;
         }
 
         base.Update(gameTime);
@@ -96,7 +167,8 @@ public class CompileAndConquer : Game
                 break;
         }
 
-        spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
+        // spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
+        spawnPhase = (spawnPhase + 1) % 5; // logic for end game
     }
     */
 
@@ -119,11 +191,39 @@ public class CompileAndConquer : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.Black);
+        // Add drawing code here
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        EntityHandler.Draw(_spriteBatch);
+
+        if (PauseMenuScreen.Instance.isPaused)
+        {
+            PauseMenuScreen.Instance.Draw(_spriteBatch);
+        }
+        else if (EndScreen.Instance.gameEnd)
+        {
+            EndScreen.Instance.Draw(_spriteBatch);
+        }
+        else if (!StartScreen.Instance.gameStart)
+        {
+            StartScreen.Instance.Draw(_spriteBatch);
+        }
+        else
+        {
+            EntityHandler.Draw(_spriteBatch);
+        }
+
         _spriteBatch.End();
 
         base.Draw(gameTime);
     }
+
+    protected void LoseLife()
+    {
+        SideBarScreen.Instance.LoseLife();
+    }
+
+    // protected void UpdateScore(int score)
+    // {
+    //     SideBarScreen.Instance.UpdateScore(score);
+    // }
 }

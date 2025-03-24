@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
+using CompileAndConquer.Screens;
 using Microsoft.Xna.Framework.Media;
 
 namespace CompileAndConquer.Content;
@@ -15,6 +16,15 @@ public class Player : Entity
     
     
     private float speed = 4.0f;
+
+    public int Lives = 3;
+
+    public Action OnLoseLife { get; set; }
+
+    public bool Invincible = false;
+    
+    private int invincibleTimer = 0;
+    private int invincibleDuration = 3;
     
     // Copied
     private static Player instance;
@@ -37,7 +47,8 @@ public class Player : Entity
         Scale = 2.0f;
         ColliderDebugMode = true;
         Collidable = true;
-        health = 3;
+        health = 100;
+        ColliderScale = 0.5f;
     }
 
     public override void Update(GameTime gameTime)
@@ -49,10 +60,14 @@ public class Player : Entity
         // SlowMode Calculations
         if (InputHandler.GetSlowMode())
         {
+            ColliderDebugMode = true;
+            ColliderScalingSeparate = true;
             Velocity += speed * InputHandler.GetMovement() * 0.5f;
         }
         else
         {
+            ColliderDebugMode = false;
+            ColliderScalingSeparate = false;
             Velocity += speed * InputHandler.GetMovement();
         }
 
@@ -77,5 +92,39 @@ public class Player : Entity
             EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f)));
             bulletCooldown = maxBulletCooldown;
         }
+    }
+
+    public void LoseLife()
+    {
+        if (Invincible) return;
+        
+        if (Lives > 0)
+        {
+            Lives--;
+            
+            // respawn from center bottom screen
+            // invincible for a few seconds
+            // clear bullets
+            OnLoseLife?.Invoke();
+
+            Invincible = true;
+            invincibleTimer = invincibleDuration;
+            Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y - 100);
+            EntityHandler.RemoveAllEnemyBullets();
+
+        }
+        else
+        {
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        Console.WriteLine("Player has been defeated");
+        
+        // show end screen
+        EndScreen.Instance.gameEnd = true;
+        EndScreen.Instance.Update();
     }
 }
