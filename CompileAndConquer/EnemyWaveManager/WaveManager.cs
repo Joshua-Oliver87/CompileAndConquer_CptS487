@@ -1,28 +1,33 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using CompileAndConquer.Content.EnemyWaveManager.entryPatterns;
 using CompileAndConquer.Content.EnemyWaveManager.exitPatterns;
 using CompileAndConquer.Entities.Enemy_Subtypes;
 using CompileAndConquer.Entitites.Enemy_Factories;
+using Microsoft.VisualBasic.FileIO;
 using Microsoft.Xna.Framework;
 
 namespace CompileAndConquer.Content.WaveManager
 {
     public class WaveManager
     {
-        private List<IWave> waves = new();
-        private int currentWaveIndex = 0;
-        private int currentEventIndex = 0;
+        private Queue<Wave> waveQueue = new();
+        private Wave currentWave;
         private double waveTimer = 0;
+        private int currentWaveIndex = 0;
 
         public struct Wave
         {
             public List<WaveEvent> WaveEvents;
-            public double TriggerTime;
+            //public double TriggerTime;
             public int waveDuration;
         }
 
+        /// <summary>
+        /// Holds spawning information for individual entity spawns
+        /// </summary>
         public struct WaveEvent
         {
             public WaveEvent(IEnemyFactory spawnType, int spawnCount, double spawnTime, int duration, IEntry entryType, IExit exitType)
@@ -48,44 +53,60 @@ namespace CompileAndConquer.Content.WaveManager
             // Need to generalize to include text/powerup spawns  
         }
 
-        public void AddWave(IWave wave)
-        {
-            waves.Add(wave);
-        }
-
+        /// <summary>
+        /// Loading waves from hard coded values TODO: Load from JSON
+        /// </summary>
         public void LoadWaves()
         {
-            waves.Add(new Wave
+            waveQueue.Enqueue(new Wave
             {
                 WaveEvents = new List<WaveEvent>
                 {
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(0), new fromTopExit(0)),
-                    new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), /*SpawnCount*/ 4, /*SpawnTime*/ 11, /*Duration*/ 10, new FromTopEntry(0), new fromTopExit(0)),
-                    new WaveEvent(new MiniBossFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), /*SpawnCount*/ 1, /*SpawnTime*/ 15, /*Duration*/ 5, new FromTopEntry(0), new fromTopExit(0));
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 
+                    /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(0), new fromTopExit(0)),
+                    new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), //Tonight update spawn locations
+                    /*SpawnCount*/ 4, /*SpawnTime*/ 11, /*Duration*/ 10, new FromTopEntry(0), new fromTopExit(0)),
+                    new WaveEvent(new MiniBossFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), 
+                    /*SpawnCount*/ 1, /*SpawnTime*/ 15, /*Duration*/ 5, new FromTopEntry(0), new fromTopExit(0))
                 },
-                TriggerTime = 1,
+                //TriggerTime = 1,
                 waveDuration = 30
             });
-            return;
+            currentWave = waveQueue.Peek();
         }
 
+        /// <summary>
+        /// Start the next wave in the queue
+        /// </summary>
         public void StartWave()
         {
-            if (waves.Count == 0)
-                return;
-
-            currentEventIndex = 0;
+            currentWave = waveQueue.Peek();
+            waveTimer = 0;
         }
 
-        public void EndWave(WaveEvent)
+        /// <summary>
+        /// End the current wave and any subevents still running, then start the next wave
+        /// </summary>
+        public void EndWave()
         {
+            if (currentWave.WaveEvents.Count != 0)
+            {
+                foreach (var waveEvent in currentWave.WaveEvents)
+                {
+                    EndEvent(waveEvent);
+                }
+                waveQueue.Dequeue();
 
+                if (waveQueue.Count != 0)
+                {
+                    StartWave();
+                }
+            }
         }
 
-        public void StartWaveEvent(WaveEvent currentEvent, int currentWaveIndex)
+
+        public void StartEvent(WaveEvent currentEvent, int currentWaveIndex)
         {
-
-
             // Event duration timeout
             if (!currentEvent.IsSpawned)
             {
@@ -93,30 +114,50 @@ namespace CompileAndConquer.Content.WaveManager
             }
         }
 
-        public void EndWaveEvent(WaveEvent currentEvent)
+        public void EndEvent(WaveEvent currentEvent)
         {
             // Despawn all enemies
             foreach (var entity in currentEvent.EventEntities)
             {
-                if entity.
+                if (entity.isAlive)
+                {
+                    // TODO: Add exit movement and despawn
+                }
             }
+            currentWave.WaveEvents.Remove(currentEvent);
         }
 
         public void UpdateWave(GameTime gameTime)
         {
-            if (waves.Count == 0)
-                return; // No more waves
+            // No more waves TODO: End Level
+            if (waveQueue.Count == 0)
+                return; 
 
-            // Wave
-            waveTimer += gameTime.ElapsedGameTime.TotalSeconds; // Increment timer
-            var currentWave = waves[currentWaveIndex]; 
+            // Increment timer for wave
+            waveTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
-            currentWave.Update(gameTime);
-
-            if (currentWave.IsComplete())
+            // Update each wave event
+            foreach (var curEvent in currentWave.WaveEvents)
             {
-                currentWaveIndex++;
+                // Check if event is ready to spawn
+                if (curEvent.IsSpawned == false && waveTimer >= curEvent.spawnTime)
+                {
+                    StartEvent(curEvent, currentWaveIndex);
+                    Console.WriteLine("Event Started");
+                }
+                // Check if event is ready to despawn
+                if (curEvent.IsSpawned == true && (waveTimer - curEvent.spawnTime) >= curEvent.duration)
+                {
+                    EndEvent(curEvent);
+                    Console.WriteLine("Event Ended");
+                }
+            }
+
+            if (waveTimer >= currentWave.waveDuration)
+            {
+                EndWave();
                 waveTimer = 0;
+                Console.WriteLine("Wave Ended");
             }
         }
 

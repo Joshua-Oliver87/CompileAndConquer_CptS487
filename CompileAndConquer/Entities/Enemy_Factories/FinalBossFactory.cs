@@ -1,23 +1,24 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using CompileAndConquer.Entities.Enemy_Subtypes;
+using CompileAndConquer.Content;
 
 namespace CompileAndConquer.Entitites.Enemy_Factories
 {
     public class FinalBossFactory : IEnemyFactory
     {
-        private readonly Texture2D _texture;
-        private readonly Vector2 _position;
+        public Texture2D texture;
+        public Vector2 position;
 
-        public FinalBossFactory(Texture2D texture, Vector2 position)
+        public FinalBossFactory(Texture2D newTexture, Vector2 newPosition)
         {
-            _texture = texture;
-            _position = position;
+            texture = newTexture;
+            position = newPosition;
         }
 
         public Enemy CreateEnemy()
         {
-            return new FinalBoss(_texture, _position);
+            return new FinalBoss(texture, position);
         }
     }
 }
