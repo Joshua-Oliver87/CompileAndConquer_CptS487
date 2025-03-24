@@ -3,7 +3,7 @@ using System.Data;
 using CompileAndConquer.Content;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using CompileAndConquer.Content.EnemyWaveManager.exitPatterns;
 namespace CompileAndConquer.Content;
 
 public abstract class Enemy : Entity
@@ -13,6 +13,9 @@ public abstract class Enemy : Entity
 	public AIComponent AIComponent { get; set; }
 
 	public IMovementStrategy movementStrategy;
+	
+	public IExit ExitBehavior { get; set; } 
+	
 
     public Enemy(Texture2D texture, Vector2 position, float speed, float scalePercentage, IMovementStrategy movementStrategy)
     {
@@ -31,9 +34,27 @@ public abstract class Enemy : Entity
     }
 
     public override void Update(GameTime gameTime)
-	{
-		movementStrategy?.Move(this, gameTime); //apply movement
-	}
+    {
+	    if (IsEntering)
+		    return;
+
+	    if (IsExiting && ExitBehavior != null)
+	    {
+		    ExitBehavior.Exit(this, gameTime);
+
+		    // Remove the entity if it’s off-screen
+		    if (Position.Y < -Size.Y || Position.Y > CompileAndConquer.ScreenSize.Y)
+		    {
+			    EntityHandler.RemoveEntity(this);
+			    isAlive = false;
+		    }
+
+		    return;
+	    }
+
+	    movementStrategy?.Move(this, gameTime);
+    }
+
     
     public abstract void Attack();
 }

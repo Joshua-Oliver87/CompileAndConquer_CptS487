@@ -11,6 +11,11 @@ public abstract class Entity
     protected Texture2D texture;
     protected Color color = Color.White;
     internal float Scale = 1.0f;
+    
+    public bool IsEntering { get; set; } = true;
+    
+    public bool IsExiting = false;
+
 
     // Position/Movement
     internal Vector2 Position;

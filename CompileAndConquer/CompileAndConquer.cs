@@ -140,12 +140,7 @@ public class CompileAndConquer : Game
         AISystem.Update(gameTime); // AI logic
         EntityHandler.Update(gameTime);
 
-        spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
-        if (spawnTimer >= 10) 
-        {
-            spawnTimer = 0;
-            DespawnAllEnemies();
-        }
+     
 
 
 
