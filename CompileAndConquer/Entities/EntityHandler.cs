@@ -130,4 +130,10 @@ public class EntityHandler
     {
         entities.RemoveAll(entity => entity is EnemyBullet);
     }
+
+
+    public static void RemoveAll()
+    {
+        entities.Clear();
+    }
 }

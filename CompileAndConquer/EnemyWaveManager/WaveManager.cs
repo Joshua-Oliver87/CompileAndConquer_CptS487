@@ -16,7 +16,6 @@ namespace CompileAndConquer.Content.WaveManager
         private Queue<Wave> waveQueue = new();
         private Wave currentWave;
         private double waveTimer = 0;
-        private int currentWaveIndex = 0;
 
         public class Wave
         {
@@ -109,7 +108,7 @@ namespace CompileAndConquer.Content.WaveManager
         }
 
 
-        public void StartEvent(WaveEvent currentEvent, int currentWaveIndex)
+        public void StartEvent(WaveEvent currentEvent)
         {
             // Event duration timeout
             if (!currentEvent.IsSpawned)
@@ -147,7 +146,7 @@ namespace CompileAndConquer.Content.WaveManager
                 // Check if event is ready to spawn
                 if (curEvent.IsSpawned == false && waveTimer >= curEvent.spawnTime)
                 {
-                    StartEvent(curEvent, currentWaveIndex);
+                    StartEvent(curEvent);
                     Console.WriteLine("Event Started");
                 }
                 // Check if event is ready to despawn

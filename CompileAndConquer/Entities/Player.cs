@@ -9,22 +9,20 @@ namespace CompileAndConquer.Content;
 
 public class Player : Entity
 {
-
-    // 
     private int bulletCooldown = 0;
     private int maxBulletCooldown = 12;
-    
-    
     private float speed = 4.0f;
-
     public int Lives = 3;
-
     public Action OnLoseLife { get; set; }
-
+    public Action OnDeath { get; set; }
     public bool Invincible = false;
-    
     private int invincibleTimer = 0;
     private int invincibleDuration = 3;
+
+    private Stopwatch startTime;
+    private Stopwatch invincibilityTimer = new Stopwatch();
+    
+    private int damage = 10;
     
     // Copied
     private static Player instance;
@@ -50,26 +48,13 @@ public class Player : Entity
         health = 100;
         ColliderScale = 0.5f;
     }
-
-    public override void Update(GameTime gameTime)
+    
+    // Input/Movement Methods
+    public void Move(Vector2 velocity)
     {
-        // Iterate bulletCooldown down
-        if (bulletCooldown > 0)
-            bulletCooldown--;
-
-        // SlowMode Calculations
-        if (InputHandler.GetSlowMode())
-        {
-            ColliderDebugMode = true;
-            ColliderScalingSeparate = true;
-            Velocity += speed * InputHandler.GetMovement() * 0.5f;
-        }
-        else
-        {
-            ColliderDebugMode = false;
-            ColliderScalingSeparate = false;
-            Velocity += speed * InputHandler.GetMovement();
-        }
+        ColliderDebugMode = false;
+        ColliderScalingSeparate = false;
+        Velocity += speed * velocity;
 
         this.Position += Velocity;
         
@@ -84,37 +69,86 @@ public class Player : Entity
             this.Position.Y = CompileAndConquer.ScreenSize.Y - this.Size.Y / 2;
         
         Velocity = Vector2.Zero;
+    }
+    
+    public void MoveSlow(Vector2 velocity)
+    {
+        ColliderDebugMode = true;
+        ColliderScalingSeparate = true;
+        Velocity += speed * velocity * 0.5f;
+
+        this.Position += Velocity;
         
+        // Check bounds 
+        if (this.Position.X - (this.Size.X / 2) < 0)
+            this.Position.X = 0 + (this.Size.X / 2);
+        if (this.Position.Y - (this.Size.Y / 2) < 0)
+            this.Position.Y = 0 + (this.Size.Y / 2);
+        if (this.Position.X + this.Size.X / 2 > CompileAndConquer.ScreenSize.X)
+            this.Position.X = CompileAndConquer.ScreenSize.X - this.Size.X / 2;
+        if (this.Position.Y + this.Size.Y / 2 > CompileAndConquer.ScreenSize.Y)
+            this.Position.Y = CompileAndConquer.ScreenSize.Y - this.Size.Y / 2;
+        
+        Velocity = Vector2.Zero;
+    }
+
+    public void Fire()
+    {
         // Fire Controls
-        if (InputHandler.GetFire() && bulletCooldown == 0)
+        if (bulletCooldown == 0)
         {
-            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f)));
-            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f)));
+            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f), damage));
+            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f), damage));
             bulletCooldown = maxBulletCooldown;
         }
+    }
+
+    public override void OnCollide(Entity collision)
+    {
+        if (collision is EnemyBullet || collision is Enemy)
+        {
+            Console.WriteLine("collision");
+            LoseLife();
+        }
+    }
+
+    public override void Update()
+    {
+        if (Invincible && invincibilityTimer.Elapsed.TotalSeconds >= 3)
+        {
+            Invincible = false;
+            invincibilityTimer.Stop();
+        }
+        // Iterate bulletCooldown down
+        if (bulletCooldown > 0)
+            bulletCooldown--;
     }
 
     public void LoseLife()
     {
         if (Invincible) return;
         
-        if (Lives > 0)
+        OnLoseLife?.Invoke();
+
+        
+        if (Lives > 1)
         {
             Lives--;
+            Console.WriteLine("lost life");
             
             // respawn from center bottom screen
             // invincible for a few seconds
             // clear bullets
-            OnLoseLife?.Invoke();
 
             Invincible = true;
-            invincibleTimer = invincibleDuration;
+            invincibilityTimer.Restart();
             Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y - 100);
             EntityHandler.RemoveAllEnemyBullets();
 
         }
         else
         {
+            Console.WriteLine("supposedly dead");
             Die();
         }
     }
@@ -122,9 +156,20 @@ public class Player : Entity
     public void Die()
     {
         Console.WriteLine("Player has been defeated");
-        
+
+        // remove all entities
+        OnDeath?.Invoke();
+
         // show end screen
         EndScreen.Instance.gameEnd = true;
         EndScreen.Instance.Update();
+
     }
+
+    public void StartTimer()
+    {
+        startTime.Start();
+    }
+
+    public double GetSurvivalTime() => startTime.Elapsed.TotalSeconds;
 }

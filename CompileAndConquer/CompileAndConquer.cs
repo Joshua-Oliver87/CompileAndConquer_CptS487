@@ -30,7 +30,11 @@ public class CompileAndConquer : Game
     private readonly EndScreen endScreen = EndScreen.Instance;
     private readonly SideBarScreen sidebar= SideBarScreen.Instance;
 
+    int score = 0;
+
     public static Vector2 ScreenSize;
+
+    private bool death = false;
 
     public CompileAndConquer()
     {
@@ -49,10 +53,7 @@ public class CompileAndConquer : Game
 
         PauseMenuScreen.Instance.OnExitGame = Exit;
         EndScreen.Instance.OnExitGame = Exit;
-        StartScreen.Instance.OnExitGame = Exit;
-
-       //Player.Instance.OnScoreUpdate = UpdateScore(score);
-        
+        StartScreen.Instance.OnExitGame = Exit;        
         base.Initialize();
     }
 
@@ -62,6 +63,8 @@ public class CompileAndConquer : Game
         TextureHandler.Load(Content);
 
         Player.Instance.OnLoseLife = LoseLife;
+        Player.Instance.OnDeath = Death;
+
 
         screenFont = Content.Load<SpriteFont>("MenuFont");
         //replace with screen manager screenmanager
@@ -69,7 +72,6 @@ public class CompileAndConquer : Game
 
         PauseMenuScreen.Instance.Initialize(screenFont);
         EndScreen.Instance.Initialize(screenFont);
-   //     SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice);
 
 
         this.waveManager.LoadWaves();
@@ -79,11 +81,16 @@ public class CompileAndConquer : Game
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
         EntityHandler.Add(Player.Instance);
+        Player.Instance.Position = new Vector2(ScreenSize.X / 2, ScreenSize.Y / 1.25f);
+        SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice, Player.Instance.Lives);
+
+        SpawnTypeAEnemies();
     }
 
 
     protected override void Update(GameTime gameTime)
     {
+
         KeyboardState keyboardState = Keyboard.GetState();
 
         if (keyboardState.IsKeyDown(Keys.Escape)&& prevKeyboardState.IsKeyUp(Keys.Escape))
@@ -94,6 +101,13 @@ public class CompileAndConquer : Game
         prevKeyboardState = keyboardState;
 
         InputHandler.Update(gameTime);
+
+        if (EndScreen.Instance.gameEnd == true)
+        {
+            endScreen.Update();
+            base.Update(gameTime);
+            return;
+        }
 
         if (StartScreen.Instance.gameStart == false)
         {
@@ -133,10 +147,13 @@ public class CompileAndConquer : Game
             DespawnAllEnemies();
         }
 
+
+
         // game over (survived)
         if (spawnPhase == 4)
         {
             endScreen.gameEnd = true;
+            endScreen.win = true;
             endScreen.Update();
             base.Update(gameTime);
 
@@ -208,6 +225,8 @@ public class CompileAndConquer : Game
         }
         else
         {
+            this.UpdateScore(this.score);
+            SideBarScreen.Instance.Draw(_spriteBatch);
             EntityHandler.Draw(_spriteBatch);
         }
 
@@ -216,13 +235,20 @@ public class CompileAndConquer : Game
         base.Draw(gameTime);
     }
 
+    protected void Death()
+    {
+        this.death = true;
+        EntityHandler.RemoveAll();
+    }
     protected void LoseLife()
     {
         SideBarScreen.Instance.LoseLife();
     }
 
-    // protected void UpdateScore(int score)
-    // {
-    //     SideBarScreen.Instance.UpdateScore(score);
-    // }
+
+
+    protected void UpdateScore(int score)
+    {
+        SideBarScreen.Instance.UpdateScore(score);
+    }
 }

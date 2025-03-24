@@ -9,26 +9,54 @@ namespace CompileAndConquer;
 
 public class InputHandler
 {
+    // Keyboard references
     private static KeyboardState kstate;
     private static KeyboardState prevkstate;
 
-    public static void Update(GameTime gameTime)
+    // Player instance
+    private static Player player = Player.Instance;
+
+    /*
+    Keybindings
+    */
+    
+    // Movement
+    private static Keys up = Keys.Up;
+    private static Keys down = Keys.Down;
+    private static Keys left = Keys.Left;
+    private static Keys right = Keys.Right;
+    private static Keys altUp = Keys.W;
+    private static Keys altDown = Keys.S;
+    private static Keys altLeft = Keys.A;
+    private static Keys altRight = Keys.D;
+    
+    // Controls
+    private static Keys slowMode = Keys.LeftShift;
+    private static Keys altSlowMode = Keys.LeftControl;
+    private static Keys fire = Keys.Space;
+    
+    // Menu
+    private static Keys escape = Keys.Escape;
+    
+    public static void Update()
     {
         prevkstate = kstate;
         kstate = Keyboard.GetState();
+        SendPlayerMovement();
+        PlayerFire();
     }
 
-    public static Vector2 GetMovement()
+    private static void SendPlayerMovement()
     {
         Vector2 movement = new Vector2();
         
-        if (kstate.IsKeyDown(Keys.Up)) 
+        if (kstate.IsKeyDown(up) || kstate.IsKeyDown(altUp)) 
             movement.Y -= 1;
-        if (kstate.IsKeyDown(Keys.Down)) 
+        if (kstate.IsKeyDown(down) || kstate.IsKeyDown(altDown)) 
             movement.Y += 1;
-        if (kstate.IsKeyDown(Keys.Left)) 
+        if (kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(altLeft)) 
             movement.X -= 1;
-        if (kstate.IsKeyDown(Keys.Right)) 
+        if (kstate.IsKeyDown(Keys.Right) || kstate.IsKeyDown(altRight)) 
             movement.X += 1;
         
         // TODO normalize movement vector
@@ -36,60 +64,47 @@ public class InputHandler
         {
             movement = Vector2.Normalize(movement);
         }
-
-        return movement;
+        if (GetSlowMode())
+            player.MoveSlow(movement);
+        
+        else
+            player.Move(movement);
     }
 
     public static bool PauseGame()
     {
         bool isPaused = false;
-        if (kstate.IsKeyDown(Keys.Escape)) //update the pause state if escape pressed
+        if (kstate.IsKeyDown(escape)) // update the pause state if escape pressed
         {
             isPaused = true;
         }
         return isPaused;
     }
 
-    public static int HandlePauseMenuInput(ref int selectedOption)
-    {
-        string[] menuOptions = { "Resume", "Quit" };
-
-        if (kstate.IsKeyDown(Keys.Up))
-        {
-            selectedOption = (selectedOption - 1 + menuOptions.Length) % menuOptions.Length;
-        }
-        else if (kstate.IsKeyDown(Keys.Down))
-        {
-            selectedOption = (selectedOption + 1) % menuOptions.Length;
-        }
-        else if (kstate.IsKeyDown(Keys.Enter))
-        {
-            return selectedOption;
-        }
-        return -1;
-    }
-
     public static int HandleScreenInput(Screen screen, ref int selectedOption)
     {
         string[] menuOptions = screen.MenuOptions;
-        
-        if (kstate.IsKeyDown(Keys.Up))
+        if (kstate.IsKeyDown(Keys.Up) && prevkstate.IsKeyUp(Keys.Up))
         {
             selectedOption = (selectedOption - 1 + menuOptions.Length) % menuOptions.Length;
         }
-        else if (kstate.IsKeyDown(Keys.Down))
+        else if (kstate.IsKeyDown(Keys.Down) && prevkstate.IsKeyUp(Keys.Down))
         {
             selectedOption = (selectedOption + 1) % menuOptions.Length;
         }
-        else if (kstate.IsKeyDown(Keys.Enter))
+        else if (kstate.IsKeyDown(Keys.Enter) && prevkstate.IsKeyUp(Keys.Enter))
         {
             return selectedOption;
         }
         return -1;
-      //  return 0;
+      //  return 0; // for debugging
+    }
+
+    public static void PlayerFire()
+    {
+        if (kstate.IsKeyDown(fire))
+            player.Fire();
     }
     
-    public static bool GetFire() { return kstate.IsKeyDown(Keys.Space); }
-    
-    public static bool GetSlowMode() { return kstate.IsKeyDown(Keys.LeftControl); }
+    public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode) || kstate.IsKeyDown(altSlowMode)); }
 }
