@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.Xna.Framework;
+
 
 namespace CompileAndConquer.Content;
 
@@ -37,14 +39,14 @@ public class EntityHandler
         entities.Add(entity);
     }
 
-    public static void Update()
+    public static void Update(GameTime gameTime)
     {
         // Need to strategically add entities so they aren't added while looping through the list
         isUpdating = true;
 
         foreach (var entity in entities)
         {
-            entity.Update();
+            entity.Update(gameTime);
             entity.UpdateCollider();
           
             // check if the entity is alive

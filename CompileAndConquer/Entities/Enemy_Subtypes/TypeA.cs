@@ -1,38 +1,25 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using CompileAndConquer.Content;
 
-namespace CompileAndConquer.Content;
 
-public class TypeB : Enemy
+namespace CompileAndConquer.Entities.Enemy_Subtypes;
+
+public class TypeA : Enemy
 {
-    private bool movingRight = true;
-    private float leftBound = 10;
-    private float rightBound = 1000;
     private int attackCooldown = 0;
-    private int maxAttackCooldown = 150; // Fires every 2.5 seconds
+    private int maxAttackCooldown = 120; // Fires every 2 seconds
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public TypeB(Texture2D texture, Vector2 position) : base(texture, position, 2.5f, 0.75f)
+    public TypeA(Texture2D texture, Vector2 position, IMovementStrategy strategy)
+    	: base(texture, position, 2.5f, 0.5f, strategy)
+	{
+    	this.health = 80;
+	}
+    public override void Update(GameTime gameTime)
     {
-        this.health = 120;
-    }
-
-    public override void Update()
-    {
-		this.Position.Y = 50;
-        if (movingRight)
-        { 
-            this.Position.X += Speed;
-            if (Position.X >= rightBound)
-                movingRight = false;
-        }
-        else
-        {
-            this.Position.X -= Speed;
-            if (Position.X <= leftBound)
-                movingRight = true;
-        }
+        base.Update(gameTime);
 
         if (attackCooldown > 0)
             attackCooldown--;
@@ -42,7 +29,7 @@ public class TypeB : Enemy
             Attack();
             attackCooldown = maxAttackCooldown;
         }
-
+        
         foreach (var bullet in pendingBullets)
             EntityHandler.Add(bullet);
 

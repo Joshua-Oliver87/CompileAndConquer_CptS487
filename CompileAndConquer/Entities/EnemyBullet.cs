@@ -15,7 +15,7 @@ public class EnemyBullet : Entity
         Collidable = true;
     }
 
-    public override void Update()
+    public override void Update(GameTime gameTime)
     {
         Position += Velocity;
     }

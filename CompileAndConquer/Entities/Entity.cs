@@ -12,11 +12,16 @@ public abstract class Entity
     protected Color color = Color.White;
     internal float Scale = 1.0f;
     
+    public bool IsEntering { get; set; } = true;
+    
+    public bool IsExiting = false;
+
+
     // Position/Movement
     internal Vector2 Position;
     internal Vector2 Velocity;
     internal float Orientation;
-    
+
     // Collisions
     internal bool Collidable = false;
     internal bool ColliderDebugMode = false;
@@ -26,10 +31,11 @@ public abstract class Entity
 
     // Entity Information
     public int health;
-    
+    public int Damage;
+
     // Removal flag (if this is set to fall the entity will be deleted in the next update)
     public bool isAlive = true;
-    
+
     private Vector2 size
     {
         get
@@ -45,24 +51,24 @@ public abstract class Entity
             return (size) * Scale;
         }
     }
-    
+
     public virtual void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(texture, Position, null, color, Orientation, size / 2f, Scale, 0, 0);
-        
+
         if (ColliderDebugMode && Collidable)
         {
             Texture2D _texture;
             _texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             _texture.SetData(new Color[] { Color.DarkGreen });
-        
+
             spriteBatch.Draw(_texture,
                 CollisionRectangle,
                 Color.White * 0.5f);
         }
     }
 
-    public abstract void Update();
+    public abstract void Update(GameTime gameTime);
 
     // Collision methods
     public void UpdateCollider()
@@ -79,19 +85,19 @@ public abstract class Entity
                 // Set collider size
                 CollisionRectangle.Width = (int)(texture.Width * (ColliderScale * Scale));
                 CollisionRectangle.Height = (int)(texture.Height * (ColliderScale * Scale));
-                
+
                 // Update collider
                 CollisionRectangle.X = (int)(Position.X - (texture.Width / 2 * (ColliderScale * Scale)));
                 CollisionRectangle.Y = (int)(Position.Y - (texture.Height / 2 * (ColliderScale * Scale)));
             }
-            
+
             // Scale and position it for having the same scale as the entity (matching the size of the sprite)
             else
             {
                 // Set collider size
                 CollisionRectangle.Width = (int)(texture.Width * (Scale));
                 CollisionRectangle.Height = (int)(texture.Height * (Scale));
-                
+
                 // Update collider
                 CollisionRectangle.X = (int)(Position.X - (texture.Width / 2 * (Scale)));
                 CollisionRectangle.Y = (int)(Position.Y - (texture.Height / 2 * (Scale)));
@@ -102,10 +108,5 @@ public abstract class Entity
     public virtual void OnCollide(Entity collision)
     {
         // Generic Entity collision
-    }
-
-    public bool CollidesWith(Entity entity)
-    {
-        return CollisionRectangle.Intersects(entity.CollisionRectangle);
     }
 }

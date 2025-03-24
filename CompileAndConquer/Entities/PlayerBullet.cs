@@ -18,7 +18,7 @@ public class PlayerBullet : Entity
         this.damage = damage;
     }
 
-    public override void Update()
+    public override void Update(GameTime gameTime)
     {
         Position += Velocity;
     }

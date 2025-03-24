@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Linq;
 using CompileAndConquer.Screens;
+using CompileAndConquer.Content.WaveManager;
 
 namespace CompileAndConquer;
 
@@ -12,6 +13,7 @@ public class CompileAndConquer : Game
 {
     private KeyboardState prevKeyboardState;
 
+    private WaveManager waveManager = new WaveManager();
     public static Random RandomGenerator = new Random();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -71,6 +73,10 @@ public class CompileAndConquer : Game
         PauseMenuScreen.Instance.Initialize(screenFont);
         EndScreen.Instance.Initialize(screenFont);
 
+
+        this.waveManager.LoadWaves();
+
+        // Set our screen size
         ScreenSize.X = GraphicsDevice.Viewport.Width;
         ScreenSize.Y = GraphicsDevice.Viewport.Height;
 
@@ -94,7 +100,7 @@ public class CompileAndConquer : Game
         
         prevKeyboardState = keyboardState;
 
-        InputHandler.Update();
+        InputHandler.Update(gameTime);
 
         if (EndScreen.Instance.gameEnd == true)
         {
@@ -125,18 +131,16 @@ public class CompileAndConquer : Game
         {
             Exit();
         }
+        
+        this.waveManager.UpdateWave(gameTime);
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
-        EntityHandler.Update();
+        InputHandler.Update(gameTime);
+        AISystem.Update(gameTime); // AI logic
+        EntityHandler.Update(gameTime);
 
-        spawnTimer += gameTime.ElapsedGameTime.TotalSeconds;
-        if (spawnTimer >= 10) 
-        {
-            spawnTimer = 0;
-            DespawnAllEnemies();
-            SpawnNextEnemy();
-        }
+     
 
 
 
@@ -154,14 +158,14 @@ public class CompileAndConquer : Game
         base.Update(gameTime);
     }
 
-
-
+    /*
     private void SpawnNextEnemy()
     {
         switch (spawnPhase)
         {
             case 0:
-                EntityHandler.Add(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
+                var enemyA = new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200), new CurvedMovement());
+                EntityHandler.Add(enemyA);
                 break;
             case 1:
                 EntityHandler.Add(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
@@ -177,32 +181,23 @@ public class CompileAndConquer : Game
         // spawnPhase = (spawnPhase + 1) % 4;  // Loop back to TypeA after FinalBoss
         spawnPhase = (spawnPhase + 1) % 5; // logic for end game
     }
+    */
 
     private void DespawnAllEnemies()
     {
-
         foreach (var entity in EntityHandler.entities.ToList()) 
         {
             if (!(entity is Player)) 
                 EntityHandler.RemoveEntity(entity);
         }
     }
-	private void SpawnTypeAEnemies()
-	{
-		Console.WriteLine("Spawning Type A Enemies");
-		EntityHandler.Add(new TypeA(TextureHandler.TypeAEnemy, new Vector2(300, 200)));
-	}
+    
 
-	private void SpawnTypeBEnemies()
-	{
-		Console.WriteLine("Spawning Type B Enemies");
-		EntityHandler.Add(new TypeB(TextureHandler.TypeBEnemy, new Vector2(500, 500)));
-	}
-	
-	private void DespawnEnemies(){
-		Console.WriteLine("Despawning Enemies");
-		EntityHandler.ClearEnemies();
-	}
+    private void DespawnEnemies()
+    {
+        Console.WriteLine("Despawning Enemies");
+        EntityHandler.ClearEnemies();
+    }
 
     protected override void Draw(GameTime gameTime)
     {
