@@ -5,7 +5,9 @@ namespace CompileAndConquer.Content;
 
 public class PlayerBullet : Entity
 {
-    public PlayerBullet(Vector2 position, Vector2 velocity)
+    public int damage;
+    
+    public PlayerBullet(Vector2 position, Vector2 velocity, int damage)
     {
         this.texture = TextureHandler.Bullet;
         this.Position = position;
@@ -13,6 +15,7 @@ public class PlayerBullet : Entity
         Scale = 2.0f;
         health = 1;
         Collidable = true;
+        this.damage = damage;
     }
 
     public override void Update()
