@@ -1,8 +1,9 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
-using CompileAndConquer.Content;
+using CompileAndConquer.Entities.Enemy_Subtypes;
 
 namespace CompileAndConquer.Content;
+
 
 public static class AISystem
 {

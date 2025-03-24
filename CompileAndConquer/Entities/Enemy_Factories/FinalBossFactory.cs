@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using CompileAndConquer.Entities.Enemy_Subtypes;
+using CompileAndConquer.Content;
+
 
 namespace CompileAndConquer.Entitites.Enemy_Factories
 {

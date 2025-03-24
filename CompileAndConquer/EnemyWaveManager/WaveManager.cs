@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using CompileAndConquer.Content.EnemyWaveManager.entryPatterns;
 using CompileAndConquer.Content.EnemyWaveManager.exitPatterns;
 using CompileAndConquer.Entities.Enemy_Subtypes;
@@ -11,19 +10,24 @@ namespace CompileAndConquer.Content.WaveManager
 {
     public class WaveManager
     {
-        private List<IWave> waves = new();
+        private List<Wave> waves = new();
         private int currentWaveIndex = 0;
         private int currentEventIndex = 0;
         private double waveTimer = 0;
 
-        public struct Wave
+        public class Wave
         {
             public List<WaveEvent> WaveEvents;
             public double TriggerTime;
             public int waveDuration;
+
+            public Wave()
+            {
+                WaveEvents = new List<WaveEvent>();
+            }
         }
 
-        public struct WaveEvent
+        public class WaveEvent
         {
             public WaveEvent(IEnemyFactory spawnType, int spawnCount, double spawnTime, int duration, IEntry entryType, IExit exitType)
             {
@@ -40,17 +44,11 @@ namespace CompileAndConquer.Content.WaveManager
             public double spawnTime;
             public int duration;
             public int spawnCount;
-            public IEnemyFactory Type; // Modularize Factory to EntityFactory later for more flexibility  
+            public IEnemyFactory Type;
             public IEntry entryType;
             public IExit exitType;
-            public bool IsSpawned = false;
+            public bool IsSpawned;
             public List<Entity> EventEntities;
-            // Need to generalize to include text/powerup spawns  
-        }
-
-        public void AddWave(IWave wave)
-        {
-            waves.Add(wave);
         }
 
         public void LoadWaves()
@@ -59,14 +57,13 @@ namespace CompileAndConquer.Content.WaveManager
             {
                 WaveEvents = new List<WaveEvent>
                 {
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(0), new fromTopExit(0)),
-                    new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), /*SpawnCount*/ 4, /*SpawnTime*/ 11, /*Duration*/ 10, new FromTopEntry(0), new fromTopExit(0)),
-                    new WaveEvent(new MiniBossFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), /*SpawnCount*/ 1, /*SpawnTime*/ 15, /*Duration*/ 5, new FromTopEntry(0), new fromTopExit(0));
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 4, 1, 10, new FromTopEntry(0), new fromTopExit(0)),
+                    new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), 4, 11, 10, new FromTopEntry(0), new fromTopExit(0)),
+                    new WaveEvent(new MiniBossFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), 1, 15, 5, new FromTopEntry(0), new fromTopExit(0))
                 },
                 TriggerTime = 1,
                 waveDuration = 30
             });
-            return;
         }
 
         public void StartWave()
@@ -77,16 +74,13 @@ namespace CompileAndConquer.Content.WaveManager
             currentEventIndex = 0;
         }
 
-        public void EndWave(WaveEvent)
+        public void EndWave(WaveEvent waveEvent)
         {
-
+            // Add logic later
         }
 
         public void StartWaveEvent(WaveEvent currentEvent, int currentWaveIndex)
         {
-
-
-            // Event duration timeout
             if (!currentEvent.IsSpawned)
             {
                 SpawnEvent(currentEvent);
@@ -95,25 +89,32 @@ namespace CompileAndConquer.Content.WaveManager
 
         public void EndWaveEvent(WaveEvent currentEvent)
         {
-            // Despawn all enemies
             foreach (var entity in currentEvent.EventEntities)
             {
-                if entity.
+                EntityHandler.RemoveEntity(entity); // Fix: this is now valid
             }
         }
 
         public void UpdateWave(GameTime gameTime)
         {
             if (waves.Count == 0)
-                return; // No more waves
+                return;
 
-            // Wave
-            waveTimer += gameTime.ElapsedGameTime.TotalSeconds; // Increment timer
-            var currentWave = waves[currentWaveIndex]; 
+            waveTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
-            currentWave.Update(gameTime);
+            var currentWave = waves[currentWaveIndex];
+            foreach (var waveEvent in currentWave.WaveEvents)
+            {
+                if (!waveEvent.IsSpawned && waveTimer >= waveEvent.spawnTime)
+                {
+                    StartWaveEvent(waveEvent, currentWaveIndex);
+                    waveEvent.IsSpawned = true;
+                }
 
-            if (currentWave.IsComplete())
+                // You could also check here if waveEvent.duration has passed and then call EndWaveEvent(waveEvent)
+            }
+
+            if (waveTimer >= currentWave.waveDuration)
             {
                 currentWaveIndex++;
                 waveTimer = 0;
@@ -124,12 +125,10 @@ namespace CompileAndConquer.Content.WaveManager
         {
             for (int i = 0; i < currentEvent.spawnCount; i++)
             {
-                var position = new Vector2(200 + i * 60, -100);
                 var enemy = currentEvent.Type.CreateEnemy();
                 EntityHandler.Add(enemy);
                 currentEvent.EventEntities.Add(enemy);
             }
         }
-
     }
 }
