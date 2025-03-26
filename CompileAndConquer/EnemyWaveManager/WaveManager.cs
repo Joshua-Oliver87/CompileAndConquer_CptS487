@@ -45,6 +45,10 @@ namespace CompileAndConquer.Content.WaveManager
                 IsSpawned = false;
                 EventEntities = new List<Entity>();
             }
+            
+            public float? startX = null; // Optional override
+            public float? spacing = null;
+
 
             public double spawnTime;
             public int duration;
@@ -62,23 +66,50 @@ namespace CompileAndConquer.Content.WaveManager
         /// </summary>
         public void LoadWaves()
         {
+            Random rng = new Random();
             waveQueue.Enqueue(new Wave
             {
                 WaveEvents = new List<WaveEvent>
                 {
                     new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 
-                        /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
+                        /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)){ startX = 100 },
                     new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: false)), 
                         /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
                     //new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)),
                         ///*SpawnCount*/ 4, /*SpawnTime*/ 3, /*Duration*/ 30, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
-                    new WaveEvent(new MiniBossFactory(TextureHandler.MiniBoss, new Vector2(0,0), new LinearMovement(startRight: true)), 
-                        /*SpawnCount*/ 1, /*SpawnTime*/ 15, /*Duration*/ 5, new FromTopEntry(150), new fromTopExit(targetY: -500, speed: 75f)),
-                    new WaveEvent(new MiniBossFactory(TextureHandler.MiniBoss, new Vector2(0,0), new LinearMovement(startRight: true)), 
-                        /*SpawnCount*/ 1, /*SpawnTime*/ 23, /*Duration*/ 8, new FromTopEntry(150), new fromTopExit(targetY: -500, speed: 75f)),
-                    new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 
-                        /*SpawnCount*/ 4, /*SpawnTime*/ 33, /*Duration*/ 10, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 
+                        new WaveEvent(
+                            new MiniBossFactory(
+                                TextureHandler.MiniBoss,
+                                new Vector2(0,0),
+                                new CurvedMovement(
+                                    horizontalAmplitude: 200f,
+                                    verticalAmplitude: 50f,
+                                    horizontalFrequency: 0.7f,
+                                    verticalFrequency: 1.3f
+                                )
+                            ), 
+                            /*SpawnCount*/ 1,
+                            /*SpawnTime*/ 23,
+                            /*Duration*/ 10,
+                            new FromTopEntry(150),
+                            new fromTopExit(targetY: -500, speed: 75f)
+                        ),
+
+                    new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0), new ZigZagMovement(
+                        leftBound: 50,
+                        rightBound: 950,
+                        topBound: 100,
+                        bottomBound: 300,
+                        horizontalSpeed: 120f,
+                        verticalSpeed: 60f)), 
+                        /*SpawnCount*/ 4, /*SpawnTime*/ 33, /*Duration*/ 10, new FromTopEntry(100, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0),new ZigZagMovement(
+                            leftBound: 50,
+                            rightBound: 950,
+                            topBound: 100 + rng.Next(0,50),
+                            bottomBound: 300+ rng.Next(0,50),
+                            horizontalSpeed: 120f+ rng.Next(0,30),
+                            verticalSpeed: 60f+ rng.Next(0,20))), 
                         /*SpawnCount*/ 4, /*SpawnTime*/ 35, /*Duration*/ 10, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f))
                     /*
                     new WaveEvent(
@@ -219,16 +250,16 @@ namespace CompileAndConquer.Content.WaveManager
         private void SpawnEvent(WaveEvent currentEvent)
         {
             int totalEnemies = currentEvent.spawnCount;
-            float spacing = CompileAndConquer.ScreenSize.X / (totalEnemies + 1);
+            float defaultSpacing = CompileAndConquer.ScreenSize.X / (totalEnemies + 1);
+            float spacing = currentEvent.spacing ?? defaultSpacing;
+            float startX = currentEvent.startX ?? spacing;
 
             for (int i = 0; i < totalEnemies; i++)
             {
                 var enemy = currentEvent.Type.CreateEnemy();
 
-                enemy.Position = new Vector2(spacing * (i + 1), 0);
+                enemy.Position = new Vector2(startX + spacing * i, 0);
                 enemy.IsEntering = true;
-
-                // Assign exit behavior always
                 enemy.ExitBehavior = currentEvent.exitType;
 
                 EntityHandler.Add(enemy);

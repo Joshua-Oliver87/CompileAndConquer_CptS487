@@ -5,64 +5,40 @@ namespace CompileAndConquer.Content
 {
     public class CurvedMovement : IMovementStrategy
     {
-        private float amplitude;         // Height of bounce
-        private float frequency;         // Controls wave tightness
-        private float baseSpeed;         // Horizontal base speed
-        private float dartSpeedY;        // Speed for darting up
+        private float horizontalAmplitude;  // Width of the horizontal wave
+        private float verticalAmplitude;    // Height of the vertical wave
+        private float horizontalFrequency;  // Controls how tight the horizontal wave is
+        private float verticalFrequency;    // Controls how fast the vertical oscillation is
+
         private float elapsedTime = 0f;
+        private Vector2 centerPoint;
 
-        private float startY = 50f;
-        private bool movingRight = false; // Start moving left
-
-        public CurvedMovement(float baseSpeed = 250f, float amplitude = 80f, float frequency = 6f, float dartSpeedY = 60f)
+        public CurvedMovement(
+            float horizontalAmplitude = 200f,
+            float verticalAmplitude = 80f,
+            float horizontalFrequency = 1.0f,
+            float verticalFrequency = 2.0f)
         {
-            this.baseSpeed = baseSpeed;
-            this.amplitude = amplitude;
-            this.frequency = frequency;
-            this.dartSpeedY = dartSpeedY;
+            this.horizontalAmplitude = horizontalAmplitude;
+            this.verticalAmplitude = verticalAmplitude;
+            this.horizontalFrequency = horizontalFrequency;
+            this.verticalFrequency = verticalFrequency;
         }
-
-        private float verticalVelocity = 0f;
 
         public void Move(Entity entity, GameTime gameTime)
         {
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            elapsedTime += deltaTime;
-            
-            float horizontalDirection = movingRight ? 1 : -1;
-            entity.Position.X += horizontalDirection * baseSpeed * deltaTime;
+            elapsedTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            // Flip direction if hitting boundaries
-            if (entity.Position.X <= 0)
+            // Store starting position as the center once
+            if (centerPoint == Vector2.Zero)
             {
-                entity.Position.X = 0;
-                movingRight = true;
-            }
-            else if (entity.Position.X + entity.Size.X >= CompileAndConquer.ScreenSize.X)
-            {
-                entity.Position.X = CompileAndConquer.ScreenSize.X - entity.Size.X;
-                movingRight = false;
-            }
-            
-            float sinValue = (float)Math.Sin(elapsedTime * frequency);
-
-            if (sinValue > 0)
-            {
-                // downward wave
-                entity.Position.Y = startY + sinValue * amplitude;
-                verticalVelocity = 0f; // reset upward velocity
-            }
-            else
-            {
-                // ease upward using velocity
-                verticalVelocity -= dartSpeedY * deltaTime;
-                entity.Position.Y += verticalVelocity * deltaTime;
-                if (entity.Position.Y < 0) entity.Position.Y = 0;
+                centerPoint = entity.Position;
             }
 
-            // despawn if off bottom
-            if (entity.Position.Y > CompileAndConquer.ScreenSize.Y)
-                EntityHandler.RemoveEntity(entity);
+            float x = centerPoint.X + (float)Math.Sin(elapsedTime * horizontalFrequency) * horizontalAmplitude;
+            float y = centerPoint.Y + (float)Math.Sin(elapsedTime * verticalFrequency) * verticalAmplitude;
+
+            entity.Position = new Vector2(x, y);
         }
     }
 }
