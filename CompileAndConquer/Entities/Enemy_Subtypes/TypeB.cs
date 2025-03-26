@@ -16,12 +16,8 @@ public class TypeB : Enemy
     private int maxAttackCooldown = 150; // Fires every 2.5 seconds
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public TypeB(Texture2D texture, Vector2 position) 
-        : base(texture, position, 2.5f, 0.75f, new ZigZagMovement(
-    leftBound: 100,
-    rightBound: 800,
-    topBound: 100,
-    bottomBound: CompileAndConquer.ScreenSize.Y * 0.25f))
+    public TypeB(Texture2D texture, Vector2 position, IMovementStrategy strategy)
+        : base(texture, position, 1.5f, 0.8f, strategy)
     {
         this.health = 120;
     }
@@ -33,7 +29,7 @@ public class TypeB : Enemy
         if (attackCooldown > 0)
             attackCooldown--;
 
-        if (attackCooldown == 0)
+        if (attackCooldown == 0 && CanAttack())
         {
             Attack();
             attackCooldown = maxAttackCooldown;

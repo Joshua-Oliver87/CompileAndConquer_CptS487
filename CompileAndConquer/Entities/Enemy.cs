@@ -32,6 +32,11 @@ public abstract class Enemy : Entity
         
         health = 1;
     }
+    
+    protected bool CanAttack()
+    {
+	    return !IsExiting && !IsEntering;
+    }
 
     public override void Update(GameTime gameTime)
     {

@@ -24,7 +24,7 @@ public class TypeA : Enemy
         if (attackCooldown > 0)
             attackCooldown--;
 
-        if (attackCooldown == 0)
+        if (attackCooldown == 0 && CanAttack())
         {
             Attack();
             attackCooldown = maxAttackCooldown;
