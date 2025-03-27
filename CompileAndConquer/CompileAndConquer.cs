@@ -75,6 +75,7 @@ public class CompileAndConquer : Game
 
 
         this.waveManager.LoadWaves();
+        this.waveManager.Survived = Win;
 
         // Set our screen size
         ScreenSize.X = GraphicsDevice.Viewport.Width;
@@ -138,20 +139,18 @@ public class CompileAndConquer : Game
         AISystem.Update(gameTime); // AI logic
         EntityHandler.Update(gameTime);
 
-     
 
 
+        // // game over (survived)
+        // if (spawnPhase == 4)
+        // {
+        //     endScreen.gameEnd = true;
+        //     endScreen.win = true;
+        //     endScreen.Update();
+        //     base.Update(gameTime);
 
-        // game over (survived)
-        if (spawnPhase == 4)
-        {
-            endScreen.gameEnd = true;
-            endScreen.win = true;
-            endScreen.Update();
-            base.Update(gameTime);
-
-            return;
-        }
+        //     return;
+        // }
 
         base.Update(gameTime);
     }
@@ -243,5 +242,12 @@ public class CompileAndConquer : Game
     protected void UpdateScore(int score)
     {
         SideBarScreen.Instance.UpdateScore(score);
+    }
+
+    protected void Win()
+    {            
+        endScreen.gameEnd = true;
+        endScreen.win = true;
+        endScreen.Update();
     }
 }

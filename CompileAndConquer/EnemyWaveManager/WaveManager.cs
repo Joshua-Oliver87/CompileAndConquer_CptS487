@@ -16,6 +16,9 @@ namespace CompileAndConquer.Content.WaveManager
     public class WaveManager
     {
         private Queue<Wave> waveQueue = new();
+        public Action Survived { get; set; }
+
+
         private Wave currentWave;
         private double waveTimer = 0;
 
@@ -130,6 +133,7 @@ namespace CompileAndConquer.Content.WaveManager
                 waveDuration = 80
             });
             currentWave = waveQueue.Peek();
+
         }
 
 
@@ -188,8 +192,12 @@ namespace CompileAndConquer.Content.WaveManager
 
         public void UpdateWave(GameTime gameTime)
         {
-            if (waveQueue.Count == 0)
+            if (waveQueue.Count == 0) //this never happens
+            {       
+                Console.WriteLine("wavequee empty");
+                Survived?.Invoke();
                 return;
+            }
 
             waveTimer += gameTime.ElapsedGameTime.TotalSeconds;
             List<WaveEvent> eventsToRemove = new();
@@ -250,6 +258,12 @@ namespace CompileAndConquer.Content.WaveManager
                 EndWave();
                 waveTimer = 0;
                 Console.WriteLine("Wave Ended");
+                if (currentWave.WaveEvents.Count == 0 && this.waveQueue.Count == 1)
+                {
+                    //player wins
+                    Survived?.Invoke();
+                }
+                
             }
         }
         private void SpawnEvent(WaveEvent currentEvent)
