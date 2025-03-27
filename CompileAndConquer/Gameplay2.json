@@ -9,7 +9,7 @@
       { "bombs": "3" },
       { "texture": "player.png" }
     ],
-    "enemyA": [
+    "TypeA": [
       { "name": "Enemy" },
       { "max-health": "100" },
       { "health": "100" },
@@ -17,7 +17,7 @@
       { "Behavior": "TypeA" },
       { "texture": "enemyA.png" }
     ],
-    "enemyB": [
+    "TypeB": [
       { "name": "Enemy" },
       { "max-health": "100" },
       { "health": "100" },
@@ -78,16 +78,16 @@
         "EnterBottom",
         "EnterLeft",
         "EnterRight",
-        "EnterImmidiate"
+        "EnterImmediate"
       ]
     },
     {"Exit":
       [
-        "EnterTop",
-        "EnterBottom",
-        "EnterLeft",
-        "EnterRight",
-        "EnterImmidiate"
+        "ExitTop",
+        "ExitBottom",
+        "ExitLeft",
+        "ExitRight",
+        "ExitImmediate"
       ]
     }
   ],
@@ -112,10 +112,24 @@
   "Waves": 
   [
     { "Wave1": [
-      {"enemyA": [{spawnTime: "10"}] 
-    
-    
-    , "miniBoss", "EnemyB"] },
+      {
+        "enemy": [
+          { "type": "TypeA" },
+          { "position": "0,0" },
+          { "movement": "Linear" },
+          { "attack": "Straight" },
+          { "speed": 250 },
+          { "spawn-count": 4 },
+          { "spawn-time": 1 },
+          { "duration": 30 },
+          { "Entry": "EnterTop" },
+          { "Exit": "ExitTop" }
+        ]
+      },
+
+        ],
+        "miniBoss",
+        "EnemyB"] },
 
     { "Wave2": ["enemyA", "enemyB", "miniboss"] },
     { "Wave3": ["enemyB", "enemyB", "miniBoss"] },
