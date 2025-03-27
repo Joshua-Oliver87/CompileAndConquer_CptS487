@@ -60,6 +60,8 @@ public abstract class Enemy : Entity
 	    if (collision is PlayerBullet)
 	    {
 		    this.health -= collision.Damage;
+
+		    CompileAndConquer.score += 1;
 		    
 		    if (this.health <= 0)
 			    this.isAlive = false;

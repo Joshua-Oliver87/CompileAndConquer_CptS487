@@ -30,7 +30,7 @@ public class CompileAndConquer : Game
     private readonly EndScreen endScreen = EndScreen.Instance;
     private readonly SideBarScreen sidebar= SideBarScreen.Instance;
 
-    int score = 0;
+    public static int score = 0;
 
     public static Vector2 ScreenSize;
 
@@ -218,7 +218,7 @@ public class CompileAndConquer : Game
         }
         else
         {
-            this.UpdateScore(this.score);
+            this.UpdateScore(CompileAndConquer.score);
             SideBarScreen.Instance.Draw(_spriteBatch);
             EntityHandler.Draw(_spriteBatch);
         }
