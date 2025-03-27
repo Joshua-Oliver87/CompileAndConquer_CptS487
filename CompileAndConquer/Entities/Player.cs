@@ -112,7 +112,7 @@ public class Player : Entity
         }
     }
 
-    public override void Update()
+    public override void Update(GameTime gameTime)
     {
         if (Invincible && invincibilityTimer.Elapsed.TotalSeconds >= 3)
         {
