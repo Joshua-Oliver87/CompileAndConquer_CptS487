@@ -14,7 +14,7 @@ public class HomingBullet : IMovementStrategy
         if (direction.LengthSquared() > 1f)
             direction.Normalize();
 
-        float speed = 300f;
+        float speed = 250f;
         bullet.Position += direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
         
         if (bullet.Position.X < -bullet.Size.X || bullet.Position.X > CompileAndConquer.ScreenSize.X + bullet.Size.X ||
