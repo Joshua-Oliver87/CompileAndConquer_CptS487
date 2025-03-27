@@ -11,33 +11,27 @@ namespace CompileAndConquer.Entities.Enemy_Subtypes
     public class FinalBoss : Enemy
     {
         private int attackTimer = 0;
-        private double lifetime = 15.0;
 
         private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-        public FinalBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.0f, 2.0f, new ZigZagMovement(
-            leftBound: 100,
-            rightBound: 800,
-            topBound: 100,
-            bottomBound: CompileAndConquer.ScreenSize.Y * 0.25f))
+        public FinalBoss(Texture2D texture, Vector2 position, IMovementStrategy strategy, IMovementStrategy bulletMovement = null)
+            : base(texture, position, 4.5f, 1.5f, strategy)
         {
             this.health = 1000;
+            this.BulletMovementStrategy = bulletMovement;
         }
-
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
             attackTimer++;
-            if (attackTimer % 150 == 0)
+            if (attackTimer % 150 == 0 && CanAttack())
             {
                 Attack();
             }
-
-            lifetime -= 1.0 / 60.0;
-            if (lifetime <= 0)
+            
+            if (health <= 0)
             {
-                EntityHandler.ScheduleClearEnemies();
                 EntityHandler.RemoveEntity(this);
             }
 
@@ -52,7 +46,7 @@ namespace CompileAndConquer.Entities.Enemy_Subtypes
             if (direction.Length() > 0)
                 direction.Normalize();
 
-            pendingBullets.Add(new EnemyBullet(this.Position, direction * 6.0f));
+            pendingBullets.Add(new EnemyBullet(this.Position, BulletMovementStrategy));
         }
     }    
 }

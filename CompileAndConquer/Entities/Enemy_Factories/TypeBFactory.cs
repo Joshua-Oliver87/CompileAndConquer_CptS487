@@ -10,15 +10,18 @@ public class TypeBFactory : IEnemyFactory
 {
     public Texture2D texture;
     public Vector2 position;
-    //// TO-DO: Add movement strategy here
-    public TypeBFactory(Texture2D newTexture, Vector2 newPosition)
+    public IMovementStrategy movement;
+    private IMovementStrategy bulletMovement;
+    public TypeBFactory(Texture2D newTexture, Vector2 newPosition, IMovementStrategy newMovement, IMovementStrategy bulletMovement = null)
     {
         texture = newTexture;
         position = newPosition;
+        movement = newMovement;
+        this.bulletMovement = bulletMovement; 
     }
 
     public Enemy CreateEnemy()
     {
-        return new TypeB(texture, position);
+        return new TypeB(texture, position, movement, bulletMovement);
     }
 }

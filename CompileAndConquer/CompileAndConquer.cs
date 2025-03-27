@@ -84,7 +84,7 @@ public class CompileAndConquer : Game
         Player.Instance.Position = new Vector2(ScreenSize.X / 2, ScreenSize.Y / 1.25f);
         SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice, Player.Instance.Lives);
 
-        SpawnTypeAEnemies();
+        //SpawnTypeAEnemies();
     }
 
 
@@ -100,7 +100,7 @@ public class CompileAndConquer : Game
         
         prevKeyboardState = keyboardState;
 
-        InputHandler.Update(gameTime);
+        InputHandler.Update();
 
         if (EndScreen.Instance.gameEnd == true)
         {
@@ -136,7 +136,7 @@ public class CompileAndConquer : Game
 
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
-        InputHandler.Update(gameTime);
+        InputHandler.Update();
         AISystem.Update(gameTime); // AI logic
         EntityHandler.Update(gameTime);
 

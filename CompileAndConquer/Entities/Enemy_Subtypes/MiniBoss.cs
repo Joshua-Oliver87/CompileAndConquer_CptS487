@@ -10,31 +10,22 @@ namespace CompileAndConquer.Entities.Enemy_Subtypes
     public class MiniBoss : Enemy
     {
         private int attackTimer = 0;
-        private double lifetime = 15.0;
         private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-        public MiniBoss(Texture2D texture, Vector2 position) : base(texture, position, 1.5f, 1.75f, new ZigZagMovement(
-            leftBound: 100,
-            rightBound: 800,
-            topBound: 100,
-            bottomBound: CompileAndConquer.ScreenSize.Y * 0.25f))
+        public MiniBoss(Texture2D texture, Vector2 position, IMovementStrategy strategy, IMovementStrategy bulletMovement = null)
+            : base(texture, position, 3.5f, 1.2f, strategy)
         {
             this.health = 300;
+            this.BulletMovementStrategy = bulletMovement;
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            lifetime -= 1.0 / 60.0;
-            if (lifetime <= 0)
-            {
-                EntityHandler.ScheduleClearEnemies();
-                EntityHandler.RemoveEntity(this);
-            }
        
 
             attackTimer++;
-            if (attackTimer % 200 == 0)
+            if (attackTimer % 200 == 0 && CanAttack())
             {
                 Attack();
             }
@@ -50,7 +41,7 @@ namespace CompileAndConquer.Entities.Enemy_Subtypes
             if (direction.Length() > 0)
                 direction.Normalize();
 
-            pendingBullets.Add(new EnemyBullet(this.Position, direction * 5.5f));
+            pendingBullets.Add(new EnemyBullet(this.Position, BulletMovementStrategy));
         }
     }
 }

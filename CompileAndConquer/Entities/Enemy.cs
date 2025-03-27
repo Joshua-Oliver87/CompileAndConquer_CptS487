@@ -14,6 +14,8 @@ public abstract class Enemy : Entity
 
 	public IMovementStrategy movementStrategy;
 	
+	public IMovementStrategy BulletMovementStrategy { get; set; } = null;
+	
 	public IExit ExitBehavior { get; set; } 
 	
 
@@ -31,6 +33,11 @@ public abstract class Enemy : Entity
         this.Scale = scalePercentage * (Player.Instance.Size.X / texture.Width);
         
         health = 1;
+    }
+    
+    protected bool CanAttack()
+    {
+	    return !IsExiting && !IsEntering;
     }
 
     public override void Update(GameTime gameTime)
