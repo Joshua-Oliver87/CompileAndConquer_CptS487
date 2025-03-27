@@ -14,6 +14,8 @@ public abstract class Enemy : Entity
 
 	public IMovementStrategy movementStrategy;
 	
+	public IMovementStrategy BulletMovementStrategy { get; set; } = null;
+	
 	public IExit ExitBehavior { get; set; } 
 	
 

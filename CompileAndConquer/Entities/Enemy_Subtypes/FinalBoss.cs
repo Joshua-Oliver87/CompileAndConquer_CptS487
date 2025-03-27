@@ -14,10 +14,11 @@ namespace CompileAndConquer.Entities.Enemy_Subtypes
 
         private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-        public FinalBoss(Texture2D texture, Vector2 position, IMovementStrategy strategy)
+        public FinalBoss(Texture2D texture, Vector2 position, IMovementStrategy strategy, IMovementStrategy bulletMovement = null)
             : base(texture, position, 4.5f, 1.5f, strategy)
         {
             this.health = 1000;
+            this.BulletMovementStrategy = bulletMovement;
         }
         public override void Update(GameTime gameTime)
         {
@@ -45,7 +46,7 @@ namespace CompileAndConquer.Entities.Enemy_Subtypes
             if (direction.Length() > 0)
                 direction.Normalize();
 
-            pendingBullets.Add(new EnemyBullet(this.Position, direction * 6.0f));
+            pendingBullets.Add(new EnemyBullet(this.Position, BulletMovementStrategy));
         }
     }    
 }

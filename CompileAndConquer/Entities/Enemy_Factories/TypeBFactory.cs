@@ -11,15 +11,17 @@ public class TypeBFactory : IEnemyFactory
     public Texture2D texture;
     public Vector2 position;
     public IMovementStrategy movement;
-    public TypeBFactory(Texture2D newTexture, Vector2 newPosition, IMovementStrategy newMovement)
+    private IMovementStrategy bulletMovement;
+    public TypeBFactory(Texture2D newTexture, Vector2 newPosition, IMovementStrategy newMovement, IMovementStrategy bulletMovement = null)
     {
         texture = newTexture;
         position = newPosition;
         movement = newMovement;
+        this.bulletMovement = bulletMovement; 
     }
 
     public Enemy CreateEnemy()
     {
-        return new TypeB(texture, position, movement);
+        return new TypeB(texture, position, movement, bulletMovement);
     }
 }

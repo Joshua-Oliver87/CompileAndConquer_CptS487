@@ -1,6 +1,11 @@
 using Microsoft.Xna.Framework;
 using System;
 
+/*
+ * Starts from a center point
+ * Moves in a circular pattern using two sine waves, one for X and Y
+ */
+
 namespace CompileAndConquer.Content
 {
     public class CurvedMovement : IMovementStrategy

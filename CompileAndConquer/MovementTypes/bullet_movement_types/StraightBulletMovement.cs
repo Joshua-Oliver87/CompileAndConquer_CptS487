@@ -10,9 +10,12 @@ namespace CompileAndConquer.Content.MovementTypes.BulletMovementTypes
         public StraightBullet(Vector2 direction, float speed = 300f)
         {
             this.direction = direction;
-            this.direction.Normalize();
+            if (direction != Vector2.Zero)
+                this.direction.Normalize();
+
             this.speed = speed;
         }
+
         public void Move(Entity entity, GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;

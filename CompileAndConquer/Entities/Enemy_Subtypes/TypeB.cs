@@ -16,10 +16,11 @@ public class TypeB : Enemy
     private int maxAttackCooldown = 150; // Fires every 2.5 seconds
     private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
 
-    public TypeB(Texture2D texture, Vector2 position, IMovementStrategy strategy)
+    public TypeB(Texture2D texture, Vector2 position, IMovementStrategy strategy, IMovementStrategy bulletStrategy = null)
         : base(texture, position, 1.5f, 0.8f, strategy)
     {
         this.health = 120;
+        this.BulletMovementStrategy = bulletStrategy;
     }
 
     public override void Update(GameTime gameTime)
@@ -43,10 +44,6 @@ public class TypeB : Enemy
 
     public override void Attack()
     {
-        Vector2 direction = Player.Instance.Position - this.Position;
-        if (direction.Length() > 0)
-            direction.Normalize();
-
-        pendingBullets.Add(new EnemyBullet(this.Position, direction * 5.0f));
+        pendingBullets.Add(new EnemyBullet(this.Position, BulletMovementStrategy));
     }
 }

@@ -12,17 +12,19 @@ namespace CompileAndConquer.Entitites.Enemy_Factories
         private readonly Vector2 position;
         
         public IMovementStrategy movement;
+        public IMovementStrategy bulletMovement;
 
-        public MiniBossFactory(Texture2D newTexture, Vector2 newPosition, IMovementStrategy newMovement)
+        public MiniBossFactory(Texture2D newTexture, Vector2 newPosition, IMovementStrategy newMovement, IMovementStrategy bulletMovement)
         {
             texture = newTexture;
             position = newPosition;
             movement = newMovement;
+            this.bulletMovement = bulletMovement;
         }
 
         public Enemy CreateEnemy()
         {
-            return new MiniBoss(texture, position, movement);
+            return new MiniBoss(texture, position, movement, bulletMovement);
         }
     }
 }

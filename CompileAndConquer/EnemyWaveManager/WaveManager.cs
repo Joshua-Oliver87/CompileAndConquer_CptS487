@@ -8,6 +8,8 @@ using CompileAndConquer.Entities.Enemy_Subtypes;
 using CompileAndConquer.Entitites.Enemy_Factories;
 using Microsoft.VisualBasic.FileIO;
 using Microsoft.Xna.Framework;
+using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
+
 
 namespace CompileAndConquer.Content.WaveManager
 {
@@ -71,9 +73,9 @@ namespace CompileAndConquer.Content.WaveManager
             {
                 WaveEvents = new List<WaveEvent>
                 {
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true), new StraightBullet(direction: new Vector2(0, 1), speed: 250f)), 
                         /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)){ startX = 100 },
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: false)), 
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: false), new StraightBullet(direction: new Vector2(0, 1), speed: 250f)), 
                         /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
                     //new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)),
                         ///*SpawnCount*/ 4, /*SpawnTime*/ 3, /*Duration*/ 30, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
@@ -86,7 +88,8 @@ namespace CompileAndConquer.Content.WaveManager
                                     verticalAmplitude: 50f,
                                     horizontalFrequency: 0.7f,
                                     verticalFrequency: 1.3f
-                                )
+                                ),
+                                new HomingBullet()
                             ), 
                             /*SpawnCount*/ 1,
                             /*SpawnTime*/ 23,
@@ -101,7 +104,7 @@ namespace CompileAndConquer.Content.WaveManager
                         topBound: 100,
                         bottomBound: 300,
                         horizontalSpeed: 120f,
-                        verticalSpeed: 60f)), 
+                        verticalSpeed: 60f), new HomingBullet()), 
                         /*SpawnCount*/ 4, /*SpawnTime*/ 33, /*Duration*/ 10, new FromTopEntry(100, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
                     new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0),new ZigZagMovement(
                             leftBound: 50,
@@ -109,20 +112,22 @@ namespace CompileAndConquer.Content.WaveManager
                             topBound: 100 + rng.Next(0,50),
                             bottomBound: 300+ rng.Next(0,50),
                             horizontalSpeed: 120f+ rng.Next(0,30),
-                            verticalSpeed: 60f+ rng.Next(0,20))), 
-                        /*SpawnCount*/ 4, /*SpawnTime*/ 35, /*Duration*/ 10, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f))
-                    /*
+                            verticalSpeed: 60f+ rng.Next(0,20)), new StraightBullet(direction: new Vector2(0, 1), speed: 250f)), 
+                        /*SpawnCount*/ 4, /*SpawnTime*/ 35, /*Duration*/ 10, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
+                    
                     new WaveEvent(
-                        new FinalBossFactory(TextureHandler.FinalBoss, new Vector2(0, 0)), 
+                        new FinalBossFactory(
+                            TextureHandler.FinalBoss,
+                            new Vector2(0, 0),
+                            new FinalBossMovement(horizontalSpeed: 60f, verticalAmplitude: 40f, verticalFrequency: 1.5f), new HomingBullet()),
                         spawnCount: 1,
-                        spawnTime: 35,
-                        duration: 9999,
+                        spawnTime: 46,
+                        duration: 30,
                         new FromTopEntry(150, speed: 50f),
                         new fromTopExit(targetY: -500, speed: 75f)
                     )
-                    */
                 },
-                waveDuration = 45
+                waveDuration = 80
             });
             currentWave = waveQueue.Peek();
         }
