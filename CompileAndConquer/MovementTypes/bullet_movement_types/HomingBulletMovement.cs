@@ -16,5 +16,11 @@ public class HomingBullet : IMovementStrategy
 
         float speed = 300f;
         bullet.Position += direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        if (bullet.Position.X < -bullet.Size.X || bullet.Position.X > CompileAndConquer.ScreenSize.X + bullet.Size.X ||
+            bullet.Position.Y < -bullet.Size.Y || bullet.Position.Y > CompileAndConquer.ScreenSize.Y + bullet.Size.Y)
+        {
+            bullet.isAlive = false;
+        }
     }
 }

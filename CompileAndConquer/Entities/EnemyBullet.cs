@@ -5,10 +5,13 @@ namespace CompileAndConquer.Content
     public class EnemyBullet : Entity
     {
         private IMovementStrategy movementStrategy;
+        
+        private float lifeTimer = 0f;
+        private float maxLifetime = 3f;
 
         public EnemyBullet(Vector2 position, IMovementStrategy strategy)
         {
-            this.texture = TextureHandler.Bullet; // Make sure Bullet texture exists
+            this.texture = TextureHandler.Bullet;
             this.Position = position;
             this.movementStrategy = strategy;
             Scale = 2.0f;
@@ -18,15 +21,15 @@ namespace CompileAndConquer.Content
 
         public override void Update(GameTime gameTime)
         {
-            movementStrategy?.Move(this, gameTime);
+            lifeTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            // Despawn bullet if it's off screen
-            if (Position.Y < -Size.Y || Position.Y > CompileAndConquer.ScreenSize.Y ||
-                Position.X < -Size.X || Position.X > CompileAndConquer.ScreenSize.X)
+            if (lifeTimer >= maxLifetime)
             {
-                isAlive = false;
-                EntityHandler.RemoveEntity(this);
+                this.isAlive = false;
+                return;
             }
+            movementStrategy?.Move(this, gameTime);
+            
         }
 
         public override void OnCollide(Entity collision)

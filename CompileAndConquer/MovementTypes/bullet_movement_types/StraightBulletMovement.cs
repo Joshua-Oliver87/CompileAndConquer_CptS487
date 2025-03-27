@@ -20,6 +20,12 @@ namespace CompileAndConquer.Content.MovementTypes.BulletMovementTypes
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             entity.Position += direction * speed * deltaTime;
+            
+            if (entity.Position.X < -entity.Size.X || entity.Position.X > CompileAndConquer.ScreenSize.X + entity.Size.X ||
+                entity.Position.Y < -entity.Size.Y || entity.Position.Y > CompileAndConquer.ScreenSize.Y + entity.Size.Y)
+            {
+                entity.isAlive = false;
+            }
         }
     }
 }
