@@ -100,6 +100,9 @@ public class EntityHandler
                     // Check if they intersect
                     if (checkingCollisionEntity.CollisionRectangle.Intersects(checkingAgainstEntity.CollisionRectangle))
                     {
+                        // skip collision if entities are same type
+                        if (checkingCollisionEntity is Enemy && checkingAgainstEntity is Enemy)
+                            continue;
                         checkingCollisionEntity.OnCollide(checkingAgainstEntity);
                         checkingAgainstEntity.OnCollide(checkingCollisionEntity);
                     }

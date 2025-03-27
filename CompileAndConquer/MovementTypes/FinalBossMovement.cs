@@ -1,35 +1,61 @@
 using Microsoft.Xna.Framework;
+using System;
+
+/*
+ * Movement for Final Boss
+ * Moves left to right bouncing off screen bounds
+ * While drifitng horizontally, it bobs up and down via vertical sine wave
+ */
 
 namespace CompileAndConquer.Content
 {
-    public class VerticalBounceMovement : IMovementStrategy
+    public class FinalBossMovement : IMovementStrategy
     {
-        private bool movingDown = true;
-        private float topBound;
-        private float bottomBound;
-        private float speed;
+        private float horizontalSpeed = 50f;
+        private float verticalAmplitude = 25f;
+        private float verticalFrequency = 2f;
 
-        public VerticalBounceMovement(float topBound, float bottomBound, float speed)
+        private float elapsedTime = 0f;
+        private bool movingRight = true;
+
+        private float leftBound = 100f;
+        private float rightBound = 800f;
+
+        public FinalBossMovement(float horizontalSpeed = 50f, float verticalAmplitude = 25f, float verticalFrequency = 2f)
         {
-            this.topBound = topBound;
-            this.bottomBound = bottomBound;
-            this.speed = speed;
+            this.horizontalSpeed = horizontalSpeed;
+            this.verticalAmplitude = verticalAmplitude;
+            this.verticalFrequency = verticalFrequency;
         }
 
         public void Move(Entity entity, GameTime gameTime)
         {
-            if (movingDown)
+            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            elapsedTime += delta;
+
+            // Horizontal drift
+            if (movingRight)
             {
-                entity.Position.Y += speed;
-                if (entity.Position.Y >= bottomBound)
-                    movingDown = false;
+                entity.Position.X += horizontalSpeed * delta;
+                if (entity.Position.X >= rightBound)
+                {
+                    entity.Position.X = rightBound;
+                    movingRight = false;
+                }
             }
             else
             {
-                entity.Position.Y -= speed;
-                if (entity.Position.Y <= topBound)
-                    movingDown = true;
+                entity.Position.X -= horizontalSpeed * delta;
+                if (entity.Position.X <= leftBound)
+                {
+                    entity.Position.X = leftBound;
+                    movingRight = true;
+                }
             }
+
+            // Vertical bobbing (sine wave)
+            float yOffset = (float)Math.Sin(elapsedTime * verticalFrequency) * verticalAmplitude;
+            entity.Position.Y = 150 + yOffset;
         }
     }
 }

@@ -8,6 +8,8 @@ using CompileAndConquer.Entities.Enemy_Subtypes;
 using CompileAndConquer.Entitites.Enemy_Factories;
 using Microsoft.VisualBasic.FileIO;
 using Microsoft.Xna.Framework;
+using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
+
 
 namespace CompileAndConquer.Content.WaveManager
 {
@@ -34,18 +36,21 @@ namespace CompileAndConquer.Content.WaveManager
         /// </summary>
         public class WaveEvent
         {
-            public WaveEvent(IEnemyFactory spawnType, int spawnCount, double spawnTime, int duration, IEntry entryType, IExit exitType, bool shouldExpire = true)
+            public WaveEvent(IEnemyFactory spawnType, int spawnCount, double spawnTime, int duration, IEntry entryType, IExit exitType)
             {
-                this.Type = spawnType;
+                Type = spawnType;
                 this.spawnTime = spawnTime;
                 this.duration = duration;
                 this.spawnCount = spawnCount;
                 this.entryType = entryType;
                 this.exitType = exitType;
-                this.IsSpawned = false;
-                this.EventEntities = new List<Entity>();
-                this.ShouldExpire = shouldExpire;
+                IsSpawned = false;
+                EventEntities = new List<Entity>();
             }
+            
+            public float? startX = null; // Optional override
+            public float? spacing = null;
+
 
             public double spawnTime;
             public int duration;
@@ -54,39 +59,79 @@ namespace CompileAndConquer.Content.WaveManager
             public IEntry entryType;
             public IExit exitType;
             public bool IsSpawned;
-            public bool ShouldExpire;
             public List<Entity> EventEntities;
         }
+
 
         /// <summary>
         /// Loading waves from hard coded values TODO: Load from JSON
         /// </summary>
         public void LoadWaves()
         {
+            Random rng = new Random();
             waveQueue.Enqueue(new Wave
             {
                 WaveEvents = new List<WaveEvent>
                 {
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true)), 
-                    /*SpawnCount*/ 5, /*SpawnTime*/ 1, /*Duration*/ 10, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
-                    new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)), //Tonight update spawn locations
-                    /*SpawnCount*/ 4, /*SpawnTime*/ 11, /*Duration*/ 10, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
-                    new WaveEvent(new MiniBossFactory(TextureHandler.MiniBoss, new Vector2(0,0)), 
-                    /*SpawnCount*/ 1, /*SpawnTime*/ 22, /*Duration*/ 12, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true), new StraightBullet(direction: new Vector2(0, 1), speed: 250f)), 
+                        /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)){ startX = 100 },
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: false), new StraightBullet(direction: new Vector2(0, 1), speed: 250f)), 
+                        /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
+                    //new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)),
+                        ///*SpawnCount*/ 4, /*SpawnTime*/ 3, /*Duration*/ 30, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
+                        new WaveEvent(
+                            new MiniBossFactory(
+                                TextureHandler.MiniBoss,
+                                new Vector2(0,0),
+                                new CurvedMovement(
+                                    horizontalAmplitude: 200f,
+                                    verticalAmplitude: 50f,
+                                    horizontalFrequency: 0.7f,
+                                    verticalFrequency: 1.3f
+                                ),
+                                new HomingBullet()
+                            ), 
+                            /*SpawnCount*/ 1,
+                            /*SpawnTime*/ 23,
+                            /*Duration*/ 10,
+                            new FromTopEntry(150),
+                            new fromTopExit(targetY: -500, speed: 75f)
+                        ),
+
+                    new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0), new ZigZagMovement(
+                        leftBound: 50,
+                        rightBound: 950,
+                        topBound: 100,
+                        bottomBound: 300,
+                        horizontalSpeed: 120f,
+                        verticalSpeed: 60f), new HomingBullet()), 
+                        /*SpawnCount*/ 4, /*SpawnTime*/ 33, /*Duration*/ 10, new FromTopEntry(100, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0),new ZigZagMovement(
+                            leftBound: 50,
+                            rightBound: 950,
+                            topBound: 100 + rng.Next(0,50),
+                            bottomBound: 300+ rng.Next(0,50),
+                            horizontalSpeed: 120f+ rng.Next(0,30),
+                            verticalSpeed: 60f+ rng.Next(0,20)), new StraightBullet(direction: new Vector2(0, 1), speed: 250f)), 
+                        /*SpawnCount*/ 4, /*SpawnTime*/ 35, /*Duration*/ 10, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
+                    
                     new WaveEvent(
-                        new FinalBossFactory(TextureHandler.FinalBoss, new Vector2(0, 0)), 
+                        new FinalBossFactory(
+                            TextureHandler.FinalBoss,
+                            new Vector2(0, 0),
+                            new FinalBossMovement(horizontalSpeed: 60f, verticalAmplitude: 40f, verticalFrequency: 1.5f), new HomingBullet()),
                         spawnCount: 1,
-                        spawnTime: 35,
-                        duration: 9999,
+                        spawnTime: 46,
+                        duration: 30,
                         new FromTopEntry(150, speed: 50f),
-                        new fromTopExit(targetY: -100, speed: 75f),
-                        shouldExpire: false 
+                        new fromTopExit(targetY: -500, speed: 75f)
                     )
                 },
-                waveDuration = 45
+                waveDuration = 80
             });
             currentWave = waveQueue.Peek();
         }
+
 
         /// <summary>
         /// Start the next wave in the queue
@@ -106,10 +151,7 @@ namespace CompileAndConquer.Content.WaveManager
             {
                 foreach (var waveEvent in currentWave.WaveEvents)
                 {
-                    if (waveEvent.ShouldExpire)
-                    {
-                        EndEvent(waveEvent);
-                    }
+                    EndEvent(waveEvent);
                 }
                 waveQueue.Dequeue();
 
@@ -134,8 +176,6 @@ namespace CompileAndConquer.Content.WaveManager
 
         public void EndEvent(WaveEvent currentEvent)
         {
-            if (!currentEvent.ShouldExpire)
-                return;
             foreach (var entity in currentEvent.EventEntities)
             {
                 if (entity.isAlive && !entity.IsExiting)
@@ -154,21 +194,21 @@ namespace CompileAndConquer.Content.WaveManager
             waveTimer += gameTime.ElapsedGameTime.TotalSeconds;
             List<WaveEvent> eventsToRemove = new();
 
+
             foreach (var curEvent in currentWave.WaveEvents)
             {
-                if (!curEvent.IsSpawned && waveTimer >= curEvent.spawnTime)
-                {
-                    StartEvent(curEvent);
-                    Console.WriteLine("Event Started");
-                }
-                
-                if (curEvent.ShouldExpire && curEvent.IsSpawned && (waveTimer - curEvent.spawnTime) >= curEvent.duration)
+                if (curEvent.IsSpawned && (waveTimer - curEvent.spawnTime) >= curEvent.duration)
                 {
                     EndEvent(curEvent);
                     eventsToRemove.Add(curEvent);
                     Console.WriteLine("Event Ended");
                 }
-
+                
+                if (!curEvent.IsSpawned && waveTimer >= curEvent.spawnTime)
+                {
+                    StartEvent(curEvent);
+                    Console.WriteLine("Event Started");
+                }
                 
                 foreach (var entity in curEvent.EventEntities)
                 {
@@ -184,10 +224,10 @@ namespace CompileAndConquer.Content.WaveManager
                         continue; // prevent movement and exit logic during entry
                     }
 
-                    if (curEvent.ShouldExpire && entity.IsExiting && curEvent.exitType != null)
+                    if (entity.IsExiting && curEvent.exitType != null)
                     {
                         curEvent.exitType.Exit(entity, gameTime);
-
+                        
                         if (entity.Position.Y < -entity.Size.Y || entity.Position.Y > CompileAndConquer.ScreenSize.Y)
                         {
                             EntityHandler.RemoveEntity(entity);
@@ -197,10 +237,7 @@ namespace CompileAndConquer.Content.WaveManager
                         continue;
                     }
 
-
-
                 }
-                
             }
 
             foreach (var eventToRemove in eventsToRemove)
@@ -218,21 +255,17 @@ namespace CompileAndConquer.Content.WaveManager
         private void SpawnEvent(WaveEvent currentEvent)
         {
             int totalEnemies = currentEvent.spawnCount;
-            float spacing = CompileAndConquer.ScreenSize.X / (totalEnemies + 1);
+            float defaultSpacing = CompileAndConquer.ScreenSize.X / (totalEnemies + 1);
+            float spacing = currentEvent.spacing ?? defaultSpacing;
+            float startX = currentEvent.startX ?? spacing;
 
             for (int i = 0; i < totalEnemies; i++)
             {
                 var enemy = currentEvent.Type.CreateEnemy();
 
-                // Assign new position after creation
-                enemy.Position = new Vector2(spacing * (i + 1), 0);
+                enemy.Position = new Vector2(startX + spacing * i, 0);
                 enemy.IsEntering = true;
-
-                // Only assign exit behavior if it should expire
-                if (currentEvent.ShouldExpire)
-                    enemy.ExitBehavior = currentEvent.exitType;
-                else
-                    enemy.ExitBehavior = null;
+                enemy.ExitBehavior = currentEvent.exitType;
 
                 EntityHandler.Add(enemy);
                 currentEvent.EventEntities.Add(enemy);
