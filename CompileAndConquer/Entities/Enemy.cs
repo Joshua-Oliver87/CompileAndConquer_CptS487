@@ -54,6 +54,17 @@ public abstract class Enemy : Entity
 
 	    movementStrategy?.Move(this, gameTime);
     }
+    
+    public override void OnCollide(Entity collision)
+    {
+	    if (collision is PlayerBullet)
+	    {
+		    this.health -= collision.Damage;
+		    
+		    if (this.health <= 0)
+			    this.isAlive = false;
+	    }
+    }
 
     
     public abstract void Attack();
