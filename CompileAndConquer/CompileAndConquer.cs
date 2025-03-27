@@ -30,7 +30,7 @@ public class CompileAndConquer : Game
     private readonly EndScreen endScreen = EndScreen.Instance;
     private readonly SideBarScreen sidebar= SideBarScreen.Instance;
 
-    int score = 0;
+    public static int score = 0;
 
     public static Vector2 ScreenSize;
 
@@ -83,8 +83,6 @@ public class CompileAndConquer : Game
         EntityHandler.Add(Player.Instance);
         Player.Instance.Position = new Vector2(ScreenSize.X / 2, ScreenSize.Y / 1.25f);
         SideBarScreen.Instance.Initialize(screenFont, GraphicsDevice, Player.Instance.Lives);
-
-        //SpawnTypeAEnemies();
     }
 
 
@@ -220,7 +218,7 @@ public class CompileAndConquer : Game
         }
         else
         {
-            this.UpdateScore(this.score);
+            this.UpdateScore(CompileAndConquer.score);
             SideBarScreen.Instance.Draw(_spriteBatch);
             EntityHandler.Draw(_spriteBatch);
         }
