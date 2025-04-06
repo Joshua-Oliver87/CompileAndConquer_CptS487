@@ -17,6 +17,9 @@ public abstract class Enemy : Entity
 	public IMovementStrategy BulletMovementStrategy { get; set; } = null;
 	
 	public IExit ExitBehavior { get; set; } 
+
+	protected virtual void HandleAttack(GameTime gameTime) { }
+
 	
 
     public Enemy(Texture2D texture, Vector2 position, float speed, float scalePercentage, IMovementStrategy movementStrategy)
@@ -35,6 +38,7 @@ public abstract class Enemy : Entity
         health = 1;
     }
     
+
     protected bool CanAttack()
     {
 	    return !IsExiting && !IsEntering;
@@ -60,6 +64,7 @@ public abstract class Enemy : Entity
 	    }
 
 	    movementStrategy?.Move(this, gameTime);
+		HandleAttack(gameTime);
     }
     
     public override void OnCollide(Entity collision)

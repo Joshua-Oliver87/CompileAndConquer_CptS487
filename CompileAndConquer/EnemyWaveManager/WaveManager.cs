@@ -9,6 +9,7 @@ using CompileAndConquer.Entitites.Enemy_Factories;
 using Microsoft.VisualBasic.FileIO;
 using Microsoft.Xna.Framework;
 using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
+using CompileAndConquer.Content.AttackPatterns;
 
 
 namespace CompileAndConquer.Content.WaveManager
@@ -76,10 +77,22 @@ namespace CompileAndConquer.Content.WaveManager
             {
                 WaveEvents = new List<WaveEvent>
                 {
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: true), new StraightBullet(direction: new Vector2(0, 1), speed: 250f)), 
-                        /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)){ startX = 100 },
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: false), new StraightBullet(direction: new Vector2(0, 1), speed: 250f)), 
-                        /*SpawnCount*/ 4, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
+                    new WaveEvent(
+    					new TypeAFactory(
+        					TextureHandler.TypeAEnemy,
+        					new Vector2(0, 0),
+        					new LinearMovement(startRight: true),
+        					new StraightBullet(direction: new Vector2(0, 1), speed: 250f),
+        					new RepeatingSpiralAttack()
+    					),
+    					spawnCount: 1,
+    					spawnTime: 1,
+    					duration: 30,
+    					new FromTopEntry(150, speed: 50f),
+    					new fromTopExit(targetY: -100, speed: 75f)
+					) { startX = 100 },
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: false), new StraightBullet(direction: new Vector2(0, 1), speed: 250f), new RepeatingSpiralAttack()), 
+                        /*SpawnCount*/ 1, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
                     //new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)),
                         ///*SpawnCount*/ 4, /*SpawnTime*/ 3, /*Duration*/ 30, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
                         new WaveEvent(
@@ -115,7 +128,7 @@ namespace CompileAndConquer.Content.WaveManager
                             topBound: 100 + rng.Next(0,50),
                             bottomBound: 300+ rng.Next(0,50),
                             horizontalSpeed: 120f+ rng.Next(0,30),
-                            verticalSpeed: 60f+ rng.Next(0,20)), new StraightBullet(direction: new Vector2(0, 1), speed: 250f)), 
+                            verticalSpeed: 60f+ rng.Next(0,20)), new StraightBullet(direction: new Vector2(0, 1), speed: 250f), null), 
                         /*SpawnCount*/ 4, /*SpawnTime*/ 35, /*Duration*/ 10, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
                     
                     new WaveEvent(
