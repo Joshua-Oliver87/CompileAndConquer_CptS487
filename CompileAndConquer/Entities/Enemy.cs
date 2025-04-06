@@ -19,6 +19,8 @@ public abstract class Enemy : Entity
 	public IExit ExitBehavior { get; set; } 
 
 	protected virtual void HandleAttack(GameTime gameTime) { }
+	public bool CanMove { get; set; } = true;
+
 
 	
 
@@ -62,8 +64,8 @@ public abstract class Enemy : Entity
 
 		    return;
 	    }
-
-	    movementStrategy?.Move(this, gameTime);
+		if (CanMove)
+	    	movementStrategy?.Move(this, gameTime);
 		HandleAttack(gameTime);
     }
     

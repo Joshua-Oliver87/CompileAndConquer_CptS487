@@ -8,42 +8,93 @@ namespace CompileAndConquer.Content.AttackPatterns
     public class RepeatingSpiralAttack : IAttackPattern
     {
         private double elapsedTime = 0;
-        private double spiralRate = 0.05; // time between shots
+        private double spiralRate = 0.05;
 
-        private float angle = 0f;
-        private float angleStep = 10f;
+        private int bulletIndex = 0;
+        private int bulletDirections = 16;
+        private float bulletAngleOffset;
 
-        private float baseBulletSpeed = 150f;
-        private float speedGrowth = 2f; // speed added per bullet
+        private float bulletCreationDistance = 20f;
+        private float spiralHeight = 0f;
+        private float spiralHeightStep = 4f;
 
-        private int bulletsFired = 0;
+        private float burstDuration = 1.6f;
+        private float pauseDuration = 1.4f;
+        private float cycleTimer = 0;
+        private bool inBurst = true;
 
-        public RepeatingSpiralAttack(float angleStep = 10f, float baseBulletSpeed = 150f, float spiralRate = 0.05f, float speedGrowth = 2f)
+        private float bulletSpeed = 60f; // much slower for tight spiral
+
+        public RepeatingSpiralAttack(
+            int bulletDirections = 16,
+            double spiralRate = 0.05,
+            float bulletCreationDistance = 20f,
+            float bulletSpeed = 60f,
+            float burstDuration = 1.6f,
+            float pauseDuration = 1.4f)
         {
-            this.angleStep = angleStep;
-            this.baseBulletSpeed = baseBulletSpeed;
+            this.bulletDirections = bulletDirections;
             this.spiralRate = spiralRate;
-            this.speedGrowth = speedGrowth;
+            this.bulletCreationDistance = bulletCreationDistance;
+            this.burstDuration = burstDuration;
+            this.pauseDuration = pauseDuration;
+            this.bulletSpeed = bulletSpeed;
+
+            this.bulletAngleOffset = 360f / bulletDirections;
         }
 
         public void Update(Enemy enemy, GameTime gameTime)
         {
-            if (enemy.BulletMovementStrategy == null) return;
+            double delta = gameTime.ElapsedGameTime.TotalSeconds;
+            cycleTimer += (float)delta;
+            elapsedTime += delta;
 
-            elapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
+            // ⛔️ Stop movement while attacking
+            enemy.CanMove = !inBurst;
+
+            if (!inBurst)
+            {
+                if (cycleTimer >= pauseDuration)
+                {
+                    inBurst = true;
+                    cycleTimer = 0;
+                }
+                return;
+            }
+
+            if (inBurst && cycleTimer >= burstDuration)
+            {
+                inBurst = false;
+                cycleTimer = 0;
+                spiralHeight = 0f;
+                bulletIndex = 0;
+                return;
+            }
 
             if (elapsedTime >= spiralRate)
             {
-                float currentAngle = MathHelper.ToRadians(angle);
-                Vector2 dir = new Vector2((float)Math.Cos(currentAngle), (float)Math.Sin(currentAngle));
+                float angleDeg = bulletIndex * bulletAngleOffset;
+                float angleRad = MathHelper.ToRadians(angleDeg);
 
-                float spiralBulletSpeed = baseBulletSpeed + (bulletsFired * speedGrowth);
+                Vector2 offset = new Vector2(
+                    (float)Math.Cos(angleRad),
+                    (float)Math.Sin(angleRad)
+                ) * bulletCreationDistance;
 
-                var bullet = new EnemyBullet(enemy.Position, new StraightBullet(dir, spiralBulletSpeed));
-                EntityHandler.Add(bullet);
+                Vector2 basePosition = new Vector2(
+                    enemy.Position.X,
+                    enemy.Position.Y + enemy.Size.Y / 2f + spiralHeight
+                );
 
-                bulletsFired++;
-                angle += angleStep;
+                EntityHandler.Add(new EnemyBullet(basePosition + offset, new StraightBullet(new Vector2(0, 1), bulletSpeed)));
+
+                bulletIndex++;
+                if (bulletIndex >= bulletDirections)
+                {
+                    bulletIndex = 0;
+                    spiralHeight += spiralHeightStep;
+                }
+
                 elapsedTime = 0;
             }
         }
