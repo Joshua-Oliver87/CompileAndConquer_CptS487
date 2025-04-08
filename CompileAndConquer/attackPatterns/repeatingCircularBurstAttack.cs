@@ -13,6 +13,7 @@ namespace CompileAndConquer.Content.AttackPatterns
         private int bulletIndex = 0;
         private int bulletDirections = 16;
         private float bulletAngleOffset;
+        private float dummy = 0f;
 
         private float bulletCreationDistance = 20f;
         private float spiralHeight = 0f;
