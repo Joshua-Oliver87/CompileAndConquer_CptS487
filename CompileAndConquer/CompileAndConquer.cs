@@ -60,7 +60,7 @@ public class CompileAndConquer : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        TextureHandler.Load(Content);
+        TextureHandler.Load(Content, GraphicsDevice);
 
         Player.Instance.OnLoseLife = LoseLife;
         Player.Instance.OnDeath = Death;

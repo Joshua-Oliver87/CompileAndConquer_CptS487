@@ -2,102 +2,64 @@ using Microsoft.Xna.Framework;
 using System;
 using CompileAndConquer.Content.Interfaces;
 using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
+using CompileAndConquer.Entities.BulletSpawners;
 
 namespace CompileAndConquer.Content.AttackPatterns
 {
     public class RepeatingSpiralAttack : IAttackPattern
-    {
-        private double elapsedTime = 0;
-        private double spiralRate = 0.05;
+	{
+    	private float burstDuration = 1.6f;
+    	private float pauseDuration = 1.4f;
+    	private float cycleTimer = 0f;
+    	private bool inBurst = false;
 
-        private int bulletIndex = 0;
-        private int bulletDirections = 16;
-        private float bulletAngleOffset;
-        private float dummy = 1f;
+    	private bool spawnersCreated = false;
 
-        private float bulletCreationDistance = 20f;
-        private float spiralHeight = 0f;
-        private float spiralHeightStep = 4f;
+    	public void Update(Enemy enemy, GameTime gameTime)
+    	{
+        	float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        	cycleTimer += delta;
 
-        private float burstDuration = 1.6f;
-        private float pauseDuration = 1.4f;
-        private float cycleTimer = 0;
-        private bool inBurst = true;
+        	// Disable movement while attacking
+        	enemy.CanMove = !inBurst;
 
-        private float bulletSpeed = 60f; // much slower for tight spiral
+        	if (!inBurst)
+        	{
+            	if (cycleTimer >= pauseDuration)
+            	{
+                	inBurst = true;
+                	cycleTimer = 0f;
+                	spawnersCreated = false;
+            	}
+            	return;
+        	}
 
-        public RepeatingSpiralAttack(
-            int bulletDirections = 16,
-            double spiralRate = 0.05,
-            float bulletCreationDistance = 20f,
-            float bulletSpeed = 60f,
-            float burstDuration = 1.6f,
-            float pauseDuration = 1.4f)
-        {
-            this.bulletDirections = bulletDirections;
-            this.spiralRate = spiralRate;
-            this.bulletCreationDistance = bulletCreationDistance;
-            this.burstDuration = burstDuration;
-            this.pauseDuration = pauseDuration;
-            this.bulletSpeed = bulletSpeed;
+        	if (inBurst && cycleTimer >= burstDuration)
+        	{
+            	inBurst = false;
+            	cycleTimer = 0f;
+            	return;
+        	}
 
-            this.bulletAngleOffset = 360f / bulletDirections;
-        }
+        	if (inBurst && !spawnersCreated)
+        	{
+            	Vector2 basePos = new Vector2(
+                	enemy.Position.X,
+                	enemy.Position.Y + enemy.Size.Y / 2f
+            	);
 
-        public void Update(Enemy enemy, GameTime gameTime)
-        {
-            double delta = gameTime.ElapsedGameTime.TotalSeconds;
-            cycleTimer += (float)delta;
-            elapsedTime += delta;
+            	// Offset left and right to form dual spirals
+            	float offsetX = 20f;
 
-            // ⛔️ Stop movement while attacking
-            enemy.CanMove = !inBurst;
+            	var leftFactory = new SpiralBulletSpawnerFactory(basePos + new Vector2(-offsetX, 0));
+				EntityHandler.Add(leftFactory.Create());
 
-            if (!inBurst)
-            {
-                if (cycleTimer >= pauseDuration)
-                {
-                    inBurst = true;
-                    cycleTimer = 0;
-                }
-                return;
-            }
+				var rightFactory = new SpiralBulletSpawnerFactory(basePos + new Vector2(offsetX, 0));
+				EntityHandler.Add(rightFactory.Create());
 
-            if (inBurst && cycleTimer >= burstDuration)
-            {
-                inBurst = false;
-                cycleTimer = 0;
-                spiralHeight = 0f;
-                bulletIndex = 0;
-                return;
-            }
 
-            if (elapsedTime >= spiralRate)
-            {
-                float angleDeg = bulletIndex * bulletAngleOffset;
-                float angleRad = MathHelper.ToRadians(angleDeg);
-
-                Vector2 offset = new Vector2(
-                    (float)Math.Cos(angleRad),
-                    (float)Math.Sin(angleRad)
-                ) * bulletCreationDistance;
-
-                Vector2 basePosition = new Vector2(
-                    enemy.Position.X,
-                    enemy.Position.Y + enemy.Size.Y / 2f + spiralHeight
-                );
-
-                EntityHandler.Add(new EnemyBullet(basePosition + offset, new StraightBullet(new Vector2(0, 1), bulletSpeed)));
-
-                bulletIndex++;
-                if (bulletIndex >= bulletDirections)
-                {
-                    bulletIndex = 0;
-                    spiralHeight += spiralHeightStep;
-                }
-
-                elapsedTime = 0;
-            }
-        }
-    }
+            	spawnersCreated = true;
+        	}
+    	}
+	}
 }

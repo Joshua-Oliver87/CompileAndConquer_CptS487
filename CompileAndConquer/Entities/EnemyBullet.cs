@@ -6,8 +6,6 @@ namespace CompileAndConquer.Content
     {
         private IMovementStrategy movementStrategy;
         
-        private float lifeTimer = 0f;
-        private float maxLifetime = 3f;
 
         public EnemyBullet(Vector2 position, IMovementStrategy strategy)
         {
@@ -21,13 +19,6 @@ namespace CompileAndConquer.Content
 
         public override void Update(GameTime gameTime)
         {
-            lifeTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (lifeTimer >= maxLifetime)
-            {
-                this.isAlive = false;
-                return;
-            }
             movementStrategy?.Move(this, gameTime);
             
         }
