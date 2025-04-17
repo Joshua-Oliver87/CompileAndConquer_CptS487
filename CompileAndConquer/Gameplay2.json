@@ -58,37 +58,37 @@
   },
 
   "MovementPatterns": [
-    {"OnScreen": 
-      [
-        { "TypeA": "PatternA" },
-        { "TypeB": "PatternB" },
-        { "MidBoss": "PatternC" },
-        {
-          "FinalBoss": [
-            { "Phase1": "ZigZag" },
-            { "Phase2": "CrossScreen" },
-            { "Phase3": "Spiral" }
-          ]
-        }
-      ]
+    {"OnScreen":
+    [
+      { "TypeA": "PatternA" },
+      { "TypeB": "PatternB" },
+      { "MidBoss": "PatternC" },
+      {
+        "FinalBoss": [
+          { "Phase1": "ZigZag" },
+          { "Phase2": "CrossScreen" },
+          { "Phase3": "Spiral" }
+        ]
+      }
+    ]
     },
     {"Entry":
-      [
-        "EnterTop",
-        "EnterBottom",
-        "EnterLeft",
-        "EnterRight",
-        "EnterImmediate"
-      ]
+    [
+      "EnterTop",
+      "EnterBottom",
+      "EnterLeft",
+      "EnterRight",
+      "EnterImmediate"
+    ]
     },
     {"Exit":
-      [
-        "ExitTop",
-        "ExitBottom",
-        "ExitLeft",
-        "ExitRight",
-        "ExitImmediate"
-      ]
+    [
+      "ExitTop",
+      "ExitBottom",
+      "ExitLeft",
+      "ExitRight",
+      "ExitImmediate"
+    ]
     }
   ],
 
@@ -109,7 +109,7 @@
       ]}
   ],
 
-  "Waves": 
+  "Waves":
   [
     { "Wave1": [
       {
@@ -125,16 +125,13 @@
           { "Entry": "EnterTop" },
           { "Exit": "ExitTop" }
         ]
-      },
+      }
 
-        ],
-        "miniBoss",
-        "EnemyB"] },
-
+    ] },
     { "Wave2": ["enemyA", "enemyB", "miniboss"] },
     { "Wave3": ["enemyB", "enemyB", "miniBoss"] },
     { "Wave4": ["FinalBoss"] }
-  ]
+  ],
 
   "Scoring": {
     "HitEnemy": 500,
