@@ -73,6 +73,9 @@ namespace CompileAndConquer.Content.WaveManager
         public void LoadWaves()
         {
             Random rng = new Random();
+			var screenW = CompileAndConquer.ScreenSize.X;
+			var columns = 4;
+			var gap = screenW / (columns + 1);	// divide screen into columns to split enemy spawning
             waveQueue.Enqueue(new Wave
             {
                 WaveEvents = new List<WaveEvent>
@@ -81,17 +84,31 @@ namespace CompileAndConquer.Content.WaveManager
     					new TypeAFactory(
         					TextureHandler.TypeAEnemy,
         					new Vector2(0, 0),
-        					new LinearMovement(startRight: true),
+        					() => new LinearMovement(startRight: false),
         					new StraightBullet(direction: new Vector2(0, 1), speed: 250f),
-        					new RepeatingSpiralAttack()
+        					new TimedStraightAttack(0.5f, 250f)
     					),
-    					spawnCount: 1,
+    					spawnCount: columns,
     					spawnTime: 1,
-    					duration: 30,
-    					new FromTopEntry(150, speed: 50f),
-    					new fromTopExit(targetY: -100, speed: 75f)
-					) { startX = 100 },
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), new LinearMovement(startRight: false), new StraightBullet(direction: new Vector2(0, 1), speed: 250f), new RepeatingSpiralAttack()), 
+    					duration: 15,
+    					new SwoopEntry(target:new Vector2(50,180), duration:2.8f, amplitude:150f),
+    					new SwoopExit(target:new Vector2(10,-100), duration:1.0f, amplitude:200f)
+					) { startX = gap, spacing = gap },
+					new WaveEvent(
+    					new TypeAFactory(
+        					TextureHandler.TypeAEnemy,
+        					new Vector2(0, 0),
+        					() => new LinearMovement(startRight: true),
+        					new StraightBullet(direction: new Vector2(0, 1), speed: 250f),
+        					new TimedStraightAttack(0.5f, 250f)
+    					),
+    					spawnCount: columns,
+    					spawnTime: 1,
+    					duration: 15,
+    					new SwoopEntry(target:new Vector2(50,180), duration:2.8f, amplitude:150f),
+    					new SwoopExit(target:new Vector2(10,-100), duration:1.0f, amplitude:200f)
+					) { startX = screenW - gap*columns, spacing = gap },
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), () => new LinearMovement(startRight: false), new StraightBullet(direction: new Vector2(0, 1), speed: 250f), new RepeatingSpiralAttack()), 
                         /*SpawnCount*/ 1, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
                     //new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)),
                         ///*SpawnCount*/ 4, /*SpawnTime*/ 3, /*Duration*/ 30, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
@@ -122,7 +139,7 @@ namespace CompileAndConquer.Content.WaveManager
                         horizontalSpeed: 120f,
                         verticalSpeed: 60f), new HomingBullet()), 
                         /*SpawnCount*/ 4, /*SpawnTime*/ 33, /*Duration*/ 10, new FromTopEntry(100, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0),new ZigZagMovement(
+                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0),() => new ZigZagMovement(
                             leftBound: 50,
                             rightBound: 950,
                             topBound: 100 + rng.Next(0,50),
