@@ -69,9 +69,12 @@ public abstract class Enemy : Entity
 		    this.health -= collision.Damage;
 
 		    CompileAndConquer.score += 1;
-		    
+
 		    if (this.health <= 0)
+		    {
 			    this.isAlive = false;
+			    EntityHandler.Add(new PowerUp(this.Position));
+		    }
 	    }
     }
 

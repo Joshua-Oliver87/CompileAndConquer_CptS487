@@ -13,6 +13,7 @@ public class TextureHandler
 	public static Texture2D MiniBoss { get; set; }
 	public static Texture2D FinalBoss { get; set; }
     public static Texture2D SideBarStar {get;set;}
+    public static Texture2D PowerUp { get; set; }
 
     public static void Load(ContentManager content)
     {
@@ -23,5 +24,6 @@ public class TextureHandler
 		MiniBoss = content.Load<Texture2D>("miniboss");
 		FinalBoss = content.Load<Texture2D>("finalboss");
         SideBarStar = content.Load<Texture2D>("star");
+        PowerUp = content.Load<Texture2D>("p-coin");
     }
 }

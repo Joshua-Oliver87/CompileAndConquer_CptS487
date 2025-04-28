@@ -18,11 +18,16 @@ public class Player : Entity
     public bool Invincible = false;
     private int invincibleTimer = 0;
     private int invincibleDuration = 3;
+    
+    private bool powerupActive = false;
+    private double powerupTimer = 0;
+    private double powerupDuration = 5;
+    private int baseDamage = 10;
 
     private Stopwatch startTime;
     private Stopwatch invincibilityTimer = new Stopwatch();
     
-    private int damage = 10;
+    private int damage => powerupActive ? baseDamage * 2 : baseDamage;
     
     // Copied
     private static Player instance;
@@ -95,11 +100,25 @@ public class Player : Entity
     public void Fire()
     {
         // Fire Controls
-        if (bulletCooldown == 0)
+        if (!powerupActive)
         {
-            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f), damage));
-            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f), damage));
-            bulletCooldown = maxBulletCooldown;
+            if (bulletCooldown == 0)
+            {
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f), damage));
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f), damage));
+                bulletCooldown = maxBulletCooldown;
+            }
+        }
+        else
+        {
+            if (bulletCooldown == 0)
+            {
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f), damage));
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f), damage));
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(44, -18), new Vector2(0, -10.0f), damage));
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-44, -18), new Vector2(0, -10.0f), damage));
+                bulletCooldown = maxBulletCooldown;
+            }
         }
     }
 
@@ -122,6 +141,16 @@ public class Player : Entity
         // Iterate bulletCooldown down
         if (bulletCooldown > 0)
             bulletCooldown--;
+        
+        // powerup active
+        if (powerupActive)
+        {
+            powerupTimer += gameTime.ElapsedGameTime.TotalSeconds;
+            if (powerupTimer >= powerupDuration)
+            {
+                powerupActive = false;
+            }
+        }
     }
 
     public void LoseLife()
@@ -172,4 +201,10 @@ public class Player : Entity
     }
 
     public double GetSurvivalTime() => startTime.Elapsed.TotalSeconds;
+
+    public void ActivatePowerup()
+    {
+        powerupActive = true;
+        powerupTimer = 0.0;
+    }
 }
