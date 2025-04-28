@@ -2,28 +2,31 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using CompileAndConquer.Entities.Enemy_Subtypes;
 using CompileAndConquer.Content;
+using CompileAndConquer.Content.Interfaces;
+using System.Collections.Generic;
 
-namespace CompileAndConquer.Entitites.Enemy_Factories
+
+
+namespace CompileAndConquer.Entities.Enemy_Factories
 {
     public class FinalBossFactory : IEnemyFactory
     {
         public Texture2D texture;
         public Vector2 position;
-        
-        public IMovementStrategy movement;
-        public IMovementStrategy bulletMovement;
+        public List<BossPhase> phases;
+        public IAttackPattern attack;
 
-        public FinalBossFactory(Texture2D newTexture, Vector2 newPosition, IMovementStrategy newMovement, IMovementStrategy bulletMovement)
+        public FinalBossFactory(Texture2D texture, Vector2 position, List<BossPhase> phases, IAttackPattern attack)
         {
-            texture = newTexture;
-            position = newPosition;
-            movement = newMovement;
-            this.bulletMovement = bulletMovement;
+            this.texture = texture;
+            this.position = position;
+            this.phases = phases;
+            this.attack = attack;
         }
 
         public Enemy CreateEnemy()
         {
-            return new FinalBoss(texture, position, movement, bulletMovement);
+            return new FinalBoss(texture, position, phases, attack);
         }
     }
 }

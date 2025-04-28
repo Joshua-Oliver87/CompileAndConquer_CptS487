@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using CompileAndConquer.Content.EnemyWaveManager.entryPatterns;
+using CompileAndConquer.Content.EnemyWaveManager.exitPatterns;
 
 namespace CompileAndConquer.Content;
 
@@ -15,6 +17,7 @@ public abstract class Entity
     public bool IsEntering { get; set; } = true;
     
     public bool IsExiting = false;
+    
 
 
     // Position/Movement

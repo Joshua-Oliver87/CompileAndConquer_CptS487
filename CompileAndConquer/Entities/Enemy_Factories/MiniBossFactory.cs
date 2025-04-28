@@ -1,30 +1,37 @@
-﻿using Microsoft.Xna.Framework;
+﻿// Entities/Enemy_Factories/MiniBossFactory.cs
+using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using CompileAndConquer.Content.Interfaces;
 using CompileAndConquer.Entities.Enemy_Subtypes;
-using CompileAndConquer.Entities;
 using CompileAndConquer.Content;
 
-namespace CompileAndConquer.Entitites.Enemy_Factories
+namespace CompileAndConquer.Entities.Enemy_Factories
 {
     public class MiniBossFactory : IEnemyFactory
     {
         private readonly Texture2D texture;
         private readonly Vector2 position;
-        
-        public IMovementStrategy movement;
-        public IMovementStrategy bulletMovement;
+        private readonly Func<IMovementStrategy> _movementFactory;
+        private readonly Func<IAttackPattern>  _attackFactory;
 
-        public MiniBossFactory(Texture2D newTexture, Vector2 newPosition, IMovementStrategy newMovement, IMovementStrategy bulletMovement)
+        public MiniBossFactory(
+            Texture2D texture,
+            Vector2 position,
+            Func<IMovementStrategy> movementFactory,
+            Func<IAttackPattern>   attackFactory         = null)
         {
-            texture = newTexture;
-            position = newPosition;
-            movement = newMovement;
-            this.bulletMovement = bulletMovement;
+            this.texture                 = texture;
+            this.position                = position;
+            this._movementFactory        = movementFactory;
+            this._attackFactory          = attackFactory;
         }
 
         public Enemy CreateEnemy()
         {
-            return new MiniBoss(texture, position, movement, bulletMovement);
+            var move    = _movementFactory();
+            var attack  = _attackFactory?.Invoke();
+            return new MiniBoss(texture, position, move, attack);
         }
     }
 }

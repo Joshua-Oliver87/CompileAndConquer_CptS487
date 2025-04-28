@@ -21,6 +21,7 @@ namespace CompileAndConquer.Entities.BulletSpawners
         private int   shotsFired;
         private float angleOffset;
         private Vector2 origin;
+		private Color color = Color.Red;
 
         public ThreeWaySpiralSpawner(Vector2 position)
         {
@@ -61,7 +62,7 @@ namespace CompileAndConquer.Entities.BulletSpawners
             // --- 1) bullet toward player ---
             Vector2 toPlayer = Player.Instance.Position - spawnPos;
             if (toPlayer != Vector2.Zero) toPlayer.Normalize();
-            EntityHandler.Add(new EnemyBullet(spawnPos, new StraightBullet(toPlayer, BulletSpeed)));
+            EntityHandler.Add(new EnemyBullet(spawnPos, new StraightBullet(toPlayer, BulletSpeed), color));
 
             // --- 2) two side streams at ±120° ---
             for (int i = 1; i < 3; i++)
@@ -69,7 +70,7 @@ namespace CompileAndConquer.Entities.BulletSpawners
                 float ang = angleOffset + 120f * i;
                 float r2  = MathHelper.ToRadians(ang);
                 Vector2 dir = new Vector2((float)System.Math.Cos(r2), (float)System.Math.Sin(r2));
-                EntityHandler.Add(new EnemyBullet(spawnPos, new StraightBullet(dir, BulletSpeed)));
+                EntityHandler.Add(new EnemyBullet(spawnPos, new StraightBullet(dir, BulletSpeed), color));
             }
 
             // advance spiral

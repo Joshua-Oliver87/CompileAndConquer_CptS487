@@ -5,11 +5,15 @@ using System.Runtime.CompilerServices;
 using CompileAndConquer.Content.EnemyWaveManager.entryPatterns;
 using CompileAndConquer.Content.EnemyWaveManager.exitPatterns;
 using CompileAndConquer.Entities.Enemy_Subtypes;
-using CompileAndConquer.Entitites.Enemy_Factories;
+using CompileAndConquer.Entities.Enemy_Factories;
 using Microsoft.VisualBasic.FileIO;
 using Microsoft.Xna.Framework;
 using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
 using CompileAndConquer.Content.AttackPatterns;
+using CompileAndConquer.SpawnPatterns;
+using CompileAndConquer.Content.EnemyWaveManager;
+
+
 
 
 namespace CompileAndConquer.Content.WaveManager
@@ -21,18 +25,52 @@ namespace CompileAndConquer.Content.WaveManager
 
 
         private Wave currentWave;
-        private double waveTimer = 0;
+       // private double waveTimer = 0;
 
         public class Wave
         {
-            public List<WaveEvent> WaveEvents;
-            //public double TriggerTime;
-            public int waveDuration;
-
+            // Each step is a group of events that spawn together
+            public List<List<WaveEvent>> Steps { get; set; }
+            public int CurrentStep { get; set; }
+        
             public Wave()
             {
-                WaveEvents = new List<WaveEvent>();
+                Steps = new List<List<WaveEvent>>();
+                CurrentStep = 0;
             }
+        }
+
+		private readonly List<BossPhase> bossPhases = new List<BossPhase>
+        {
+            new BossPhase {
+                Movement = new FinalBossMovement(),
+                Attack = new AlternatingAttackPattern(
+                    pauseBetweenAttacks: 15f,
+                    new RepeatingSpiralAttack(),
+                    new ConcentricCircleAttack()
+                ),
+                HpThreshold = 2000
+            },
+            new BossPhase {
+                Movement = new ZigZagMovement(leftBound:   0f, rightBound:  CompileAndConquer.ScreenSize.X, topBound:    100f, bottomBound: CompileAndConquer.ScreenSize.Y - 100f, horizontalSpeed: 150f, verticalSpeed:   75f),
+                Attack = new AlternatingAttackPattern(
+                    pauseBetweenAttacks: 5f,
+                    new RepeatingSpiralAttack(),
+                    //new RepeatingSpiralAttack()
+                    new ArcAttackPattern(dir => new StraightBullet(dir, 200f), 1f)
+                ),
+                HpThreshold = 800
+            }
+        };
+
+
+		public enum WaveEventState
+        {
+            NotStarted,
+            Entering,
+            Active,
+            Exiting,
+            Complete
         }
 
         /// <summary>
@@ -40,30 +78,44 @@ namespace CompileAndConquer.Content.WaveManager
         /// </summary>
         public class WaveEvent
         {
-            public WaveEvent(IEnemyFactory spawnType, int spawnCount, double spawnTime, int duration, IEntry entryType, IExit exitType)
+            public IEnemyFactory Type { get; }
+            public int spawnCount { get; }
+            public double spawnTime { get; }
+            public int duration { get; }
+            public ISpawnPattern SpawnPattern { get; set; }
+            public float? startX { get; set; }
+            public float? spacing { get; set; }
+            public bool IsSpawned { get; set; }
+            public List<Entity> EventEntities { get; }
+
+			public WaveEventState State { get; set; }
+            public double StateTimer { get; set; }
+
+            private readonly Func<Vector2,IEntry> _entryFactory;
+            private readonly Func<IExit>  _exitFactory;
+
+            public WaveEvent(
+                IEnemyFactory spawnType,
+                int spawnCount,
+                int duration,
+                Func<Vector2,IEntry> entryFactory,
+                Func<IExit> exitFactory
+            )
             {
-                Type = spawnType;
-                this.spawnTime = spawnTime;
-                this.duration = duration;
+                Type           = spawnType;
                 this.spawnCount = spawnCount;
-                this.entryType = entryType;
-                this.exitType = exitType;
-                IsSpawned = false;
-                EventEntities = new List<Entity>();
+                this.duration   = duration;
+                _entryFactory  = entryFactory;
+                _exitFactory   = exitFactory;
+                SpawnPattern   = null;
+                IsSpawned      = false;
+                EventEntities  = new List<Entity>();
+				State = WaveEventState.NotStarted;
+                StateTimer = 0;
             }
-            
-            public float? startX = null; // Optional override
-            public float? spacing = null;
 
-
-            public double spawnTime;
-            public int duration;
-            public int spawnCount;
-            public IEnemyFactory Type;
-            public IEntry entryType;
-            public IExit exitType;
-            public bool IsSpawned;
-            public List<Entity> EventEntities;
+            public IEntry CreateEntry(Vector2 finalPos) => _entryFactory(finalPos);
+            public IExit  CreateExit()  => _exitFactory();
         }
 
 
@@ -72,99 +124,402 @@ namespace CompileAndConquer.Content.WaveManager
         /// </summary>
         public void LoadWaves()
         {
-            Random rng = new Random();
-			var screenW = CompileAndConquer.ScreenSize.X;
-			var columns = 4;
-			var gap = screenW / (columns + 1);	// divide screen into columns to split enemy spawning
+            waveQueue.Clear();
+            var screenW = CompileAndConquer.ScreenSize.X;
+        
             waveQueue.Enqueue(new Wave
             {
-                WaveEvents = new List<WaveEvent>
+                Steps = new List<List<WaveEvent>>
                 {
-                    new WaveEvent(
-    					new TypeAFactory(
-        					TextureHandler.TypeAEnemy,
-        					new Vector2(0, 0),
-        					() => new LinearMovement(startRight: false),
-        					new StraightBullet(direction: new Vector2(0, 1), speed: 250f),
-        					new TimedStraightAttack(0.5f, 250f)
-    					),
-    					spawnCount: columns,
-    					spawnTime: 1,
-    					duration: 15,
-    					new SwoopEntry(target:new Vector2(50,180), duration:2.8f, amplitude:150f),
-    					new SwoopExit(target:new Vector2(10,-100), duration:1.0f, amplitude:200f)
-					) { startX = gap, spacing = gap },
-					new WaveEvent(
-    					new TypeAFactory(
-        					TextureHandler.TypeAEnemy,
-        					new Vector2(0, 0),
-        					() => new LinearMovement(startRight: true),
-        					new StraightBullet(direction: new Vector2(0, 1), speed: 250f),
-        					new TimedStraightAttack(0.5f, 250f)
-    					),
-    					spawnCount: columns,
-    					spawnTime: 1,
-    					duration: 15,
-    					new SwoopEntry(target:new Vector2(50,180), duration:2.8f, amplitude:150f),
-    					new SwoopExit(target:new Vector2(10,-100), duration:1.0f, amplitude:200f)
-					) { startX = screenW - gap*columns, spacing = gap },
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0), () => new LinearMovement(startRight: false), new StraightBullet(direction: new Vector2(0, 1), speed: 250f), new RepeatingSpiralAttack()), 
-                        /*SpawnCount*/ 1, /*SpawnTime*/ 1, /*Duration*/ 30, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
-                    //new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0)),
-                        ///*SpawnCount*/ 4, /*SpawnTime*/ 3, /*Duration*/ 30, new FromTopEntry(150), new fromTopExit(targetY: -100, speed: 75f)),
+                    // STEP 1: 4 grunts move left-to-right
+/*
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                new Vector2(0,0),
+                                () => new LinearMovement(startRight: true),
+                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                            ),
+                            spawnCount: 4,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) }
+                    },
+        
+                    // STEP 2: 4 grunts move right-to-left
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                new Vector2(0,0),
+                                () => new LinearMovement(startRight: false),
+                                () => new TimedStraightAttack(dir => new StraightBullet(dir, 250f), 0.5f)
+                            ),
+                            spawnCount: 4,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:150f) }
+                    },
+        
+                    // STEP 3: 4 grunts move left-to-right
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                new Vector2(0,0),
+                                () => new LinearMovement(startRight: true),
+                                () => new TimedStraightAttack(dir => new StraightBullet(dir, 250f), 0.5f)
+                            ),
+                            spawnCount: 4,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) }
+                    },
+        
+                    // STEP 4: 4 grunts move right-to-left
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                new Vector2(0,0),
+                                () => new LinearMovement(startRight: false),
+                                () => new TimedStraightAttack(dir => new StraightBullet(dir, 250f), 0.5f)
+                            ),
+                            spawnCount: 4,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:150f) }
+                    },
+        
+                    // STEP 5: First fairy miniboss
+                    new List<WaveEvent>
+                    {
                         new WaveEvent(
                             new MiniBossFactory(
                                 TextureHandler.MiniBoss,
                                 new Vector2(0,0),
-                                new CurvedMovement(
+                                () => new CurvedMovement(
                                     horizontalAmplitude: 200f,
                                     verticalAmplitude: 50f,
                                     horizontalFrequency: 0.7f,
                                     verticalFrequency: 1.3f
                                 ),
-                                new HomingBullet()
-                            ), 
-                            /*SpawnCount*/ 1,
-                            /*SpawnTime*/ 23,
-                            /*Duration*/ 10,
-                            new FromTopEntry(150),
-                            new fromTopExit(targetY: -500, speed: 75f)
-                        ),
+                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                            ),
+                            spawnCount: 1,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) }
+                    },
+        
+                    // STEP 6: Second fairy miniboss
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new MiniBossFactory(
+                                TextureHandler.MiniBoss,
+                                new Vector2(0,0),
+                                () => new CurvedMovement(
+                                    horizontalAmplitude: 200f,
+                                    verticalAmplitude: 50f,
+                                    horizontalFrequency: 0.7f,
+                                    verticalFrequency: 1.3f
+                                ),
+                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                            ),
+                            spawnCount: 1,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) }
+                    },
+        
+                    // STEP 7: 2 lines of grunts in parallel (horizontal lines)
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                new Vector2(0,0),
+                                () => new StationaryMovement(),
+                                () => new CircleAttack(24,30f, dir => new StraightBullet(dir, 200f))
+                            ),
+                            spawnCount: 4,
+                            duration: 2,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:230f) },
+        
+                        new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                new Vector2(0,0),
+                                () => new StationaryMovement(),
+                                () => new CircleAttack(24,30f, dir => new StraightBullet(dir, 200f))
+                            ),
+                            spawnCount: 4,
+                            duration: 2,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:180f) }
+                    },
+        
+                    // STEP 8: Midboss attack phase (alternating arc & circle)
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new MiniBossFactory(
+                                TextureHandler.MiniBoss,
+                                new Vector2(0,0),
+                                () => new miniBossMovement(),
+                                () => new AlternatingAttackPattern(
+                                    switchInterval: 2f,
+                                    new ArcAttackPattern(dir => new StraightBullet(dir, 200f), 1f),
+                                    new ConcentricCircleAttack(cooldown: 1.2f)
+                                )
+                            ),
+                            spawnCount: 1,
+                            duration: 25,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) }
+                    },
 
-                    new WaveEvent(new TypeBFactory(TextureHandler.TypeBEnemy, new Vector2(0,0), new ZigZagMovement(
-                        leftBound: 50,
-                        rightBound: 950,
-                        topBound: 100,
-                        bottomBound: 300,
-                        horizontalSpeed: 120f,
-                        verticalSpeed: 60f), new HomingBullet()), 
-                        /*SpawnCount*/ 4, /*SpawnTime*/ 33, /*Duration*/ 10, new FromTopEntry(100, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
-                    new WaveEvent(new TypeAFactory(TextureHandler.TypeAEnemy, new Vector2(0,0),() => new ZigZagMovement(
-                            leftBound: 50,
-                            rightBound: 950,
-                            topBound: 100 + rng.Next(0,50),
-                            bottomBound: 300+ rng.Next(0,50),
-                            horizontalSpeed: 120f+ rng.Next(0,30),
-                            verticalSpeed: 60f+ rng.Next(0,20)), new StraightBullet(direction: new Vector2(0, 1), speed: 250f), null), 
-                        /*SpawnCount*/ 4, /*SpawnTime*/ 35, /*Duration*/ 10, new FromTopEntry(150, speed: 50f), new fromTopExit(targetY: -100, speed: 75f)),
-                    
-                    new WaveEvent(
-                        new FinalBossFactory(
-                            TextureHandler.FinalBoss,
-                            new Vector2(0, 0),
-                            new FinalBossMovement(horizontalSpeed: 60f, verticalAmplitude: 40f, verticalFrequency: 1.5f), new HomingBullet()),
-                        spawnCount: 1,
-                        spawnTime: 46,
-                        duration: 30,
-                        new FromTopEntry(150, speed: 50f),
-                        new fromTopExit(targetY: -500, speed: 75f)
-                    )
-                },
-                waveDuration = 80
+
+        
+					// SECOND WAVE AFTER MINIBOSS
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new MiniBossFactory(
+                                TextureHandler.MiniBoss,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: false),
+                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                            ),
+                            spawnCount: 1,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Left, new Vector2(CompileAndConquer.ScreenSize.X+50,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) },
+            
+                        new WaveEvent(
+                            new MiniBossFactory(
+                                TextureHandler.MiniBoss,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: true),
+                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                            ),
+                            spawnCount: 1,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) },
+						new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: true),
+                                () => new noAttack()
+                            ),
+                            spawnCount: 5,
+                            duration: 4,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Left, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:100) },
+						new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: false),
+                                () => new noAttack()
+                            ),
+                            spawnCount: 5,
+                            duration: 4,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(CompileAndConquer.ScreenSize.X+50,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:150) }
+                    },
+            
+            
+                    // STEP: Two horizontal lines (both at once, parallel)
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                Vector2.Zero,
+                                () => new StationaryMovement(),
+                                () => new CircleAttack(24,30f, dir => new StraightBullet(dir, 200f))
+                            ),
+                            spawnCount: 4,
+                            duration: 2,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new FromTopExit(targetY: -100, speed: 100f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) },
+            
+                        new WaveEvent(
+                            new TypeAFactory(
+                                TextureHandler.TypeAEnemy,
+                                Vector2.Zero,
+                                () => new StationaryMovement(),
+                                () => new CircleAttack(24,30f, dir => new StraightBullet(dir, 200f))
+                            ),
+                            spawnCount: 4,
+                            duration: 2,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new FromTopExit(targetY: -100, speed: 100f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:180f) }
+                    },
+
+					//REPEAT ABOVE 2 WAVEEVENTS
+					new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new MiniBossFactory(
+                                TextureHandler.MiniBoss,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: false),
+                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                            ),
+                            spawnCount: 1,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Left, new Vector2(CompileAndConquer.ScreenSize.X+50,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) },
+            
+                        new WaveEvent(
+                            new MiniBossFactory(
+                                TextureHandler.MiniBoss,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: true),
+                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                            ),
+                            spawnCount: 1,
+                            duration: 5,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) },
+						new WaveEvent(
+                            new TypeBFactory(
+                                TextureHandler.TypeBEnemy,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: true),
+                                () => new noAttack()
+                            ),
+                            spawnCount: 5,
+                            duration: 4,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Left, new Vector2(-100f,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:100) },
+						new WaveEvent(
+                            new TypeBFactory(
+                                TextureHandler.TypeBEnemy,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: false),
+                                () => new noAttack()
+                            ),
+                            spawnCount: 5,
+                            duration: 4,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
+                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(CompileAndConquer.ScreenSize.X+50,220), 320f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:150) }
+                    },
+            
+            
+                    // STEP: Two horizontal lines (both at once, parallel)
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new TypeBFactory(
+                                TextureHandler.TypeBEnemy,
+                                Vector2.Zero,
+                                () => new StationaryMovement(),
+                                () => new CircleAttack(24,30f, dir => new StraightBullet(dir, 200f))
+                            ),
+                            spawnCount: 4,
+                            duration: 2,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new FromTopExit(targetY: -100, speed: 100f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:200f) },
+            
+                        new WaveEvent(
+                            new TypeBFactory(
+                                TextureHandler.TypeBEnemy,
+                                Vector2.Zero,
+                                () => new StationaryMovement(),
+                                () => new CircleAttack(24,30f, dir => new StraightBullet(dir, 200f))
+                            ),
+                            spawnCount: 4,
+                            duration: 2,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new FromTopExit(targetY: -100, speed: 100f)
+                        ) { SpawnPattern = new LineSpawnPattern(y:180f) }
+                    },
+
+            
+                    // grunts in pyramid on left, move right and attack
+                    new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new TypeBFactory(
+                                TextureHandler.TypeBEnemy,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: false),
+                                () => new TimedStraightAttack(dir => new StraightBullet(dir, 300f), 0.5f)
+                            ),
+                            spawnCount: 6,
+                            duration: 6,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
+                            exitFactory: () => new FromLeftExit(targetX: -100f, speed: 120f)
+                        ) { SpawnPattern = new PyramidSpawnPattern(rows: 3, spacing: 40f, y: 200f) },
+
+						new WaveEvent(
+                            new TypeBFactory(
+                                TextureHandler.TypeBEnemy,
+                                Vector2.Zero,
+                                () => new LinearMovement(startRight: true),
+                                () => new TimedStraightAttack(dir => new StraightBullet(dir, 300f), 0.5f)
+                            ),
+                            spawnCount: 6,
+                            duration: 6,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
+                            exitFactory: () => new FromRightExit(targetX: 100f, speed: 120f)
+                        ) { SpawnPattern = new PyramidSpawnPattern(rows: 3, spacing: 40f, y: 200f) },
+                    },
+*/
+					// FINAL BOSS
+ 					new List<WaveEvent>
+                    {
+                        new WaveEvent(
+                            new FinalBossFactory(
+                                TextureHandler.FinalBoss,
+                                Vector2.Zero,           
+                                bossPhases,             
+                                bossPhases[0].Attack    // phase 1 A.P.
+                            ),
+                            spawnCount: 1,
+                            duration: 90,
+                            entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
+                            exitFactory: () => new FromLeftExit(targetX: -100f, speed: 120f)
+                        ) { SpawnPattern = new LineSpawnPattern(y: 100) },
+                    }
+                }
             });
             currentWave = waveQueue.Peek();
-
         }
+
+
 
 
         /// <summary>
@@ -173,7 +528,6 @@ namespace CompileAndConquer.Content.WaveManager
         public void StartWave()
         {
             currentWave = waveQueue.Peek();
-            waveTimer = 0;
         }
 
         /// <summary>
@@ -181,19 +535,16 @@ namespace CompileAndConquer.Content.WaveManager
         /// </summary>
         public void EndWave()
         {
-            if (currentWave.WaveEvents.Count != 0)
+            if (currentWave == null || currentWave.CurrentStep >= currentWave.Steps.Count)
+                return;
+        
+            foreach (var waveEvent in currentWave.Steps[currentWave.CurrentStep])
             {
-                foreach (var waveEvent in currentWave.WaveEvents)
-                {
-                    EndEvent(waveEvent);
-                }
-                waveQueue.Dequeue();
-
-                if (waveQueue.Count != 0)
-                {
-                    StartWave();
-                }
+                EndEvent(waveEvent);
             }
+        
+            // Advance to next step (next set of parallel events)
+            currentWave.CurrentStep++;
         }
 
 
@@ -220,102 +571,106 @@ namespace CompileAndConquer.Content.WaveManager
         }
 
 
-        public void UpdateWave(GameTime gameTime)
+		public void UpdateWave(GameTime gameTime)
         {
-            if (waveQueue.Count == 0) //this never happens
-            {       
-                Console.WriteLine("wavequee empty");
+
+            if (waveQueue.Count == 0)
+            {
                 Survived?.Invoke();
                 return;
             }
-
-            waveTimer += gameTime.ElapsedGameTime.TotalSeconds;
-            List<WaveEvent> eventsToRemove = new();
-
-
-            foreach (var curEvent in currentWave.WaveEvents)
+        
+            if (currentWave == null)
+                currentWave = waveQueue.Peek();
+        
+            // Are we done with this wave?
+            if (currentWave.CurrentStep >= currentWave.Steps.Count)
             {
-                if (curEvent.IsSpawned && (waveTimer - curEvent.spawnTime) >= curEvent.duration)
-                {
-                    EndEvent(curEvent);
-                    eventsToRemove.Add(curEvent);
-                    Console.WriteLine("Event Ended");
-                }
-                
-                if (!curEvent.IsSpawned && waveTimer >= curEvent.spawnTime)
-                {
-                    StartEvent(curEvent);
-                    Console.WriteLine("Event Started");
-                }
-                
-                foreach (var entity in curEvent.EventEntities)
-                {
-                    if (entity.IsEntering && curEvent.entryType != null)
-                    {
-                        curEvent.entryType.Enter(entity, gameTime);
+                waveQueue.Dequeue();
+                currentWave = waveQueue.Count > 0 ? waveQueue.Peek() : null;
+                return;
+            }
+        
+            var parallelEvents = currentWave.Steps[currentWave.CurrentStep];
 
-                        if (curEvent.entryType.HasEntered(entity))
+            //Console.WriteLine($"[WaveManager] Step: {currentWave.CurrentStep}/{currentWave.Steps.Count}");
+            foreach (var (evt, idx) in parallelEvents.Select((e, i) => (e, i)))
+            {
+                //Console.WriteLine($"  Event {idx}: State={evt.State} Entities={evt.EventEntities.Count} Alive={evt.EventEntities.Count(e => e.isAlive)}");
+            }
+
+        
+            // Spawn any not-started events in this step
+            foreach (var waveEvent in parallelEvents)
+            {
+                if (waveEvent.State == WaveEventState.NotStarted)
+                {
+                    SpawnEvent(waveEvent);
+                    waveEvent.State = WaveEventState.Entering;
+                    waveEvent.StateTimer = 0;
+                }
+        
+                waveEvent.StateTimer += gameTime.ElapsedGameTime.TotalSeconds;
+        
+                switch (waveEvent.State)
+                {
+                    case WaveEventState.Entering:
+                        if (waveEvent.EventEntities.All(e => !e.IsEntering))
                         {
-                            entity.IsEntering = false;
+                            waveEvent.State = WaveEventState.Active;
+                            waveEvent.StateTimer = 0;
                         }
-
-                        continue; // prevent movement and exit logic during entry
-                    }
-
-                    if (entity.IsExiting && curEvent.exitType != null)
-                    {
-                        curEvent.exitType.Exit(entity, gameTime);
-                        
-                        if (entity.Position.Y < -entity.Size.Y || entity.Position.Y > CompileAndConquer.ScreenSize.Y)
+                        break;
+                    case WaveEventState.Active:
+                        if (waveEvent.StateTimer >= waveEvent.duration || waveEvent.EventEntities.All(e => !e.isAlive))
                         {
-                            EntityHandler.RemoveEntity(entity);
-                            entity.isAlive = false;
+                            foreach (var ent in waveEvent.EventEntities.Where(e => e.isAlive && !e.IsExiting))
+                                ent.IsExiting = true;
+                            waveEvent.State = WaveEventState.Exiting;
+                            waveEvent.StateTimer = 0;
                         }
-
-                        continue;
-                    }
-
+                        break;
+                    case WaveEventState.Exiting:
+                        if (waveEvent.EventEntities.All(e => !e.isAlive))
+                        {
+                            waveEvent.State = WaveEventState.Complete;
+                        }
+                        break;
                 }
+        
+                // Always update all entities
+                foreach (var ent in waveEvent.EventEntities.ToList())
+                    ent.Update(gameTime);
             }
 
-            foreach (var eventToRemove in eventsToRemove)
-            {
-                currentWave.WaveEvents.Remove(eventToRemove);
-            }
+            foreach (var waveEvent in parallelEvents)
+                //Console.WriteLine($"Event: {waveEvent.Type.GetType().Name}, Alive: {waveEvent.EventEntities.Count(e => e.isAlive)}");
 
-            if (waveTimer >= currentWave.waveDuration)
-            {
-                EndWave();
-                waveTimer = 0;
-                Console.WriteLine("Wave Ended");
-                if (currentWave.WaveEvents.Count == 0 && this.waveQueue.Count == 1)
-                {
-                    //player wins
-                    Survived?.Invoke();
-                }
-                
-            }
+        
+            // If all parallel events in this step are complete, advance to next step
+            if (parallelEvents.All(ev => ev.State == WaveEventState.Complete))
+                currentWave.CurrentStep++;
         }
-        private void SpawnEvent(WaveEvent currentEvent)
+
+        private void SpawnEvent(WaveEvent ev)
         {
-            int totalEnemies = currentEvent.spawnCount;
-            float defaultSpacing = CompileAndConquer.ScreenSize.X / (totalEnemies + 1);
-            float spacing = currentEvent.spacing ?? defaultSpacing;
-            float startX = currentEvent.startX ?? spacing;
+            int total = ev.spawnCount;
+            var screen = CompileAndConquer.ScreenSize;
 
-            for (int i = 0; i < totalEnemies; i++)
+            for (int i = 0; i < total; i++)
             {
-                var enemy = currentEvent.Type.CreateEnemy();
+                var enemy = ev.Type.CreateEnemy();
+                Vector2 finalPos = ev.SpawnPattern.GetPosition(i, total, screen);
 
-                enemy.Position = new Vector2(startX + spacing * i, 0);
                 enemy.IsEntering = true;
-                enemy.ExitBehavior = currentEvent.exitType;
+                enemy.EntryBehavior = ev.CreateEntry(finalPos);
+                enemy.ExitBehavior = ev.CreateExit();
 
                 EntityHandler.Add(enemy);
-                currentEvent.EventEntities.Add(enemy);
+                ev.EventEntities.Add(enemy);
             }
-
-            currentEvent.IsSpawned = true;
+            ev.IsSpawned = true;
         }
+
     }
 }

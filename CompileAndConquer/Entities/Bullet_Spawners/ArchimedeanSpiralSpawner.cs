@@ -20,7 +20,8 @@ namespace CompileAndConquer.Entities.BulletSpawners
         private Vector2 origin;
         private float theta;
         private float timeSinceLast;
-        private int   shotsFired;
+        private int  shotsFired;
+		private Color color = Color.Yellow;
 
         public ArchimedeanSpiralSpawner(
             Vector2 center,
@@ -64,7 +65,7 @@ namespace CompileAndConquer.Entities.BulletSpawners
                 // one bullet toward player:
                 Vector2 toPlayer = Player.Instance.Position - Position;
                 if (toPlayer != Vector2.Zero) toPlayer.Normalize();
-                EntityHandler.Add(new EnemyBullet(Position, new StraightBullet(toPlayer, BulletSpeed)));
+                EntityHandler.Add(new EnemyBullet(Position, new StraightBullet(toPlayer, BulletSpeed), color));
 
                 // two flank streams ±120°:
                 for (int i = 1; i < 3; i++)
@@ -74,7 +75,7 @@ namespace CompileAndConquer.Entities.BulletSpawners
                         (float)System.Math.Cos(ang),
                         (float)System.Math.Sin(ang)
                     );
-                    EntityHandler.Add(new EnemyBullet(Position, new StraightBullet(dir, BulletSpeed)));
+                    EntityHandler.Add(new EnemyBullet(Position, new StraightBullet(dir, BulletSpeed), color));
                 }
 
                 shotsFired++;

@@ -6,29 +6,28 @@ using CompileAndConquer.Entities;
 using CompileAndConquer.Content;
 using CompileAndConquer.Content.Interfaces;
 
-namespace CompileAndConquer.Entitites.Enemy_Factories;
+namespace CompileAndConquer.Entities.Enemy_Factories;
 
 public class TypeAFactory : IEnemyFactory
 {
     public Texture2D texture;
     public Vector2 position;
     public readonly Func<IMovementStrategy> _movementFactory;
-    public IMovementStrategy bulletMovement;
-    public IAttackPattern attackPattern;
+    public readonly Func<IAttackPattern>    _attackFactory;
 
-    public TypeAFactory(Texture2D newTexture, Vector2 newPosition, Func<IMovementStrategy> movementFactory, IMovementStrategy bulletMovement = null, IAttackPattern attackPattern = null)
+    public TypeAFactory(Texture2D newTexture, Vector2 newPosition, Func<IMovementStrategy> movementFactory, Func<IAttackPattern> attackFactory = null)
     {
         texture = newTexture;
         position = newPosition;
         _movementFactory = movementFactory;
-        this.bulletMovement = bulletMovement;
-        this.attackPattern = attackPattern;
+        _attackFactory = attackFactory;
     }
 
     public Enemy CreateEnemy()
     {
-		var movement = _movementFactory();
-        return new TypeA(texture, position, movement, bulletMovement, attackPattern);
+        var move    = _movementFactory();
+        var attack = _attackFactory?.Invoke();
+        return new TypeA(texture, position, move, attack);
     }
 }
 

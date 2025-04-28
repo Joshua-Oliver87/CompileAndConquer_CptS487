@@ -22,6 +22,7 @@ namespace CompileAndConquer.Entities.BulletSpawners
 
         public float SpiralHeight = 0f;
         public float HeightStep = 2f;
+		private Color color = Color.Red;
 
         public SpiralBulletSpawner(Vector2 position)
         {
@@ -59,7 +60,7 @@ namespace CompileAndConquer.Entities.BulletSpawners
                 if (toPlayer != Vector2.Zero)
                     toPlayer.Normalize();
 
-                var bullet = new EnemyBullet(spawnPosition, new StraightBullet(toPlayer, BulletSpeed));
+                var bullet = new EnemyBullet(spawnPosition, new StraightBullet(toPlayer, BulletSpeed), color);
                 EntityHandler.Add(bullet);
 
                 angle += AngleStep;
