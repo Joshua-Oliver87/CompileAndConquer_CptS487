@@ -48,6 +48,15 @@ public class Player : Entity
         health = 100;
         ColliderScale = 0.5f;
     }
+
+    public void CheatModeOn()
+    {
+        this.Collidable = false;
+    }
+    public void CheatModeOff()
+    {
+        this.Collidable = true;
+    }
     
     // Input/Movement Methods
     public void Move(Vector2 velocity)

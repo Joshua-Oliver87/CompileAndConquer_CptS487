@@ -34,6 +34,8 @@ public class InputHandler
     private static Keys slowMode = Keys.LeftShift;
     private static Keys altSlowMode = Keys.LeftControl;
     private static Keys fire = Keys.Space;
+    private static Keys cheatModeOn = Keys.N;
+    private static Keys cheatModeOff = Keys.M;
     
     // Menu
     private static Keys escape = Keys.Escape;
@@ -44,6 +46,7 @@ public class InputHandler
         kstate = Keyboard.GetState();
         SendPlayerMovement();
         PlayerFire();
+        CheatMode();
     }
 
     private static void SendPlayerMovement()
@@ -107,4 +110,14 @@ public class InputHandler
     }
     
     public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode) || kstate.IsKeyDown(altSlowMode)); }
+
+    public static void CheatMode()
+    {
+        if (kstate.IsKeyDown(cheatModeOn))
+            player.CheatModeOn();
+        
+        if (kstate.IsKeyDown(cheatModeOff))
+            player.CheatModeOff();
+    }
+
 }
