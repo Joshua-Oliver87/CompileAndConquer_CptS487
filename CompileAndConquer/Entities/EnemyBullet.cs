@@ -4,13 +4,11 @@ namespace CompileAndConquer.Content
 {
     public class EnemyBullet : Entity
     {
-        private IMovementStrategy movementStrategy;
+        protected IMovementStrategy movementStrategy;
         
-        private float lifeTimer = 0f;
-        private float maxLifetime = 3f;
-        private bool controlled = false;
-
-        
+        protected float lifeTimer = 0f;
+        protected float maxLifetime = 3f;
+        protected bool controlled = false;
 
         public EnemyBullet(Vector2 position, IMovementStrategy strategy, Color tint)
         {

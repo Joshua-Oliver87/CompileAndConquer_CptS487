@@ -45,7 +45,7 @@ public class Player : Entity
         Scale = 2.0f;
         ColliderDebugMode = true;
         Collidable = true;
-        health = 100;
+        health = 3;
         ColliderScale = 0.5f;
     }
 
