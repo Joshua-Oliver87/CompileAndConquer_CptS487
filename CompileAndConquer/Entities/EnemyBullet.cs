@@ -8,6 +8,7 @@ namespace CompileAndConquer.Content
         
         private float lifeTimer = 0f;
         private float maxLifetime = 3f;
+        private bool controlled = false;
 
         public EnemyBullet(Vector2 position, IMovementStrategy strategy)
         {
@@ -31,12 +32,23 @@ namespace CompileAndConquer.Content
             movementStrategy?.Move(this, gameTime);
             
         }
-
+        
+        public void ControlPosition(Vector2 pos)
+        {
+            if (controlled)
+                this.Position = pos;
+        }
         public override void OnCollide(Entity collision)
         {
             // Delete bullet on collision with player
             if (collision is Player)
                 this.isAlive = false;
+
+            if (collision is GatherBullet)
+            {
+                controlled = true;
+                this.movementStrategy = null;
+            }
         }
     }
 }

@@ -92,7 +92,8 @@ namespace CompileAndConquer.Content.WaveManager
                                     horizontalFrequency: 0.7f,
                                     verticalFrequency: 1.3f
                                 ),
-                                new HomingBullet()
+                                new CurvedMovement()
+                                
                             ), 
                             /*SpawnCount*/ 1,
                             /*SpawnTime*/ 23,
