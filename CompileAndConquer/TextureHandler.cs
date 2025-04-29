@@ -1,5 +1,6 @@
 using System.Dynamic;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace CompileAndConquer.Content;
@@ -14,8 +15,9 @@ public class TextureHandler
 	public static Texture2D FinalBoss { get; set; }
     public static Texture2D SideBarStar {get;set;}
     public static Texture2D PowerUp { get; set; }
+    public static Texture2D Pixel { get; set; }
 
-    public static void Load(ContentManager content)
+    public static void Load(ContentManager content, GraphicsDevice graphicsDevice)
     {
         Player = content.Load<Texture2D>("spaceship");
         TypeAEnemy = content.Load<Texture2D>("alien");
@@ -25,5 +27,7 @@ public class TextureHandler
 		FinalBoss = content.Load<Texture2D>("finalboss");
         SideBarStar = content.Load<Texture2D>("star");
         PowerUp = content.Load<Texture2D>("lightning-powerup");
+        Pixel = new Texture2D(graphicsDevice, 1, 1);
+        Pixel.SetData(new[] { Microsoft.Xna.Framework.Color.Transparent });
     }
 }

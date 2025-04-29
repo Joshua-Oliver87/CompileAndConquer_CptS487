@@ -11,8 +11,14 @@ namespace CompileAndConquer.Content;
 
 public abstract class Screen
 {
+    protected ScreenContext screenContext;
+
+    public void SetScreenContext(ScreenContext screenContext)
+    {
+        this.screenContext = screenContext;
+    }
+
     protected SpriteFont font;
-    // private bool show = false; // is it visible on screen?
 
     public string[] MenuOptions;
     

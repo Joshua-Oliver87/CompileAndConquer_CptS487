@@ -1,49 +1,45 @@
-using CompileAndConquer.Content;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using CompileAndConquer.Content;
+using CompileAndConquer.Content.Interfaces;
+using CompileAndConquer.Entities;
 
-
-namespace CompileAndConquer.Entities.Enemy_Subtypes;
-
-public class TypeB : Enemy
+namespace CompileAndConquer.Entities.Enemy_Subtypes
 {
-    private bool movingRight = true;
-    private float leftBound = 10;
-    private float rightBound = 1000;
-    private int attackCooldown = 0;
-    private int maxAttackCooldown = 150; // Fires every 2.5 seconds
-    private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
-
-    public TypeB(Texture2D texture, Vector2 position, IMovementStrategy strategy, IMovementStrategy bulletStrategy = null)
-        : base(texture, position, 1.5f, 0.8f, strategy)
+    public class TypeB : Enemy
     {
-        this.health = 120;
-        this.BulletMovementStrategy = bulletStrategy;
-    }
+        private readonly IAttackPattern _attackPattern;
 
-    public override void Update(GameTime gameTime)
-    {
-		base.Update(gameTime);
-
-        if (attackCooldown > 0)
-            attackCooldown--;
-
-        if (attackCooldown == 0 && CanAttack())
+        public TypeB(
+            Texture2D texture,
+            Vector2 startPosition,
+            IMovementStrategy movementStrategy,
+            IAttackPattern attackPattern       = null
+        ) : base(texture, startPosition, 1.5f, 0.8f, movementStrategy)
         {
-            Attack();
-            attackCooldown = maxAttackCooldown;
+            this._attackPattern         = attackPattern;
+            this.health                 = 120;
         }
 
-        foreach (var bullet in pendingBullets)
-            EntityHandler.Add(bullet);
+        // Enemy.Update calls this under the hood:
+        protected override void HandleAttack(GameTime gameTime)
+        {
+            // If there's an attack‐pattern, hand off to it
+            if (_attackPattern != null)
+            {
+                _attackPattern.Update(this, gameTime);
+            }
+            else
+            {
+                // fallback one‐shot behavior
+                if (CanAttack())
+                    Attack();
+            }
+        }
 
-        pendingBullets.Clear();
-    }
+        public override void Attack()
+        {
 
-    public override void Attack()
-    {
-        pendingBullets.Add(new EnemyBullet(this.Position, BulletMovementStrategy));
+        }
     }
 }

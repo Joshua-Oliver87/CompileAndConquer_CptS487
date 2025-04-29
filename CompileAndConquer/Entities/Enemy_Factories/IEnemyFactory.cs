@@ -1,6 +1,6 @@
 using CompileAndConquer.Content;
 
-namespace CompileAndConquer.Entitites.Enemy_Factories;
+namespace CompileAndConquer.Entities.Enemy_Factories;
 
 public interface IEnemyFactory
 {

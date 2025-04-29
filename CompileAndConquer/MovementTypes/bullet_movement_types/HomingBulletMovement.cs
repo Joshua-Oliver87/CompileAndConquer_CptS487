@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
-namespace CompileAndConquer.Content;
+namespace CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
 public class HomingBullet : IMovementStrategy
 {
     public void Move(Entity bullet, GameTime gameTime)

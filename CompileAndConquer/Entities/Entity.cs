@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using CompileAndConquer.Content.EnemyWaveManager.entryPatterns;
+using CompileAndConquer.Content.EnemyWaveManager.exitPatterns;
 
 namespace CompileAndConquer.Content;
 
@@ -15,6 +17,7 @@ public abstract class Entity
     public bool IsEntering { get; set; } = true;
     
     public bool IsExiting = false;
+    
 
 
     // Position/Movement
@@ -56,7 +59,7 @@ public abstract class Entity
     {
         spriteBatch.Draw(texture, Position, null, color, Orientation, size / 2f, Scale, 0, 0);
 
-        if (ColliderDebugMode && Collidable)
+        if (ColliderDebugMode)
         {
             Texture2D _texture;
             _texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);

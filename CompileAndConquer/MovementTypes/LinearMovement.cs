@@ -21,6 +21,7 @@ namespace CompileAndConquer.Content
 
         public void Move(Entity entity, GameTime gameTime)
         {
+			//Console.WriteLine($"[Move]  {entity.GetHashCode()} DIR={(movingRight?">": "<")} POS={entity.Position}");
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             
             float movement = speed * deltaTime * (movingRight ? 1 : -1);
@@ -45,7 +46,7 @@ namespace CompileAndConquer.Content
             timeSinceLastChange += deltaTime;
             if (timeSinceLastChange >= changeInterval)
             {
-                speed = (float)rng.NextDouble() * (maxSpeed - minSpeed) + minSpeed * 2;
+                speed = (float)rng.NextDouble() * (maxSpeed - minSpeed) + minSpeed;
                 timeSinceLastChange = 0;
             }
         }
