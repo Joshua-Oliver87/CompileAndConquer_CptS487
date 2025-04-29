@@ -13,9 +13,6 @@ using CompileAndConquer.Content.AttackPatterns;
 using CompileAndConquer.SpawnPatterns;
 using CompileAndConquer.Content.EnemyWaveManager;
 
-
-
-
 namespace CompileAndConquer.Content.WaveManager
 {
     public class WaveManager
@@ -46,8 +43,7 @@ namespace CompileAndConquer.Content.WaveManager
                 Movement = new FinalBossMovement(),
                 Attack = new AlternatingAttackPattern(
                     pauseBetweenAttacks: 15f,
-                    new ThreeWaySpiralAttack(),
-                    new ConcentricCircleAttack()
+                    new SpecialFeature()
                 ),
                 HpThreshold = 2000
             },

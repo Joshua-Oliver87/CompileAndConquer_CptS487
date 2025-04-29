@@ -12,7 +12,7 @@ public class Player : Entity
     private int bulletCooldown = 0;
     private int maxBulletCooldown = 12;
     private float speed = 4.0f;
-    public int Lives = 30;
+    public int Lives = JSONHandler.GetPlayerLives();
     public Action OnLoseLife { get; set; }
     public Action OnDeath { get; set; }
     public bool Invincible = false;

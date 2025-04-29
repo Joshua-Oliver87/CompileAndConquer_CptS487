@@ -59,7 +59,7 @@ public abstract class Entity
     {
         spriteBatch.Draw(texture, Position, null, color, Orientation, size / 2f, Scale, 0, 0);
 
-        if (ColliderDebugMode)
+        if (ColliderDebugMode && Collidable)
         {
             Texture2D _texture;
             _texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);

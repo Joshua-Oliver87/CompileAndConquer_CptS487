@@ -1,16 +1,11 @@
 {
   "Entities": {
     "player": [
-      { "name": "Player" },
       { "lives": "3" },
-      { "max-health": "100" },
-      { "health": "100" },
       { "attack": "10" },
-      { "bombs": "3" },
       { "texture": "player.png" }
     ],
     "TypeA": [
-      { "name": "Enemy" },
       { "max-health": "100" },
       { "health": "100" },
       { "attack": "10" },
