@@ -31,9 +31,11 @@ public class InputHandler
     // public static Keys altRight{get;set;} = Keys.D;
     
     // Controls
-    public static Keys slowMode{get;set;} = Keys.LeftShift;
-    //public static Keys altSlowMode{get;set;} = Keys.LeftControl;
-    public static Keys fire{get;set;} = Keys.Space;
+    private static Keys slowMode = Keys.LeftShift;
+    private static Keys altSlowMode = Keys.LeftControl;
+    private static Keys fire = Keys.Space;
+    private static Keys cheatModeOn = Keys.N;
+    private static Keys cheatModeOff = Keys.M;
     
     // Menu
     public static Keys escape = Keys.Escape;
@@ -44,6 +46,7 @@ public class InputHandler
         kstate = Keyboard.GetState();
         SendPlayerMovement();
         PlayerFire();
+        CheatMode();
     }
 
     private static void SendPlayerMovement()
@@ -106,52 +109,15 @@ public class InputHandler
             player.Fire();
     }
     
-    public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode)); }
+    public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode) || kstate.IsKeyDown(altSlowMode)); }
 
-    public static bool setCurrentKey(int i)
+    public static void CheatMode()
     {
-        if (kstate.GetPressedKeys().Length == 0)
-        {
-            return false;
-        }
-        Keys curkey = kstate.GetPressedKeys()[0];
-        Console.WriteLine(i.ToString()+" : "+curkey.ToString());
-        switch (i + 1)
-        {
-    //"Up","Down", "Right","Left","Slow Mode","Fire","Pause",
-            case 1: 
-                up = curkey;
-                break;
-            case 2: 
-                down = curkey;
-                break;
-            case 3: 
-                right = curkey;
-                break;            
-            case 4: 
-                left = curkey;
-                break;            
-            case 5: 
-                slowMode = curkey;
-                break;            
-            case 6: 
-                fire = curkey;
-                break;            
-            case 7: 
-                escape = curkey;
-                break;            
-            default: break;
-        }
-        return true;
+        if (kstate.IsKeyDown(cheatModeOn))
+            player.CheatModeOn();
+        
+        if (kstate.IsKeyDown(cheatModeOff))
+            player.CheatModeOff();
     }
 
-    public static bool curKeyNull()
-    {
-        var keys = kstate.GetPressedKeys();
-        if (keys.Length > 0)
-        {
-            return false;
-        }
-        return true;
-    }
 }
