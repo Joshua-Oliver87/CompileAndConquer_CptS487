@@ -12,7 +12,7 @@
       { "invincible-duration": "3"}
     ],
     "TypeA": [
-      { "health": "100" },
+      { "health": "80" },
       { "attack-speed": "10" },
       { "speed": "10" },
       { "scale": "1" }

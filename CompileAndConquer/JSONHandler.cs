@@ -58,8 +58,17 @@ public static class JSONHandler
     }
 
     public static int GetTypeAHealth() => GetEntityInt("TypeA", "health");
+    public static int GetTypeAAttackSpeed() => GetEntityInt("TypeA", "attack-speed");
+    public static int GetTypeASpeed() => GetEntityInt("TypeA", "speed");
+    public static int GetTypeAScale() => GetEntityInt("TypeA", "scale");
+
     public static int GetTypeBHealth() => GetEntityInt("TypeB", "health");
+    public static int GetTypeBAttackSpeed() => GetEntityInt("TypeB", "attack-speed");
+    public static int GetTypeBSpeed() => GetEntityInt("TypeB", "speed");
+    public static int GetTypeBScale() => GetEntityInt("TypeB", "scale");
     public static int GetMiniBossHealth() => GetEntityInt("MiniBoss", "health");
+    public static int GetMiniBossAttackDamage() => GetEntityInt("MiniBoss", "attack-damage");
+    public static int GetMiniBossAttackSpeed() => GetEntityInt("MiniBoss", "attack-speed");
     public static int GetFinalBossHealth() => GetEntityInt("FinalBoss", "health");
 
     private static int GetEntityInt(string entity, string key)
