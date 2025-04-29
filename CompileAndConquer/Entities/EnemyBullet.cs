@@ -25,6 +25,8 @@ namespace CompileAndConquer.Content
         {
             movementStrategy?.Move(this, gameTime);
             
+            if (this.Position.X  < 0 || this.Position.X >= CompileAndConquer.ScreenSize.X || (this.Position.Y  < 0 || this.Position.Y >= CompileAndConquer.ScreenSize.Y))
+                this.isAlive = false;
         }
         
         public void ControlPosition(Vector2 pos)
