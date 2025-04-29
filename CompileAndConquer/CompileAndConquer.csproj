@@ -27,8 +27,7 @@
         <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105" />
     </ItemGroup>
     <ItemGroup>
-      <None Remove="Gameplay2.json" />
-      <Content Include="Gameplay2.json">
+      <Content Include="Gameplay.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>

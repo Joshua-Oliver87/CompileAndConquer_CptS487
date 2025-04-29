@@ -1,0 +1,66 @@
+{
+  "Scoring": {
+    "HitEnemy": 500,
+    "DefeatEnemy": 10000,
+    "CollectItem": 10000,
+    "GrazeBullet": 1000,
+    "LeftoverLife": 100000
+  },
+
+  "Entities": {
+    "player": [
+      { "name": "Player" },
+      { "lives": "3" },
+      { "health": "100" },
+      { "attack-damage": "10" },
+      { "attack-speed": "12" },
+      { "speed": "4f" },
+      { "bombs": "3" },
+      { "texture": "player.png" }
+    ],
+    "TypeA": [
+      { "name": "Enemy" },
+      { "health": "100" },
+      { "attack-speed": "10" },
+      { "speed": "10" },
+      { "Behavior": "TypeA" },
+      { "texture": "enemyA.png" }
+    ],
+    "TypeB": [
+      { "name": "Enemy" },
+      { "health": "100" },
+      { "attack-damage": "10" },
+      { "attack-speed": "10" },
+      { "Behavior": "TypeB" },
+      { "texture": "enemyB.png" }
+    ],
+    "MiniBoss": [
+      { "name": "Mini Boss" },
+      { "health": "100" },
+      { "attack-damage": "10" },
+      { "attack-speed": "10" },
+      { "Behavior": "MidBoss" },
+      { "texture": "enemyB.png" }
+    ],
+    "FinalBoss": [
+      { "name": "Final Boss" },
+      { "health": "100" },
+      { "Behavior": "FinalBoss" },
+      { "texture": "enemyB.png" }
+    ],
+    "PlayerBullet": [
+      { "damage": 10 },
+      { "speed": 5 },
+      { "texture": "PlayerBullet.png" }
+    ],
+    "BasicBullet": [
+      { "damage": 10 },
+      { "speed": 5 },
+      { "texture": "EnemyBullet.png" }
+    ],
+    "PowerUp": [
+      { "texture": "powerup.png" }
+    ]
+  }
+
+}

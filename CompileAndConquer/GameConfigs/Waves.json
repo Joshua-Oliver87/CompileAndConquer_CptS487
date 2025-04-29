@@ -1,0 +1,44 @@
+{
+  "Waves": [
+    {
+      "Wave1": [
+        {
+          "Event1": [
+            { "type": "TypeA" },
+            { "position": "0,0" },
+            { "movement": "Linear" },
+            { "attack": "Straight" },
+            { "speed": 250 },
+            { "spawn-count": 4 },
+            { "spawn-time": 1 },
+            { "duration": 30 },
+            { "Entry": "EnterTop" },
+            { "Exit": "ExitTop" }
+          ]
+        },
+        {
+          "Event2": [
+            { "type": "TypeB" },
+            { "position": "0,0" },
+            { "movement": "Circular" },
+            { "attack": "Spiral" },
+            { "speed": 200 },
+            { "spawn-count": 3 },
+            { "spawn-time": 2 },
+            { "duration": 30 },
+            { "Entry": "EnterBottom" },
+            { "Exit": "ExitLeft" }
+          ]
+        },
+
+      ],
+      "miniBoss",
+      "EnemyB"
+  ]
+},
+
+    { "Wave2": ["enemyA", "enemyB", "miniboss"] },
+    { "Wave3": ["enemyB", "enemyB", "miniBoss"] },
+    { "Wave4": ["FinalBoss"] }
+  ]
+}

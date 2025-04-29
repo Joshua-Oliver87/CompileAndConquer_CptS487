@@ -10,7 +10,7 @@ public static class JSONHandler
 
     static JSONHandler()
     {
-        string jsonPath = "Gameplay2.json";
+        string jsonPath = "Gameplay.json";
         if (!File.Exists(jsonPath))
             throw new FileNotFoundException("JSON file not found.");
 
