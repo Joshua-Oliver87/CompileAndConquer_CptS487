@@ -98,7 +98,7 @@
 /processorParam:TextureFormat=Color
 /build:star.png
 
-#begin p-coin.png
+#begin lightning-powerup.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -108,7 +108,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:p-coin.png
+/build:lightning-powerup.png
 
 #begin MenuFont.spritefont
 /importer:FontDescriptionImporter

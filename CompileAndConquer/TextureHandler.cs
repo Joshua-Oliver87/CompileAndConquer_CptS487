@@ -24,6 +24,6 @@ public class TextureHandler
 		MiniBoss = content.Load<Texture2D>("miniboss");
 		FinalBoss = content.Load<Texture2D>("finalboss");
         SideBarStar = content.Load<Texture2D>("star");
-        PowerUp = content.Load<Texture2D>("p-coin");
+        PowerUp = content.Load<Texture2D>("lightning-powerup");
     }
 }
