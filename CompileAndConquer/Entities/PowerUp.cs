@@ -9,7 +9,7 @@ public class PowerUp : Entity
     {
         this.texture = TextureHandler.PowerUp;
         this.Position = position;
-        this.Scale = 1.0f;
+        this.Scale = 0.05f;
         this.Collidable = true;
         this.ColliderScale = 0.5f;
         this.ColliderScalingSeparate = true;
