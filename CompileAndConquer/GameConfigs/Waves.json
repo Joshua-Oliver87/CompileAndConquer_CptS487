@@ -11,7 +11,7 @@
             "SpawnPattern": { "Type": "Line", "Y": 100 },
             "Entry": { "Direction": "Top", "Speed": 120 },
             "Exit": { "Direction": "Top", "Speed": 120 },
-            "Movement": { "Type": "MiniBossMovement" },
+            "Movement": { "Type": "ZigZag" },
             "Attack": {
               "Type": "AlternatingAttack",
               "PauseBetweenAttacks": 3,
