@@ -25,7 +25,10 @@
               "StartRight": false
             },
             "Attack": {
-              "Type": "SpecialFeature"
+              "Type": "Triangle",
+              "BulletCount": 8,
+              "Interval": 10,
+              "Speed": 350
             }
           }
         ],
