@@ -1,0 +1,46 @@
+{
+  "MovementPatterns": {
+    "OnScreen": [
+      { "TypeA": "PatternA" },
+      { "TypeB": "PatternB" },
+      { "MidBoss": "PatternC" },
+      {
+        "FinalBoss": [
+          { "Phase1": "ZigZag" },
+          { "Phase2": "CrossScreen" },
+          { "Phase3": "Spiral" }
+        ]
+      }
+    ],
+    "EntryTypes": [
+      "EnterTop",
+      "EnterBottom",
+      "EnterLeft",
+      "EnterRight",
+      "EnterImmediate"
+    ],
+    "ExitTypes": [
+      "ExitTop",
+      "ExitBottom",
+      "ExitLeft",
+      "ExitRight",
+      "ExitImmediate"
+    ]
+  },
+
+  "AttackBehavior": {
+    "ABullet": [
+      { "FireRate": 5 },
+      { "BulletSpeed": 5 },
+      { "aim": "FixedSouth" },
+      { "Bullettexture": "bulletA.png" }
+    ],
+
+    "BBullet": [
+      { "FireRate": 10 },
+      { "BulletSpeed": 10 },
+      { "aim": "player" },
+      { "Bullettexture": "bulletB.png" }
+    ]
+  }
+}
