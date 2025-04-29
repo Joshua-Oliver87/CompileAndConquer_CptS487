@@ -16,7 +16,6 @@ public class TextureHandler
     public static Texture2D SideBarStar {get;set;}
     public static Texture2D Pixel { get; set; }
 
-
     public static void Load(ContentManager content, GraphicsDevice graphicsDevice)
     {
         Player = content.Load<Texture2D>("spaceship");

@@ -11,7 +11,6 @@ public abstract class Enemy : Entity
 {
     public float Speed { get; protected set; } = 2.0f;    //default speed for enemies
 
-	public AIComponent AIComponent { get; set; }
 	
 	public bool IsInvulnerable { get; set; } = false;
 

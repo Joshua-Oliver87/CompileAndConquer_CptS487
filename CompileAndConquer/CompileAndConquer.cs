@@ -136,7 +136,6 @@ public class CompileAndConquer : Game
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
         InputHandler.Update();
-        AISystem.Update(gameTime); // AI logic
         EntityHandler.Update(gameTime);
 
 

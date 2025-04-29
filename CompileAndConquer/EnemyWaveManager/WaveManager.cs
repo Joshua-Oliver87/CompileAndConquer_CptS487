@@ -46,18 +46,17 @@ namespace CompileAndConquer.Content.WaveManager
                 Movement = new FinalBossMovement(),
                 Attack = new AlternatingAttackPattern(
                     pauseBetweenAttacks: 15f,
-                    new RepeatingSpiralAttack(),
+                    new ThreeWaySpiralAttack(),
                     new ConcentricCircleAttack()
                 ),
                 HpThreshold = 2000
             },
             new BossPhase {
-                Movement = new ZigZagMovement(leftBound:   0f, rightBound:  CompileAndConquer.ScreenSize.X, topBound:    100f, bottomBound: CompileAndConquer.ScreenSize.Y - 100f, horizontalSpeed: 150f, verticalSpeed:   75f),
+                Movement = new  miniBossMovement(),
                 Attack = new AlternatingAttackPattern(
                     pauseBetweenAttacks: 5f,
                     new RepeatingSpiralAttack(),
-                    //new RepeatingSpiralAttack()
-                    new ArcAttackPattern(dir => new StraightBullet(dir, 200f), 1f)
+                    new ArcAttackPattern(dir => new StraightBullet(dir, 200f), 0f)
                 ),
                 HpThreshold = 800
             }
@@ -92,14 +91,14 @@ namespace CompileAndConquer.Content.WaveManager
             public double StateTimer { get; set; }
 
             private readonly Func<Vector2,IEntry> _entryFactory;
-            private readonly Func<IExit>  _exitFactory;
+            private readonly Func<Vector2, IExit>  _exitFactory;
 
             public WaveEvent(
                 IEnemyFactory spawnType,
                 int spawnCount,
                 int duration,
                 Func<Vector2,IEntry> entryFactory,
-                Func<IExit> exitFactory
+                Func<Vector2,IExit> exitFactory
             )
             {
                 Type           = spawnType;
@@ -115,7 +114,7 @@ namespace CompileAndConquer.Content.WaveManager
             }
 
             public IEntry CreateEntry(Vector2 finalPos) => _entryFactory(finalPos);
-            public IExit  CreateExit()  => _exitFactory();
+            public IExit  CreateExit(Vector2 finalPos)  => _exitFactory(finalPos);
         }
 
 
@@ -131,8 +130,7 @@ namespace CompileAndConquer.Content.WaveManager
             {
                 Steps = new List<List<WaveEvent>>
                 {
-                    // STEP 1: 4 grunts move left-to-right
-/*
+                    //  4 grunts move left-to-right
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -145,11 +143,14 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 120f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) }
                     },
+                    
+                    
         
-                    // STEP 2: 4 grunts move right-to-left
+                    //  4 grunts move right-to-left
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -162,11 +163,12 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 220f)
                         ) { SpawnPattern = new LineSpawnPattern(y:150f) }
                     },
         
-                    // STEP 3: 4 grunts move left-to-right
+                    //  4 grunts move left-to-right
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -179,11 +181,12 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Right, 120f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) }
                     },
         
-                    // STEP 4: 4 grunts move right-to-left
+                    //  4 grunts move right-to-left
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -196,11 +199,12 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 120f)
                         ) { SpawnPattern = new LineSpawnPattern(y:150f) }
                     },
         
-                    // STEP 5: First fairy miniboss
+                    // First fairy miniboss
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -218,11 +222,12 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 1,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 220f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) }
                     },
         
-                    // STEP 6: Second fairy miniboss
+                    //  Second fairy miniboss
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -240,11 +245,12 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 1,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) }
                     },
         
-                    // STEP 7: 2 lines of grunts in parallel (horizontal lines)
+                    // 2 lines of grunts in parallel (horizontal lines)
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -257,7 +263,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 2,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:230f) },
         
                         new WaveEvent(
@@ -270,11 +277,12 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 2,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:180f) }
                     },
         
-                    // STEP 8: Midboss attack phase (alternating arc & circle)
+                    // Midboss attack phase (alternating arc & circle)
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -283,21 +291,22 @@ namespace CompileAndConquer.Content.WaveManager
                                 new Vector2(0,0),
                                 () => new miniBossMovement(),
                                 () => new AlternatingAttackPattern(
-                                    switchInterval: 2f,
+                                    pauseBetweenAttacks: 5f,
                                     new ArcAttackPattern(dir => new StraightBullet(dir, 200f), 1f),
-                                    new ConcentricCircleAttack(cooldown: 1.2f)
+                                    new ConcentricCircleAttack()
                                 )
                             ),
                             spawnCount: 1,
                             duration: 25,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Top, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) }
                     },
 
 
         
-					// SECOND WAVE AFTER MINIBOSS
+					// SECOND ROUND AFTER MINIBOSS
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -310,7 +319,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 1,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Left, new Vector2(CompileAndConquer.ScreenSize.X+50,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Left, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) },
             
                         new WaveEvent(
@@ -323,7 +333,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 1,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Right, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) },
 						new WaveEvent(
                             new TypeAFactory(
@@ -335,7 +346,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 5,
                             duration: 4,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Left, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Left, 220f)
                         ) { SpawnPattern = new LineSpawnPattern(y:100) },
 						new WaveEvent(
                             new TypeAFactory(
@@ -347,12 +359,13 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 5,
                             duration: 4,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(CompileAndConquer.ScreenSize.X+50,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Right, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:150) }
                     },
             
             
-                    // STEP: Two horizontal lines (both at once, parallel)
+                    // Two horizontal lines (both at once, parallel)
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -365,7 +378,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 2,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new FromTopExit(targetY: -100, speed: 100f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) },
             
                         new WaveEvent(
@@ -378,7 +392,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 2,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new FromTopExit(targetY: -100, speed: 100f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 100f)
                         ) { SpawnPattern = new LineSpawnPattern(y:180f) }
                     },
 
@@ -395,7 +410,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 1,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Left, new Vector2(CompileAndConquer.ScreenSize.X+50,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Left, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) },
             
                         new WaveEvent(
@@ -408,7 +424,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 1,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Right, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) },
 						new WaveEvent(
                             new TypeBFactory(
@@ -420,7 +437,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 5,
                             duration: 4,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Left, new Vector2(-100f,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Left, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:100) },
 						new WaveEvent(
                             new TypeBFactory(
@@ -432,12 +450,13 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 5,
                             duration: 4,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
-                            exitFactory: () => new DirectionalExit(CardinalDirection.Right, new Vector2(CompileAndConquer.ScreenSize.X+50,220), 320f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Right, 320f)
                         ) { SpawnPattern = new LineSpawnPattern(y:150) }
                     },
             
             
-                    // STEP: Two horizontal lines (both at once, parallel)
+                    // Two horizontal lines (both at once, parallel)
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -450,7 +469,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 2,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new FromTopExit(targetY: -100, speed: 100f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 100f)
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) },
             
                         new WaveEvent(
@@ -463,10 +483,12 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 4,
                             duration: 2,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new FromTopExit(targetY: -100, speed: 100f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Top, 100f)
                         ) { SpawnPattern = new LineSpawnPattern(y:180f) }
                     },
-
+                    
+                    
             
                     // grunts in pyramid on left, move right and attack
                     new List<WaveEvent>
@@ -481,7 +503,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 6,
                             duration: 6,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
-                            exitFactory: () => new FromLeftExit(targetX: -100f, speed: 120f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Left, 120f)
                         ) { SpawnPattern = new PyramidSpawnPattern(rows: 3, spacing: 40f, y: 200f) },
 
 						new WaveEvent(
@@ -494,12 +517,13 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 6,
                             duration: 6,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Right, target: finalPos, speed: 120f),
-                            exitFactory: () => new FromRightExit(targetX: 100f, speed: 120f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Right, 120f)
                         ) { SpawnPattern = new PyramidSpawnPattern(rows: 3, spacing: 40f, y: 200f) },
                     },
-*/
-					// FINAL BOSS
- 					new List<WaveEvent>
+                    
+                    // FINAL BOSS:
+                    new List<WaveEvent>
                     {
                         new WaveEvent(
                             new FinalBossFactory(
@@ -511,7 +535,8 @@ namespace CompileAndConquer.Content.WaveManager
                             spawnCount: 1,
                             duration: 90,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
-                            exitFactory: () => new FromLeftExit(targetX: -100f, speed: 120f)
+                            exitFactory:  finalPos => new DirectionalExit(
+                                CardinalDirection.Left, 120f)
                         ) { SpawnPattern = new LineSpawnPattern(y: 100) },
                     }
                 }
@@ -573,34 +598,21 @@ namespace CompileAndConquer.Content.WaveManager
 
 		public void UpdateWave(GameTime gameTime)
         {
-
+            // If there are no waves at all, trigger Survived immediately
             if (waveQueue.Count == 0)
             {
                 Survived?.Invoke();
                 return;
             }
         
+            //  grab the current wave
             if (currentWave == null)
                 currentWave = waveQueue.Peek();
         
-            // Are we done with this wave?
-            if (currentWave.CurrentStep >= currentWave.Steps.Count)
-            {
-                waveQueue.Dequeue();
-                currentWave = waveQueue.Count > 0 ? waveQueue.Peek() : null;
-                return;
-            }
-        
+            // Run the current step
             var parallelEvents = currentWave.Steps[currentWave.CurrentStep];
-
-            //Console.WriteLine($"[WaveManager] Step: {currentWave.CurrentStep}/{currentWave.Steps.Count}");
-            foreach (var (evt, idx) in parallelEvents.Select((e, i) => (e, i)))
-            {
-                //Console.WriteLine($"  Event {idx}: State={evt.State} Entities={evt.EventEntities.Count} Alive={evt.EventEntities.Count(e => e.isAlive)}");
-            }
-
         
-            // Spawn any not-started events in this step
+            // Spawn & advance each event in this step
             foreach (var waveEvent in parallelEvents)
             {
                 if (waveEvent.State == WaveEventState.NotStarted)
@@ -610,8 +622,8 @@ namespace CompileAndConquer.Content.WaveManager
                     waveEvent.StateTimer = 0;
                 }
         
+                // Advance its timer and state machine
                 waveEvent.StateTimer += gameTime.ElapsedGameTime.TotalSeconds;
-        
                 switch (waveEvent.State)
                 {
                     case WaveEventState.Entering:
@@ -621,15 +633,19 @@ namespace CompileAndConquer.Content.WaveManager
                             waveEvent.StateTimer = 0;
                         }
                         break;
+        
                     case WaveEventState.Active:
-                        if (waveEvent.StateTimer >= waveEvent.duration || waveEvent.EventEntities.All(e => !e.isAlive))
+                        if (waveEvent.StateTimer >= waveEvent.duration
+                            || waveEvent.EventEntities.All(e => !e.isAlive))
                         {
-                            foreach (var ent in waveEvent.EventEntities.Where(e => e.isAlive && !e.IsExiting))
-                                ent.IsExiting = true;
+                            // kick off the exit phase
+                            foreach (var e in waveEvent.EventEntities.Where(e => e.isAlive && !e.IsExiting))
+                                e.IsExiting = true;
                             waveEvent.State = WaveEventState.Exiting;
                             waveEvent.StateTimer = 0;
                         }
                         break;
+        
                     case WaveEventState.Exiting:
                         if (waveEvent.EventEntities.All(e => !e.isAlive))
                         {
@@ -638,19 +654,35 @@ namespace CompileAndConquer.Content.WaveManager
                         break;
                 }
         
-                // Always update all entities
-                foreach (var ent in waveEvent.EventEntities.ToList())
-                    ent.Update(gameTime);
+                //update every entity in that event
+                foreach (var e in waveEvent.EventEntities.ToList())
+                    e.Update(gameTime);
             }
-
-            foreach (var waveEvent in parallelEvents)
-                //Console.WriteLine($"Event: {waveEvent.Type.GetType().Name}, Alive: {waveEvent.EventEntities.Count(e => e.isAlive)}");
-
         
-            // If all parallel events in this step are complete, advance to next step
+            // If ALL events in this step finished go to next step
             if (parallelEvents.All(ev => ev.State == WaveEventState.Complete))
+            {
                 currentWave.CurrentStep++;
+            }
+        
+            //  check whether the wave itself is done
+            if (currentWave.CurrentStep >= currentWave.Steps.Count)
+            {
+                waveQueue.Dequeue();
+        
+                // if that was the last wave, we win
+                if (waveQueue.Count == 0)
+                {
+                    Survived?.Invoke();
+                }
+                else
+                {
+                    //else , start the next wave
+                    currentWave = waveQueue.Peek();
+                }
+            }
         }
+
 
         private void SpawnEvent(WaveEvent ev)
         {
@@ -664,7 +696,7 @@ namespace CompileAndConquer.Content.WaveManager
 
                 enemy.IsEntering = true;
                 enemy.EntryBehavior = ev.CreateEntry(finalPos);
-                enemy.ExitBehavior = ev.CreateExit();
+                enemy.ExitBehavior = ev.CreateExit(finalPos);
 
                 EntityHandler.Add(enemy);
                 ev.EventEntities.Add(enemy);
