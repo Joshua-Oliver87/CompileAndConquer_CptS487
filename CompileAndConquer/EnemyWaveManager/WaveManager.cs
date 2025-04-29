@@ -16,17 +16,10 @@ using CompileAndConquer.Content.EnemyWaveManager;
 
 
 
-namespace CompileAndConquer.Content.WaveManager
+namespace CompileAndConquer.Content.EnemyWaveManager
 {
     public class WaveManager
     {
-        private Queue<Wave> waveQueue = new();
-        public Action Survived { get; set; }
-
-
-        private Wave currentWave;
-       // private double waveTimer = 0;
-
         public class Wave
         {
             // Each step is a group of events that spawn together
@@ -39,6 +32,14 @@ namespace CompileAndConquer.Content.WaveManager
                 CurrentStep = 0;
             }
         }
+
+        private Queue<Wave> waveQueue = new();
+        public Action Survived { get; set; }
+
+
+        private Wave currentWave;
+       // private double waveTimer = 0;
+
 
 		private readonly List<BossPhase> bossPhases = new List<BossPhase>
         {

@@ -17,30 +17,22 @@
       "EnterBottom",
       "EnterLeft",
       "EnterRight",
-      "EnterImmediate"
+      "SwoopEntry"
     ],
     "ExitTypes": [
       "ExitTop",
       "ExitBottom",
       "ExitLeft",
       "ExitRight",
-      "ExitImmediate"
+      "SwoopEntry"
     ]
   },
 
-  "AttackBehavior": {
-    "ABullet": [
-      { "FireRate": 5 },
-      { "BulletSpeed": 5 },
-      { "aim": "FixedSouth" },
-      { "Bullettexture": "bulletA.png" }
-    ],
-
-    "BBullet": [
-      { "FireRate": 10 },
-      { "BulletSpeed": 10 },
-      { "aim": "player" },
-      { "Bullettexture": "bulletB.png" }
-    ]
+  "AttackPatterns": {
+    "CircularBurstAttack": {
+      "count": "36",
+      "color": "red",
+      ""
+    }
   }
 }
