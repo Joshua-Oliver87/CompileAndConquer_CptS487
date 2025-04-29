@@ -1,3 +1,4 @@
+
 using System;
 using CompileAndConquer.Content;
 using CompileAndConquer.Screens;
@@ -19,27 +20,28 @@ public class InputHandler
     /*
     Keybindings
     */
-    
+
     // Movement
-    public static Keys up{get;set;} = Keys.Up;
-    public static Keys down{get;set;} = Keys.Down;
-    public static Keys left{get;set;} = Keys.Left;
-    public static Keys right{get;set;} = Keys.Right;
+    public static Keys up { get; set; } = Keys.Up;
+    public static Keys down { get; set; } = Keys.Down;
+    public static Keys left { get; set; } = Keys.Left;
+    public static Keys right { get; set; } = Keys.Right;
     // public static Keys altUp{get;set;} = Keys.W;
     // public static Keys altDown{get;set;} = Keys.S;
     // public static Keys altLeft{get;set;} = Keys.A;
     // public static Keys altRight{get;set;} = Keys.D;
-    
+
     // Controls
-    private static Keys slowMode = Keys.LeftShift;
-    private static Keys altSlowMode = Keys.LeftControl;
-    private static Keys fire = Keys.Space;
+    public static Keys slowMode { get; set; } = Keys.LeftShift;
+    //private static Keys altSlowMode = Keys.LeftControl;
+    public static Keys fire { get; set; } = Keys.Space;
     private static Keys cheatModeOn = Keys.N;
     private static Keys cheatModeOff = Keys.M;
-    
+
+
     // Menu
     public static Keys escape = Keys.Escape;
-    
+
     public static void Update()
     {
         prevkstate = kstate;
@@ -52,16 +54,16 @@ public class InputHandler
     private static void SendPlayerMovement()
     {
         Vector2 movement = new Vector2();
-        
-        if (kstate.IsKeyDown(up)) 
+
+        if (kstate.IsKeyDown(up))
             movement.Y -= 1;
-        if (kstate.IsKeyDown(down)) 
+        if (kstate.IsKeyDown(down))
             movement.Y += 1;
-        if (kstate.IsKeyDown(left)) 
+        if (kstate.IsKeyDown(left))
             movement.X -= 1;
-        if (kstate.IsKeyDown(right)) 
+        if (kstate.IsKeyDown(right))
             movement.X += 1;
-        
+
         // TODO normalize movement vector
         if (movement.Length() > 0)
         {
@@ -69,7 +71,7 @@ public class InputHandler
         }
         if (GetSlowMode())
             player.MoveSlow(movement);
-        
+
         else
             player.Move(movement);
     }
@@ -100,7 +102,7 @@ public class InputHandler
             return selectedOption;
         }
         return -1;
-      //  return 0; // for debugging
+        //  return 0; // for debugging
     }
 
     public static void PlayerFire()
@@ -108,16 +110,64 @@ public class InputHandler
         if (kstate.IsKeyDown(fire))
             player.Fire();
     }
-    
-    public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode) || kstate.IsKeyDown(altSlowMode)); }
+
+
+    public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode)); }
 
     public static void CheatMode()
     {
         if (kstate.IsKeyDown(cheatModeOn))
             player.CheatModeOn();
-        
+
         if (kstate.IsKeyDown(cheatModeOff))
             player.CheatModeOff();
     }
 
+
+    public static bool setCurrentKey(int i)
+    {
+        if (kstate.GetPressedKeys().Length == 0)
+        {
+            return false;
+        }
+        Keys curkey = kstate.GetPressedKeys()[0];
+        // Console.WriteLine(i.ToString()+" : "+curkey.ToString());
+        switch (i + 1)
+        {
+            //"Up","Down", "Right","Left","Slow Mode","Fire","Pause",
+            case 1:
+                up = curkey;
+                break;
+            case 2:
+                down = curkey;
+                break;
+            case 3:
+                right = curkey;
+                break;
+            case 4:
+                left = curkey;
+                break;
+            case 5:
+                slowMode = curkey;
+                break;
+            case 6:
+                fire = curkey;
+                break;
+            case 7:
+                escape = curkey;
+                break;
+            default: break;
+        }
+        return true;
+    }
+
+    public static bool curKeyNull()
+    {
+        var keys = kstate.GetPressedKeys();
+        if (keys.Length > 0)
+        {
+            return false;
+        }
+        return true;
+    }
 }

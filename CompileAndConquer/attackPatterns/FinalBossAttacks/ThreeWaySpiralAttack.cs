@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
-using CompileAndConquer.Content.Interfaces;
 using CompileAndConquer.Entities.BulletSpawners;
+using CompileAndConquer.Content.Interfaces;
 
 namespace CompileAndConquer.Content.AttackPatterns
 {

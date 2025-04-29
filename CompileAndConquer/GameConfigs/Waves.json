@@ -1,9 +1,11 @@
 {
   "Waves": [
     {
+      "WaveID": "Wave1",
       "Events": [
         [
           {
+            "EventID": "W1E1",
             "EnemyType": "TypeA",
             "SpawnCount": 4,
             "Duration": 5,
@@ -33,6 +35,7 @@
         ],
         [
           {
+            "EventID": "W1E2",
             "EnemyType": "TypeA",
             "SpawnCount": 4,
             "Duration": 5,
@@ -61,6 +64,65 @@
         ],
         [
           {
+            "EventID": "W1E3",
+            "EnemyType": "TypeA",
+            "SpawnCount": 4,
+            "Duration": 5,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 200
+            },
+            "Entry": {
+              "Direction": "Left",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Right",
+              "Speed": 120
+            },
+            "Movement": {
+              "Type": "Linear",
+              "StartRight": true
+            },
+            "Attack": {
+              "Type": "TimedStraight",
+              "Interval": 0.5,
+              "Speed": 250
+            }
+          }
+        ],
+        [
+          {
+            "EventID": "W1E4",
+            "EnemyType": "TypeA",
+            "SpawnCount": 4,
+            "Duration": 5,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 150
+            },
+            "Entry": {
+              "Direction": "Top",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Top",
+              "Speed": 120
+            },
+            "Movement": {
+              "Type": "Linear",
+              "StartRight": false
+            },
+            "Attack": {
+              "Type": "TimedStraight",
+              "Interval": 0.5,
+              "Speed": 250
+            }
+          }
+        ],
+        [
+          {
+            "EventID": "W1E5",
             "EnemyType": "MiniBoss",
             "SpawnCount": 1,
             "Duration": 5,
@@ -90,15 +152,163 @@
               "Speed": 350
             }
           }
+        ],
+        [
+          {
+            "EventID": "W1E6",
+            "EnemyType": "MiniBoss",
+            "SpawnCount": 1,
+            "Duration": 5,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 200
+            },
+            "Entry": {
+              "Direction": "Top",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Top",
+              "Speed": 320
+            },
+            "Movement": {
+              "Type": "Curved",
+              "HorizontalAmplitude": 200,
+              "VerticalAmplitude": 50,
+              "HorizontalFrequency": 0.7,
+              "VerticalFrequency": 1.3
+            },
+            "Attack": {
+              "Type": "Triangle",
+              "BulletCount": 8,
+              "Interval": 10,
+              "Speed": 350
+            }
+          }
+        ],
+        [
+          {
+            "EventID": "W1E7A",
+            "EnemyType": "TypeA",
+            "SpawnCount": 4,
+            "Duration": 2,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 230
+            },
+            "Entry": {
+              "Direction": "Top",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Top",
+              "Speed": 320
+            },
+            "Movement": {
+              "Type": "Stationary"
+            },
+            "Attack": {
+              "Type": "Circle",
+              "BulletCount": 24,
+              "Interval": 30,
+              "Speed": 200
+            }
+          },
+          {
+            "EventID": "W1E7B",
+            "EnemyType": "TypeA",
+            "SpawnCount": 4,
+            "Duration": 2,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 180
+            },
+            "Entry": {
+              "Direction": "Top",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Top",
+              "Speed": 320
+            },
+            "Movement": {
+              "Type": "Stationary"
+            },
+            "Attack": {
+              "Type": "Circle",
+              "BulletCount": 24,
+              "Interval": 30,
+              "Speed": 200
+            }
+          }
         ]
       ]
     },
     {
+      "WaveID": "Wave2",
       "Events": [
         [
           {
-            "EnemyType": "TypeB",
-            "SpawnCount": 4,
+            "EventID": "W2E1",
+            "EnemyType": "MiniBoss",
+            "SpawnCount": 1,
+            "Duration": 25,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 200
+            },
+            "Entry": {
+              "Direction": "Top",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Top",
+              "Speed": 320
+            },
+            "Movement": {
+              "Type": "MiniBoss"
+            },
+            "Attack": {
+              "Type": "Circle",
+              "BulletCount": 24,
+              "Interval": 30,
+              "Speed": 200
+            }
+          }
+        ],
+        [
+          {
+            "EventID": "W2E2A",
+            "EnemyType": "MiniBoss",
+            "SpawnCount": 1,
+            "Duration": 5,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 200
+            },
+            "Entry": {
+              "Direction": "Right",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Left",
+              "Speed": 320
+            },
+            "Movement": {
+              "Type": "Linear",
+              "StartRight": false
+            },
+            "Attack": {
+              "Type": "Triangle",
+              "BulletCount": 8,
+              "Interval": 10,
+              "Speed": 350
+            }
+          },
+          {
+            "EventID": "W2E2B",
+            "EnemyType": "MiniBoss",
+            "SpawnCount": 1,
             "Duration": 5,
             "SpawnPattern": {
               "Type": "Line",
@@ -106,6 +316,122 @@
             },
             "Entry": {
               "Direction": "Left",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Right",
+              "Speed": 320
+            },
+            "Movement": {
+              "Type": "Linear",
+              "StartRight": true
+            },
+            "Attack": {
+              "Type": "Triangle",
+              "BulletCount": 8,
+              "Interval": 10,
+              "Speed": 350
+            }
+          },
+          {
+            "EventID": "W2E2C",
+            "EnemyType": "TypeA",
+            "SpawnCount": 5,
+            "Duration": 4,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 100
+            },
+            "Entry": {
+              "Direction": "Left",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Left",
+              "Speed": 220
+            },
+            "Movement": {
+              "Type": "Linear",
+              "StartRight": true
+            },
+            "Attack": {
+              "Type": "None"
+            }
+          },
+          {
+            "EventID": "W2E2D",
+            "EnemyType": "TypeA",
+            "SpawnCount": 5,
+            "Duration": 4,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 150
+            },
+            "Entry": {
+              "Direction": "Right",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Right",
+              "Speed": 320
+            },
+            "Movement": {
+              "Type": "Linear",
+              "StartRight": false
+            },
+            "Attack": {
+              "Type": "None"
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "WaveID": "Wave3",
+      "Events": [
+        [
+          {
+            "EventID": "W3E1A",
+            "EnemyType": "TypeB",
+            "SpawnCount": 6,
+            "Duration": 6,
+            "SpawnPattern": {
+              "Type": "Pyramid",
+              "Rows": 3,
+              "Spacing": 40,
+              "Y": 200
+            },
+            "Entry": {
+              "Direction": "Left",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Left",
+              "Speed": 120
+            },
+            "Movement": {
+              "Type": "Linear",
+              "StartRight": false
+            },
+            "Attack": {
+              "Type": "TimedStraight",
+              "Interval": 0.5,
+              "Speed": 300
+            }
+          },
+          {
+            "EventID": "W3E1B",
+            "EnemyType": "TypeB",
+            "SpawnCount": 6,
+            "Duration": 6,
+            "SpawnPattern": {
+              "Type": "Pyramid",
+              "Rows": 3,
+              "Spacing": 40,
+              "Y": 200
+            },
+            "Entry": {
+              "Direction": "Right",
               "Speed": 120
             },
             "Exit": {
@@ -119,8 +445,43 @@
             "Attack": {
               "Type": "TimedStraight",
               "Interval": 0.5,
-              "Speed": 250
+              "Speed": 300
             }
+          }
+        ]
+      ]
+    },
+    {
+      "WaveID": "Wave4",
+      "Events": [
+        [
+          {
+            "EventID": "W4E1",
+            "EnemyType": "FinalBoss",
+            "SpawnCount": 1,
+            "Duration": 90,
+            "SpawnPattern": {
+              "Type": "Line",
+              "Y": 100
+            },
+            "Entry": {
+              "Direction": "Top",
+              "Speed": 120
+            },
+            "Exit": {
+              "Direction": "Left",
+              "Speed": 120
+            },
+            "Movement": {
+              "Type": "FinalBoss"
+            },
+            "Attack": {
+              "Type": "Circle",
+              "BulletCount": 24,
+              "Interval": 30,
+              "Speed": 200
+            },
+            "HpThreshold": 2000
           }
         ]
       ]

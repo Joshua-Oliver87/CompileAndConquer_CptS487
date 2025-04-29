@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using CompileAndConquer.Content;
 using Microsoft.Xna.Framework;
+using CompileAndConquer.Content.AttackPatterns;
 using CompileAndConquer.Content.Interfaces;
 
 public class BossPhase

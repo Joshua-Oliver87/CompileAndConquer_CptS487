@@ -11,14 +11,14 @@ public class KeyBindScreen : Screen
     private bool enterPressed = false;
     private bool needUserInput = false;
     private SettingMenuScreen settingMenu;
-    
+
     // private int playerHealth = 5; // example value, set this dynamically
     // private int playerScore = 1000; // example value, set this dynamically
 
     public void Initialize(SpriteFont font)
     {
         this.font = font;
-        this.MenuOptions = new string[] { "Up","Down", "Right","Left","Slow Mode","Fire","Pause","Return to Settings" };
+        this.MenuOptions = new string[] { "Up", "Down", "Right", "Left", "Slow Mode", "Fire", "Pause", "Return to Settings" };
 
     }
 
@@ -49,55 +49,57 @@ public class KeyBindScreen : Screen
                 color = Color.White;
             }
 
-            if(i<MenuOptions.Length - 1)
+            if (i < MenuOptions.Length - 1)
             {
                 curkey += " - " + getCurrentKey(i);
             }
 
             spriteBatch.DrawString(font, curkey, menuPosition, color);
-            menuPosition.Y += 40; 
+            menuPosition.Y += 40;
         }
 
-        if(enterPressed)
+        if (enterPressed)
         {
-            spriteBatch.DrawString(font, "Please press new key...", new Vector2(CompileAndConquer.ScreenSize.X/2 - 50, 100), Color.Yellow);
+            spriteBatch.DrawString(font, "Please press new key...", new Vector2(CompileAndConquer.ScreenSize.X / 2 - 50, 100), Color.Yellow);
         }
     }
 
     public override void Update()
     {
-        if(enterPressed)
+        if (enterPressed)
         {
-            if(needUserInput)
+            if (needUserInput)
             {
-                if(InputHandler.curKeyNull())
+                if (InputHandler.curKeyNull())
                 {
-                    needUserInput =false;
+                    needUserInput = false;
                 }
                 return;
 
             }
-            
-            if(!InputHandler.curKeyNull())
+
+            if (!InputHandler.curKeyNull())
             {
                 InputHandler.setCurrentKey(selectedOption);
-                enterPressed =false;
+                enterPressed = false;
             }
             return;
         }
 
         int enter = InputHandler.HandleScreenInput(this, ref selectedOption);
-        if (enter== -1)
+        if (enter == -1)
         {
             return;
         }
-        if(MenuOptions[enter] == "Return to Settings")
+        if (MenuOptions[enter] == "Return to Settings")
         {
 
-            if(settingMenu !=null)
+            if (settingMenu != null)
             {
-            this.screenContext.SetScreen(settingMenu);}
-            else{
+                this.screenContext.SetScreen(settingMenu);
+            }
+            else
+            {
                 Console.WriteLine("ERROR: in setting screen, pause is null.");
             }
 
@@ -106,7 +108,7 @@ public class KeyBindScreen : Screen
         {
             // no option was selected.
             enterPressed = true;
-            needUserInput =true;
+            needUserInput = true;
         }
 
     }
@@ -115,7 +117,7 @@ public class KeyBindScreen : Screen
     {
         switch (i + 1)
         {
-    //"Up","Down", "Right","Left","Slow Mode","Fire","Pause",
+            //"Up","Down", "Right","Left","Slow Mode","Fire","Pause",
             case 1: return InputHandler.up.ToString();
             case 2: return InputHandler.down.ToString();
             case 3: return InputHandler.right.ToString();

@@ -6,8 +6,8 @@ using CompileAndConquer.Content.EnemyWaveManager.entryPatterns;
 using CompileAndConquer.Content.EnemyWaveManager.exitPatterns;
 using CompileAndConquer.SpawnPatterns;
 using CompileAndConquer.Entities.Enemy_Factories;
-using CompileAndConquer.Content.MovementTypes;
 using CompileAndConquer.Content.AttackPatterns;
+using CompileAndConquer.Content.Interfaces;
 using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
 
 namespace CompileAndConquer.Content.EnemyWaveManager
@@ -18,9 +18,15 @@ namespace CompileAndConquer.Content.EnemyWaveManager
         {
             var wave = new WaveManager.Wave();
             
-            if (waveJson.TryGetProperty("Steps", out JsonElement stepsJson))
+            // Set wave ID if present
+            if (waveJson.TryGetProperty("WaveID", out JsonElement waveIdJson))
             {
-                foreach (JsonElement stepJson in stepsJson.EnumerateArray())
+                wave.WaveID = waveIdJson.GetString() ?? "Wave";
+            }
+            
+            if (waveJson.TryGetProperty("Events", out JsonElement eventsJson))
+            {
+                foreach (JsonElement stepJson in eventsJson.EnumerateArray())
                 {
                     var waveEvents = new List<WaveManager.WaveEvent>();
                     
@@ -44,16 +50,35 @@ namespace CompileAndConquer.Content.EnemyWaveManager
         {
             try
             {
+                string eventId = GetStringProperty(eventJson, "EventID", "UnknownEvent");
+                Console.WriteLine($"    Building event {eventId}");
+                
                 string enemyType = GetStringProperty(eventJson, "EnemyType");
+                Console.WriteLine($"    - EnemyType: {enemyType}");
+                
                 int spawnCount = GetIntProperty(eventJson, "SpawnCount");
                 int duration = GetIntProperty(eventJson, "Duration");
                 
+                Console.WriteLine($"    - Creating factories for {enemyType}");
                 var enemyFactory = CreateEnemyFactory(eventJson);
                 var entryFactory = CreateEntryFactory(eventJson);
                 var exitFactory = CreateExitFactory(eventJson);
 
-                if (enemyFactory == null || entryFactory == null || exitFactory == null)
+                if (enemyFactory == null)
                 {
+                    Console.WriteLine($"    - ERROR: enemyFactory is null for {eventId}");
+                    return null;
+                }
+                
+                if (entryFactory == null)
+                {
+                    Console.WriteLine($"    - ERROR: entryFactory is null for {eventId}");
+                    return null;
+                }
+                
+                if (exitFactory == null)
+                {
+                    Console.WriteLine($"    - ERROR: exitFactory is null for {eventId}");
                     return null;
                 }
 
@@ -65,13 +90,22 @@ namespace CompileAndConquer.Content.EnemyWaveManager
                     exitFactory
                 );
                 
+                // Set event ID if present
+                if (eventJson.TryGetProperty("EventID", out JsonElement eventIdJson))
+                {
+                    waveEvent.EventID = eventIdJson.GetString() ?? "Event";
+                }
+                
+                Console.WriteLine($"    - Setting spawn pattern for {eventId}");
                 SetSpawnPattern(waveEvent, eventJson);
                 
+                Console.WriteLine($"    - Successfully built event {eventId}");
                 return waveEvent;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error building wave event: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
                 return null;
             }
         }
@@ -176,7 +210,7 @@ namespace CompileAndConquer.Content.EnemyWaveManager
                     case "TimedStraight":
                         float interval = GetFloatProperty(attackJson, "Interval", 0.5f);
                         float speed = GetFloatProperty(attackJson, "Speed", 250f);
-                        return (IAttackPattern)new TimedStraightAttack(dir => new StraightBullet(dir, speed), interval);
+                        return new TimedStraightAttack(dir => new StraightBullet(dir, speed), interval);
                         
                     case "Triangle":
                         int bulletCount = GetIntProperty(attackJson, "BulletCount", 8);

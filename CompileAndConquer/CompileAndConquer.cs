@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Linq;
 using CompileAndConquer.Screens;
-using CompileAndConquer.Content.WaveManager;
+using CompileAndConquer.Content.EnemyWaveManager;
 
 namespace CompileAndConquer;
 

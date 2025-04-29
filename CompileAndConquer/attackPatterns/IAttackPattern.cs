@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using CompileAndConquer.Content;
 
-namespace CompileAndConquer.Content.AttackPatterns
+namespace CompileAndConquer.Content.Interfaces
 {
     public interface IAttackPattern
     {
