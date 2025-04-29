@@ -31,9 +31,9 @@ public class InputHandler
     // public static Keys altRight{get;set;} = Keys.D;
     
     // Controls
-    private static Keys slowMode = Keys.LeftShift;
+    public static Keys slowMode{get;set;} = Keys.LeftShift;
     //private static Keys altSlowMode = Keys.LeftControl;
-    private static Keys fire = Keys.Space;
+    public static Keys fire{get;set;} = Keys.Space;
     private static Keys cheatModeOn = Keys.N;
     private static Keys cheatModeOff = Keys.M;
 
@@ -110,8 +110,8 @@ public class InputHandler
             player.Fire();
     }
     
-<<<<<<< HEAD
-    public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode) || kstate.IsKeyDown(altSlowMode)); }
+
+    public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode)); }
 
     public static void CheatMode()
     {
@@ -121,9 +121,7 @@ public class InputHandler
         if (kstate.IsKeyDown(cheatModeOff))
             player.CheatModeOff();
     }
-
-=======
-    public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode)); }
+    
 
     public static bool setCurrentKey(int i)
     {
@@ -171,5 +169,4 @@ public class InputHandler
         }
         return true;
     }
->>>>>>> main
 }
