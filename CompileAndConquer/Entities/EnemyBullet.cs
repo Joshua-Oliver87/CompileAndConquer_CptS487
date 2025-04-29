@@ -10,7 +10,9 @@ namespace CompileAndConquer.Content
         private float maxLifetime = 3f;
         private bool controlled = false;
 
-        public EnemyBullet(Vector2 position, IMovementStrategy strategy)
+        
+
+        public EnemyBullet(Vector2 position, IMovementStrategy strategy, Color tint)
         {
             this.texture = TextureHandler.Bullet;
             this.Position = position;
@@ -18,17 +20,11 @@ namespace CompileAndConquer.Content
             Scale = 2.0f;
             health = 1;
             Collidable = true;
+			this.color = tint;
         }
 
         public override void Update(GameTime gameTime)
         {
-            lifeTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (lifeTimer >= maxLifetime)
-            {
-                this.isAlive = false;
-                return;
-            }
             movementStrategy?.Move(this, gameTime);
             
         }

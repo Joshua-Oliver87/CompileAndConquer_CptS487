@@ -3,12 +3,12 @@ using CompileAndConquer.Content;
 
 namespace CompileAndConquer.Content.EnemyWaveManager.exitPatterns
 {
-    public class fromTopExit : IExit
+    public class FromTopExit : IExit
     {
         private float targetY;
         private float speed;
 
-        public fromTopExit(float targetY, float speed = 100f)
+        public FromTopExit(float targetY, float speed = 100f)
         {
             this.targetY = targetY;
             this.speed = speed;

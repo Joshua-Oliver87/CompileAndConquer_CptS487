@@ -65,7 +65,7 @@ public class CompileAndConquer : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        TextureHandler.Load(Content);
+        TextureHandler.Load(Content, GraphicsDevice);
 
         Player.Instance.OnLoseLife = LoseLife;
         Player.Instance.OnDeath = Death;
@@ -141,7 +141,6 @@ public class CompileAndConquer : Game
         ScreenSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
         InputHandler.Update();
-        AISystem.Update(gameTime); // AI logic
         EntityHandler.Update(gameTime);
 
         base.Update(gameTime);
