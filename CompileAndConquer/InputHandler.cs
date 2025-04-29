@@ -130,7 +130,7 @@ public class InputHandler
             return false;
         }
         Keys curkey = kstate.GetPressedKeys()[0];
-        Console.WriteLine(i.ToString()+" : "+curkey.ToString());
+        // Console.WriteLine(i.ToString()+" : "+curkey.ToString());
         switch (i + 1)
         {
     //"Up","Down", "Right","Left","Slow Mode","Fire","Pause",
