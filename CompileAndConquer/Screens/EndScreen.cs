@@ -7,11 +7,10 @@ namespace CompileAndConquer.Screens;
 
 public class EndScreen : Screen
 {
-    private static EndScreen instance;
-    public  bool gameEnd { get; set; } = false;
-
     public bool win {get;set;} = false;
     public Action OnExitGame { get; set; }
+
+    private StartScreen startScreen;
 
     private int selectedOption;
 
@@ -21,17 +20,11 @@ public class EndScreen : Screen
         MenuOptions = ["Return to Main Menu", "Quit"];
     }
 
-    public static EndScreen Instance
+    public void SetStartScreen(StartScreen startScreen)
     {
-        get{
-            if (instance == null)
-            {
-                instance = new EndScreen();
-            }
-            return instance;
-        }
-        
+        this.startScreen = startScreen;
     }
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         Vector2 menuPosition = new Vector2(CompileAndConquer.ScreenSize.X / 2 - 50, CompileAndConquer.ScreenSize.Y / 2 - 50);
@@ -69,8 +62,9 @@ public class EndScreen : Screen
         int enter = InputHandler.HandleScreenInput(this, ref selectedOption);
         if (enter == 0)
         {
-            gameEnd = false;
-            // switch to main menu when created
+            // switch to start when created
+            this.screenContext.SetScreen(startScreen);
+
         }
         else if(enter == 1)
         {

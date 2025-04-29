@@ -169,10 +169,6 @@ public class Player : Entity
         // remove all entities
         OnDeath?.Invoke();
 
-        // show end screen
-        EndScreen.Instance.gameEnd = true;
-        EndScreen.Instance.Update();
-
     }
 
     public void StartTimer()

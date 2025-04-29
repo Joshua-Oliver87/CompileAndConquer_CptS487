@@ -9,6 +9,7 @@ namespace CompileAndConquer.Content.MovementTypes.BulletMovementTypes
         private bool hasFired = false;
         private int bulletCount;
         private float bulletSpeed;
+		private Color color = Color.Yellow;
 
         public CircularBulletBurstMovement(int bulletCount = 12, float bulletSpeed = 200f)
         {
@@ -29,7 +30,7 @@ namespace CompileAndConquer.Content.MovementTypes.BulletMovementTypes
                 Vector2 dir = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
                 IMovementStrategy bulletStrategy = new StraightBullet(dir, bulletSpeed);
 
-                var burstBullet = new EnemyBullet(entity.Position, bulletStrategy);
+                var burstBullet = new EnemyBullet(entity.Position, bulletStrategy, color);
                 EntityHandler.Add(burstBullet);
             }
 

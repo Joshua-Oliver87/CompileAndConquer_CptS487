@@ -21,24 +21,25 @@ public class InputHandler
     */
     
     // Movement
-    private static Keys up = Keys.Up;
-    private static Keys down = Keys.Down;
-    private static Keys left = Keys.Left;
-    private static Keys right = Keys.Right;
-    private static Keys altUp = Keys.W;
-    private static Keys altDown = Keys.S;
-    private static Keys altLeft = Keys.A;
-    private static Keys altRight = Keys.D;
+    public static Keys up{get;set;} = Keys.Up;
+    public static Keys down{get;set;} = Keys.Down;
+    public static Keys left{get;set;} = Keys.Left;
+    public static Keys right{get;set;} = Keys.Right;
+    // public static Keys altUp{get;set;} = Keys.W;
+    // public static Keys altDown{get;set;} = Keys.S;
+    // public static Keys altLeft{get;set;} = Keys.A;
+    // public static Keys altRight{get;set;} = Keys.D;
     
     // Controls
     private static Keys slowMode = Keys.LeftShift;
-    private static Keys altSlowMode = Keys.LeftControl;
+    //private static Keys altSlowMode = Keys.LeftControl;
     private static Keys fire = Keys.Space;
     private static Keys cheatModeOn = Keys.N;
     private static Keys cheatModeOff = Keys.M;
+
     
     // Menu
-    private static Keys escape = Keys.Escape;
+    public static Keys escape = Keys.Escape;
     
     public static void Update()
     {
@@ -53,13 +54,13 @@ public class InputHandler
     {
         Vector2 movement = new Vector2();
         
-        if (kstate.IsKeyDown(up) || kstate.IsKeyDown(altUp)) 
+        if (kstate.IsKeyDown(up)) 
             movement.Y -= 1;
-        if (kstate.IsKeyDown(down) || kstate.IsKeyDown(altDown)) 
+        if (kstate.IsKeyDown(down)) 
             movement.Y += 1;
-        if (kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(altLeft)) 
+        if (kstate.IsKeyDown(left)) 
             movement.X -= 1;
-        if (kstate.IsKeyDown(Keys.Right) || kstate.IsKeyDown(altRight)) 
+        if (kstate.IsKeyDown(right)) 
             movement.X += 1;
         
         // TODO normalize movement vector
@@ -109,6 +110,7 @@ public class InputHandler
             player.Fire();
     }
     
+<<<<<<< HEAD
     public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode) || kstate.IsKeyDown(altSlowMode)); }
 
     public static void CheatMode()
@@ -120,4 +122,54 @@ public class InputHandler
             player.CheatModeOff();
     }
 
+=======
+    public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode)); }
+
+    public static bool setCurrentKey(int i)
+    {
+        if (kstate.GetPressedKeys().Length == 0)
+        {
+            return false;
+        }
+        Keys curkey = kstate.GetPressedKeys()[0];
+        Console.WriteLine(i.ToString()+" : "+curkey.ToString());
+        switch (i + 1)
+        {
+    //"Up","Down", "Right","Left","Slow Mode","Fire","Pause",
+            case 1: 
+                up = curkey;
+                break;
+            case 2: 
+                down = curkey;
+                break;
+            case 3: 
+                right = curkey;
+                break;            
+            case 4: 
+                left = curkey;
+                break;            
+            case 5: 
+                slowMode = curkey;
+                break;            
+            case 6: 
+                fire = curkey;
+                break;            
+            case 7: 
+                escape = curkey;
+                break;            
+            default: break;
+        }
+        return true;
+    }
+
+    public static bool curKeyNull()
+    {
+        var keys = kstate.GetPressedKeys();
+        if (keys.Length > 0)
+        {
+            return false;
+        }
+        return true;
+    }
+>>>>>>> main
 }
