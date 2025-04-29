@@ -30,7 +30,7 @@ public class CompileAndConquer : Game
     private readonly EndScreen endScreen = new EndScreen();
     private readonly SettingMenuScreen settingScreen = new SettingMenuScreen();
     private readonly SideBarScreen sidebar= SideBarScreen.Instance;
-
+    private readonly KeyBindScreen keyBindScreen = new KeyBindScreen();
     public static int score = 0;
 
     public static Vector2 ScreenSize;
@@ -72,26 +72,26 @@ public class CompileAndConquer : Game
 
 
         screenFont = Content.Load<SpriteFont>("MenuFont");
-        //replace with screen manager screenmanager
 
-        // StartScreen.Instance.Initialize(screenFont);
-        // PauseMenuScreen.Instance.Initialize(screenFont);
-        //EndScreen.Instance.Initialize(screenFont);
         startScreen.Initialize(screenFont);
         pauseScreen.Initialize(screenFont);
         endScreen.Initialize(screenFont);
         settingScreen.Initialize(screenFont);
+        keyBindScreen.Initialize(screenFont);
 
         startScreen.SetScreenContext(ScreenContext.Instance);
         pauseScreen.SetScreenContext(ScreenContext.Instance);
         endScreen.SetScreenContext(ScreenContext.Instance);
         settingScreen.SetScreenContext(ScreenContext.Instance);
+        keyBindScreen.SetScreenContext(ScreenContext.Instance);
 
         settingScreen.SetPauseScreen(pauseScreen);
         pauseScreen.SetEndScreen(endScreen);
         pauseScreen.SetSettingScreen(settingScreen);
         startScreen.SetSettingScreen(settingScreen);
         endScreen.SetStartScreen(startScreen);
+        settingScreen.SetKeyBindScreen(keyBindScreen);
+        keyBindScreen.SetSettingScreen(settingScreen);
         
         ScreenContext.Instance.Initialize(screenFont, startScreen);
 

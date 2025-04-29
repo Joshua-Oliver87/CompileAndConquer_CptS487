@@ -10,6 +10,7 @@ public class SettingMenuScreen : Screen
     private int selectedOption;
     private PauseMenuScreen pauseMenu;
     
+    private KeyBindScreen keyBindScreen;
     // private int playerHealth = 5; // example value, set this dynamically
     // private int playerScore = 1000; // example value, set this dynamically
 
@@ -23,6 +24,11 @@ public class SettingMenuScreen : Screen
     public void SetPauseScreen(PauseMenuScreen pauseMenuScreen)
     {
         this.pauseMenu = pauseMenuScreen;
+    }
+
+    public void SetKeyBindScreen(KeyBindScreen keyBind)
+    {
+        this.keyBindScreen = keyBind;
     }
 
 
@@ -57,6 +63,12 @@ public class SettingMenuScreen : Screen
         if (enter == 0)
         {
             //change keybinds logic
+            if(keyBindScreen !=null)
+            {
+            this.screenContext.SetScreen(keyBindScreen);}
+            else{
+                Console.WriteLine("ERROR: in setting screen, keybind is null.");
+            }
         }
         else if(enter == 1)
         {
