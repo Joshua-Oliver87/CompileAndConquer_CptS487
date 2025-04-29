@@ -39,7 +39,7 @@ public class SettingMenuScreen : Screen
         // spriteBatch.DrawString(font, $"Health: {playerHealth}", statsPosition, Color.White);
         // spriteBatch.DrawString(font, $"Score: {playerScore}", new Vector2(statsPosition.X, statsPosition.Y + 30), Color.White);
 
-        Vector2 menuPosition = new Vector2(CompileAndConquer.ScreenSize.X / 2 - 50, CompileAndConquer.ScreenSize.Y / 2 - 50);
+        Vector2 menuPosition = new Vector2(CompileAndConquer.ScreenSize.X / 2 - 100, CompileAndConquer.ScreenSize.Y / 2 - 50);
 
         for (int i = 0; i < MenuOptions.Length; i++)
         {

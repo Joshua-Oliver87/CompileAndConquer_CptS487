@@ -10,19 +10,24 @@ namespace CompileAndConquer.Content;
 public class Player : Entity
 {
     private int bulletCooldown = 0;
-    private int maxBulletCooldown = 12;
-    private float speed = 4.0f;
-    public int Lives = 30;
+    private int maxBulletCooldown = (int)JSONHandler.GetPlayerAttackSpeed();
+    private float speed = JSONHandler.GetPlayerSpeed();
+    public int Lives = JSONHandler.GetPlayerHealth();
     public Action OnLoseLife { get; set; }
     public Action OnDeath { get; set; }
     public bool Invincible = false;
     private int invincibleTimer = 0;
-    private int invincibleDuration = 3;
+    private int invincibleDuration = (int)JSONHandler.GetPlayerInvincibleDuration();
+    
+    private bool powerupActive = false;
+    private double powerupTimer = 0;
+    private double powerupDuration = 5;
+    private int baseDamage = JSONHandler.GetPlayerAttackDamage();
 
     private Stopwatch startTime;
     private Stopwatch invincibilityTimer = new Stopwatch();
     
-    private int damage = 10;
+    private int damage => powerupActive ? baseDamage * 2 : baseDamage;
     
     // Copied
     private static Player instance;
@@ -42,11 +47,20 @@ public class Player : Entity
     {
         texture = TextureHandler.Player;
         Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y / 2);
-        Scale = 2.0f;
+        Scale = JSONHandler.GetPlayerScale();
         ColliderDebugMode = true;
         Collidable = true;
-        health = 100;
+        health = JSONHandler.GetPlayerHealth();
         ColliderScale = 0.5f;
+    }
+
+    public void CheatModeOn()
+    {
+        this.Collidable = false;
+    }
+    public void CheatModeOff()
+    {
+        this.Collidable = true;
     }
     
     // Input/Movement Methods
@@ -95,11 +109,25 @@ public class Player : Entity
     public void Fire()
     {
         // Fire Controls
-        if (bulletCooldown == 0)
+        if (!powerupActive)
         {
-            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f), damage));
-            EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f), damage));
-            bulletCooldown = maxBulletCooldown;
+            if (bulletCooldown == 0)
+            {
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f), damage));
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f), damage));
+                bulletCooldown = maxBulletCooldown;
+            }
+        }
+        else
+        {
+            if (bulletCooldown == 0)
+            {
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(22, -18), new Vector2(0, -10.0f), damage));
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-22, -18), new Vector2(0, -10.0f), damage));
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(44, -18), new Vector2(0, -10.0f), damage));
+                EntityHandler.Add(new PlayerBullet(this.Position + new Vector2(-44, -18), new Vector2(0, -10.0f), damage));
+                bulletCooldown = maxBulletCooldown;
+            }
         }
     }
 
@@ -122,6 +150,16 @@ public class Player : Entity
         // Iterate bulletCooldown down
         if (bulletCooldown > 0)
             bulletCooldown--;
+        
+        // powerup active
+        if (powerupActive)
+        {
+            powerupTimer += gameTime.ElapsedGameTime.TotalSeconds;
+            if (powerupTimer >= powerupDuration)
+            {
+                powerupActive = false;
+            }
+        }
     }
 
     public void LoseLife()
@@ -168,4 +206,10 @@ public class Player : Entity
     }
 
     public double GetSurvivalTime() => startTime.Elapsed.TotalSeconds;
+
+    public void ActivatePowerup()
+    {
+        powerupActive = true;
+        powerupTimer = 0.0;
+    }
 }

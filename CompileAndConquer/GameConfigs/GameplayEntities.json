@@ -1,0 +1,36 @@
+{
+  "Scoring": {
+    "HitEnemy": 1
+  },
+  "Entities": {
+    "player": [
+      { "lives": "3" },
+      { "attack-damage": "10" },
+      { "attack-speed": "12" },
+      { "speed": "4.0" },
+      { "scale": "2.0" },
+      { "invincible-duration": "3"}
+    ],
+    "TypeA": [
+      { "health": "80" },
+      { "attack-speed": "10" },
+      { "speed": "10" },
+      { "scale": "1" }
+    ],
+    "TypeB": [
+      { "health": "100" },
+      { "attack-damage": "10" },
+      { "attack-speed": "10" },
+      { "scale": "1" }
+    ],
+    "MiniBoss": [
+      { "health": "100" },
+      { "attack-damage": "10" },
+      { "attack-speed": "10" }
+    ],
+    "FinalBoss": [
+      { "health": "200" }
+    ]
+  }
+
+}

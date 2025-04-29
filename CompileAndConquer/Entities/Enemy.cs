@@ -97,10 +97,13 @@ public abstract class Enemy : Entity
 	    {
 		    this.health -= collision.Damage;
 
-		    CompileAndConquer.score += 1;
-		    
+		    CompileAndConquer.score += JSONHandler.GetScoreForHitEnemy();
+
 		    if (this.health <= 0)
+		    {
 			    this.isAlive = false;
+			    EntityHandler.Add(new PowerUp(this.Position));
+		    }
 	    }
     }
 

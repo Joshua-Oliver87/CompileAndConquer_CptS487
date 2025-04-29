@@ -1,0 +1,37 @@
+{
+  "MovementPatterns": {
+    "OnScreen": [
+      { "TypeA": "PatternA" },
+      { "TypeB": "PatternB" },
+      { "MidBoss": "PatternC" },
+      {
+        "FinalBoss": [
+          { "Phase1": "ZigZag" },
+          { "Phase2": "CrossScreen" },
+          { "Phase3": "Spiral" }
+        ]
+      }
+    ],
+    "EntryTypes": [
+      "EnterTop",
+      "EnterBottom",
+      "EnterLeft",
+      "EnterRight",
+      "SwoopEntry"
+    ],
+    "ExitTypes": [
+      "ExitTop",
+      "ExitBottom",
+      "ExitLeft",
+      "ExitRight",
+      "SwoopEntry"
+    ]
+  },
+
+  "AttackPatterns": {
+    "CircularBurstAttack": {
+      "count": "36",
+      "color": "red"
+    }
+  }
+}
