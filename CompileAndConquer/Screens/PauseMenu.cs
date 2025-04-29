@@ -1,3 +1,4 @@
+using CompileAndConquer.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -6,9 +7,10 @@ namespace CompileAndConquer.Content;
 
 public class PauseMenuScreen : Screen
 {
-    private static PauseMenuScreen instance;
-    public  bool isPaused { get; set; } = false;
+    //private static PauseMenuScreen instance;
     public Action OnExitGame { get; set; }
+    private SettingMenuScreen settingMenu;
+    private EndScreen endScreen;
 
     private int selectedOption;
     
@@ -18,21 +20,19 @@ public class PauseMenuScreen : Screen
     public void Initialize(SpriteFont font)
     {
         this.font = font;
-        this.MenuOptions = new string[] { "Resume", "Quit" };
-
+        this.MenuOptions = new string[] { "Resume","Settings", "Quit" };
     }
 
-    public static PauseMenuScreen Instance
+    public void SetEndScreen(EndScreen endScreen)
     {
-        get{
-            if (instance == null)
-            {
-                instance = new PauseMenuScreen();
-            }
-            return instance;
-        }
-        
+        this.endScreen = endScreen;
     }
+    public void SetSettingScreen(SettingMenuScreen settingScreen)
+    {
+        this.settingMenu = settingScreen;
+    }
+
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         // // Display base stats (hearts, score) at the top
@@ -63,12 +63,28 @@ public class PauseMenuScreen : Screen
         int enter = InputHandler.HandleScreenInput(this, ref selectedOption);
         if (enter == 0)
         {
-            isPaused = false;
+            this.screenContext.isVisible = false;
 
         }
-        else if(enter == 1)
+        else if(enter ==1)
         {
+            //settings
+            if(settingMenu !=null)
+            {
+                this.screenContext.SetScreen(settingMenu);
+            }
+            else
+            {
+                Console.WriteLine("ERROR: in pause screen, setting is null.");
+            }
+        }
+        else if(enter == 2)
+        {
+            //dirrectly exit the game
             OnExitGame?.Invoke();
+
+            //alternativly, take to exit game screen?
+            this.screenContext.SetScreen(endScreen);
         }
         else
         {
