@@ -110,6 +110,7 @@ public class InputHandler
             player.Fire();
     }
     
+
     public static bool GetSlowMode() { return (kstate.IsKeyDown(slowMode)); }
 
     public static void CheatMode()
