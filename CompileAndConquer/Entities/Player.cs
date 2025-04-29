@@ -10,19 +10,19 @@ namespace CompileAndConquer.Content;
 public class Player : Entity
 {
     private int bulletCooldown = 0;
-    private int maxBulletCooldown = 12;
-    private float speed = 4.0f;
-    public int Lives = JSONHandler.GetPlayerLives();
+    private int maxBulletCooldown = (int)JSONHandler.GetPlayerAttackSpeed();
+    private float speed = JSONHandler.GetPlayerSpeed();
+    public int Lives = JSONHandler.GetPlayerHealth();
     public Action OnLoseLife { get; set; }
     public Action OnDeath { get; set; }
     public bool Invincible = false;
     private int invincibleTimer = 0;
-    private int invincibleDuration = 3;
+    private int invincibleDuration = (int)JSONHandler.GetPlayerInvincibleDuration();
     
     private bool powerupActive = false;
     private double powerupTimer = 0;
     private double powerupDuration = 5;
-    private int baseDamage = 10;
+    private int baseDamage = JSONHandler.GetPlayerAttackDamage();
 
     private Stopwatch startTime;
     private Stopwatch invincibilityTimer = new Stopwatch();
@@ -47,10 +47,10 @@ public class Player : Entity
     {
         texture = TextureHandler.Player;
         Position = new Vector2(CompileAndConquer.ScreenSize.X / 2, CompileAndConquer.ScreenSize.Y / 2);
-        Scale = 2.0f;
+        Scale = JSONHandler.GetPlayerScale();
         ColliderDebugMode = true;
         Collidable = true;
-        health = 3;
+        health = JSONHandler.GetPlayerHealth();
         ColliderScale = 0.5f;
     }
 
