@@ -14,6 +14,8 @@ using CompileAndConquer.Content.Interfaces;
 using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
 using CompileAndConquer.SpawnPatterns;
 
+using CompileAndConquer.Entities.BulletSpawners;
+
 public static class JSONHandler
 {
     private static JsonNode gameplayEntities;
@@ -156,8 +158,6 @@ public static class JSONHandler
     {
         return gameplayEntities?["Scoring"]?["HitEnemy"]?.GetValue<int>() ?? 0;
     }
-    
-    // Helper methods for parsing movement, attack, entry, exit, and spawn pattern from JSON
     public static IMovementStrategy ParseMovement(JsonNode node)
     { 
         if (node == null) return new StationaryMovement();
@@ -193,21 +193,24 @@ public static class JSONHandler
                 float interval = node["Interval"]?.GetValue<float>() ?? 10f;
                 float speed = node["Speed"]?.GetValue<float>() ?? 350f;
                 return new TriangleAttack(bulletCount, interval, 2.0, dir => new StraightBullet(new Vector2(0, 1), speed));
+    
             case "TimedStraight":
                 float tInterval = node["Interval"]?.GetValue<float>() ?? 0.5f;
                 float tSpeed = node["Speed"]?.GetValue<float>() ?? 250f;
                 return new TimedStraightAttack(dir => new StraightBullet(dir, tSpeed), tInterval);
+    
             case "Circle":
                 int bulletCountRad = node["BulletCount"]?.GetValue<int>() ?? 24;
                 float radius = node["Radius"]?.GetValue<float>() ?? 30f;
                 float cSpeed = node["Speed"]?.GetValue<float>() ?? 200f;
                 return new CircleAttack(bulletCountRad, radius, dir => new StraightBullet(dir, cSpeed));
+    
             case "AlternatingAttack":
                 float pauseBetweenAttacks = node["PauseBetweenAttacks"]?.GetValue<float>() ?? 5f;
                 var subAttacksNode = node["Attacks"]?.AsArray();
                 if (subAttacksNode == null || subAttacksNode.Count == 0)
                     return new noAttack();
-
+    
                 var subPatterns = new List<IAttackPattern>();
                 foreach (var subNode in subAttacksNode)
                 {
@@ -216,20 +219,30 @@ public static class JSONHandler
                         subPatterns.Add(pattern);
                 }
                 return new AlternatingAttackPattern(pauseBetweenAttacks, subPatterns.ToArray());
-            case "NoAttack":
-                return new noAttack();
+    
             case "Arc":
                 float aSpeed = node["Speed"]?.GetValue<float>() ?? 200f;
                 float aCooldown = node["Cooldown"]?.GetValue<float>() ?? 0.5f;
                 return new ArcAttackPattern(dir => new StraightBullet(dir, aSpeed), 1f);
+    
             case "ConcentricCircle":
                 return new ConcentricCircleAttack();
+    
             case "SpecialFeature":
                 return new SpecialFeature();
+    
+            case "ThreeWaySpiralAttack":
+                return new ThreeWaySpiralAttack();
+    
+            case "RepeatingSpiralAttack":
+                return new RepeatingSpiralAttack();
+    
+            case "NoAttack":
             default:
                 return new noAttack();
         }
     }
+
 
     public static IEntry ParseEntry(JsonNode node, Vector2 finalPos)
     {
@@ -277,9 +290,10 @@ public static class JSONHandler
         }
     }
     
+
+    
     public static List<BossPhase> ParseBossPhases()
     {
-        // Find the first wave that has a FinalBoss event and get its BossPhases
         var wavesArr = waves?["Waves"]?.AsArray();
         if (wavesArr == null) return new List<BossPhase>();
 

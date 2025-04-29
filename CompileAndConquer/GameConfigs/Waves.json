@@ -2,6 +2,52 @@
   "Waves": [
     {
       "Events": [
+
+        [
+          {
+            "EnemyType": "FinalBoss",
+            "SpawnCount": 1,
+            "Duration": 90,
+            "SpawnPattern": { "Type": "Line", "Y": 100 },
+            "Entry": { "Direction": "Top", "Speed": 120 },
+            "Exit": { "Direction": "Top", "Speed": 120 },
+            "Movement": { "Type": "MiniBossMovement" },
+            "Attack": {
+              "Type": "AlternatingAttack",
+              "PauseBetweenAttacks": 3,
+              "Attacks": [
+                { "Type": "Arc", "Cooldown": 8, "Speed": 200 },
+                { "Type": "ConcentricCircle" }
+              ]
+            },
+            "BossPhases": [
+              {
+                "Movement": { "Type": "FinalBossMovement" },
+                "Attack": {
+                  "Type": "AlternatingAttack",
+                  "PauseBetweenAttacks": 5,
+                  "Attacks": [
+                    { "Type": "Arc", "Speed": 200, "Cooldown": 3 },
+                    { "Type": "ConcentricCircle" }
+                  ]
+                },
+                "HpThreshold": 2000
+              },
+              {
+                "Movement": { "Type": "MiniBossMovement" },
+                "Attack": {
+                  "Type": "AlternatingAttack",
+                  "PauseBetweenAttacks": 3,
+                  "Attacks": [
+                    { "Type": "RepeatingSpiralAttack" },
+                    { "Type": "Arc", "Speed": 200, "Cooldown": 3 }
+                  ]
+                },
+                "HpThreshold": 800
+              }
+            ]
+          }
+        ],
         
         [
           {
@@ -188,52 +234,6 @@
                 }
               ]
             }
-          }
-        ],
-
-        [
-          {
-            "EnemyType": "FinalBoss",
-            "SpawnCount": 1,
-            "Duration": 90,
-            "SpawnPattern": { "Type": "Line", "Y": 100 },
-            "Entry": { "Direction": "Top", "Speed": 120 },
-            "Exit": { "Direction": "Top", "Speed": 120 },
-            "Movement": { "Type": "MiniBossMovement" },
-            "Attack": {
-              "Type": "AlternatingAttack",
-              "PauseBetweenAttacks": 3,
-              "Attacks": [
-                { "Type": "Arc", "Cooldown": 8, "Speed": 200 },
-                { "Type": "ConcentricCircle" }
-              ]
-            },
-            "BossPhases": [
-              {
-                "Movement": { "Type": "FinalBossMovement" },
-                "Attack": {
-                  "Type": "AlternatingAttack",
-                  "PauseBetweenAttacks": 5,
-                  "Attacks": [
-                    { "Type": "Arc", "Speed": 200, "Cooldown": 1 },
-                    { "Type": "ConcentricCircle" }
-                  ]
-                },
-                "HpThreshold": 2000
-              },
-              {
-                "Movement": { "Type": "MiniBossMovement" },
-                "Attack": {
-                  "Type": "AlternatingAttack",
-                  "PauseBetweenAttacks": 3,
-                  "Attacks": [
-                    { "Type": "RepeatingSpiralAttack" },
-                    { "Type": "Arc", "Speed": 200, "Cooldown": 1 }
-                  ]
-                },
-                "HpThreshold": 800
-              }
-            ]
           }
         ],
 
