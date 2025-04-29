@@ -7,29 +7,23 @@ namespace CompileAndConquer.Screens;
 
 public class StartScreen : Screen
 {
-    private static StartScreen instance;
-    public  bool gameStart { get; set; } = false;
     public Action OnExitGame { get; set; }
+
+    private SettingMenuScreen settingMenu;
 
     private int selectedOption;
 
     public void Initialize(SpriteFont font)
     {
         this.font = font;
-        MenuOptions = ["Start Game", "Quit"];
+        MenuOptions = ["Start Game","Settings", "Quit"];
     }
 
-    public static StartScreen Instance
+    public void SetSettingScreen(SettingMenuScreen settingScreen)
     {
-        get{
-            if (instance == null)
-            {
-                instance = new StartScreen();
-            }
-            return instance;
-        }
-        
+        this.settingMenu = settingScreen;
     }
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         Vector2 menuPosition = new Vector2(CompileAndConquer.ScreenSize.X / 2 - 50, CompileAndConquer.ScreenSize.Y / 2 - 50);
@@ -56,9 +50,13 @@ public class StartScreen : Screen
         if (enter == 0)
         {
             // start game
-            gameStart = true;
+            this.screenContext.isVisible = false;
         }
         else if(enter == 1)
+        {
+            this.screenContext.SetScreen(settingMenu);
+        }
+        else if(enter == 2)
         {
             OnExitGame?.Invoke();
         }

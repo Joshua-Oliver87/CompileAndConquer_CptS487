@@ -1,47 +1,58 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System;
 using CompileAndConquer.Content;
-
+using CompileAndConquer.Content.Interfaces;
+using System;
 
 namespace CompileAndConquer.Entities.Enemy_Subtypes
 {
     public class MiniBoss : Enemy
     {
-        private int attackTimer = 0;
-        private List<EnemyBullet> pendingBullets = new List<EnemyBullet>();
+        private double stateTimer = 0;
+        private bool isFiring = true;
 
-        public MiniBoss(Texture2D texture, Vector2 position, IMovementStrategy strategy, IMovementStrategy bulletMovement = null)
+        private readonly double firingDuration = 3.0;  // Fire for 3 seconds (longer than TypeA for boss feel)
+        private readonly double cooldownDuration = 2.0; // Pause for 2 seconds (longer cooldown)
+
+        private IAttackPattern attackPattern;
+
+        public MiniBoss(Texture2D texture, Vector2 position, IMovementStrategy strategy, IAttackPattern attackPattern = null)
             : base(texture, position, 3.5f, 1.2f, strategy)
         {
             this.health = 300;
-            this.BulletMovementStrategy = bulletMovement;
+            this.attackPattern = attackPattern;
         }
 
-        public override void Update(GameTime gameTime)
+        protected override void HandleAttack(GameTime gameTime)
         {
-            base.Update(gameTime);
-       
+            if (!CanAttack())
+                return;
 
-            attackTimer++;
-            if (attackTimer % 200 == 0 && CanAttack())
+            stateTimer += gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (isFiring)
             {
-                Attack();
-            }
+                attackPattern?.Update(this, gameTime);
 
-            foreach (var bullet in pendingBullets)
-                EntityHandler.Add(bullet);
-            pendingBullets.Clear();
+                if (stateTimer >= firingDuration)
+                {
+                    isFiring = false;
+                    stateTimer = 0;
+                }
+            }
+            else // cooldown
+            {
+                if (stateTimer >= cooldownDuration)
+                {
+                    isFiring = true;
+                    stateTimer = 0;
+                }
+            }
         }
 
         public override void Attack()
         {
-            Vector2 direction = Player.Instance.Position - this.Position;
-            if (direction.Length() > 0)
-                direction.Normalize();
 
-            pendingBullets.Add(new EnemyBullet(this.Position, BulletMovementStrategy));
         }
     }
 }
