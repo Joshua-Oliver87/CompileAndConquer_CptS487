@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System;
 using CompileAndConquer.Content;
 using CompileAndConquer.Content.Interfaces;
+using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
 
 namespace CompileAndConquer.Content.AttackPatterns
 {
@@ -9,68 +10,76 @@ namespace CompileAndConquer.Content.AttackPatterns
     {
         private readonly int _rows;
         private readonly float _spacing;
-        private readonly double _fireInterval;
-        private float timer = 0f;
-   		private bool hasFired = false;
+        private readonly float _fireInterval;
+        private float timer;
 
-        public bool IsAttackInProgress => false;
+        private bool isFiring;
 
-        public void Reset()
-        {
-            timer = 0f;
-            hasFired = false;
-        }
+        private readonly Func<Vector2, IMovementStrategy> bulletFactory;
+        private readonly Color color = Color.Yellow;
 
-        private readonly Func<Vector2, IMovementStrategy> _bulletFactory;
-        
-        private double _timer;
-        private Color color = Color.Yellow;
+        public bool IsAttackInProgress => isFiring;
 
         public TriangleAttack(
             int rows,
             float spacing,
-            double fireInterval,
-            Func<Vector2, IMovementStrategy> bulletFactory
-        ) {
-            _rows           = rows;
-            _spacing        = spacing;
-            _fireInterval   = fireInterval;
-            _bulletFactory  = bulletFactory;
-            _timer          = fireInterval; // fire right away
+            float fireInterval = 2.0f,
+            Func<Vector2, IMovementStrategy>? bulletFactory = null
+        )
+        {
+            _rows = rows;
+            _spacing = spacing;
+            _fireInterval = fireInterval;
+            this.bulletFactory = bulletFactory ?? DefaultBulletFactory;
+            Reset();
+        }
+
+        public void Reset()
+        {
+            timer = _fireInterval; // fire right away
+            isFiring = false;
         }
 
         public void Update(Enemy enemy, GameTime gameTime)
         {
-            _timer += gameTime.ElapsedGameTime.TotalSeconds;
-            if (_timer < _fireInterval) return;
-            _timer = 0;
+            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            // center of the formation just below the enemy
-            var spawnCenter = enemy.Position 
-                            + new Vector2(0, enemy.Size.Y * 0.5f + _spacing);
+            if (timer < _fireInterval)
+                return;
 
-            // everyone flies in the same direction
+            timer = 0f;
+            isFiring = true;
+
+            // Determine spawn center slightly below enemy
+            var spawnCenter = enemy.Position + new Vector2(0, enemy.Size.Y * 0.5f + _spacing);
             Vector2 dir = Player.Instance.Position - spawnCenter;
             if (dir.LengthSquared() > 0) dir.Normalize();
 
-            // vertical step for equilateral triangle
             float rowHeight = _spacing * (float)Math.Sqrt(3) / 2f;
 
             for (int row = 0; row < _rows; row++)
-            for (int col = 0; col <= row; col++)
             {
-                // two edges and the base
-                bool isEdge = (col == 0 || col == row || row == _rows - 1);
-                if (!isEdge) continue;
+                for (int col = 0; col <= row; col++)
+                {
+                    // fire only edges and base of triangle
+                    bool isEdge = (col == 0 || col == row || row == _rows - 1);
+                    if (!isEdge) continue;
 
-                float xOff = (col - row * 0.5f) * _spacing;
-                float yOff = -row * rowHeight;
-                var pos = spawnCenter + new Vector2(xOff, yOff);
+                    float xOffset = (col - row * 0.5f) * _spacing;
+                    float yOffset = -row * rowHeight;
+                    Vector2 spawnPos = spawnCenter + new Vector2(xOffset, yOffset);
 
-                // ask factory for the right movement
-                var move = _bulletFactory(dir);
-                EntityHandler.Add(new EnemyBullet(pos, move, color));
+                    var move = bulletFactory(dir);
+                    EntityHandler.Add(new EnemyBullet(spawnPos, move, color));
+                }
             }
+
+            isFiring = false; // done firing this burst
+        }
+
+        private IMovementStrategy DefaultBulletFactory(Vector2 direction)
+        {
+            return new StraightBullet(direction, speed: 250f);
         }
     }
 }

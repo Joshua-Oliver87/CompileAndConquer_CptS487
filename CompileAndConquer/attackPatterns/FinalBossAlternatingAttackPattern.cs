@@ -13,7 +13,6 @@ public class AlternatingAttackPattern : IAttackPattern
     private float pauseBetween;
     private float pauseTimer = 0f;
     private bool inPause = false;
-	private float timer = 0f;
     private bool hasFired = false;
 
 	public bool IsAttackInProgress => !inPause || !hasFired;

@@ -43,22 +43,31 @@ namespace CompileAndConquer.Content.WaveManager
 		private readonly List<BossPhase> bossPhases = new List<BossPhase>
         {
             new BossPhase {
-                Movement = new FinalBossMovement(),
+                Movement = new  miniBossMovement(),
                 Attack = new AlternatingAttackPattern(
-                    pauseBetweenAttacks: 15f,
-                    new ThreeWaySpiralAttack(),
-                    new ConcentricCircleAttack()
+                    pauseBetweenAttacks: 12f,
+                    new TimedStraightAttack(dir => new HomingBullet()),
+                    new ArcAttackPattern(dir => new StraightBullet(dir, 250f), 0.5f)
                 ),
                 HpThreshold = 2000
             },
             new BossPhase {
+                Movement = new FinalBossMovement(),
+                Attack = new AlternatingAttackPattern(
+                    pauseBetweenAttacks: 15f,
+                    new ConcentricCircleAttack(),
+                    new ThreeWaySpiralAttack()
+                ),
+                HpThreshold = 1000
+            },
+            new BossPhase {
                 Movement = new  miniBossMovement(),
                 Attack = new AlternatingAttackPattern(
-                    pauseBetweenAttacks: 5f,
+                    pauseBetweenAttacks: 8f,
                     new RepeatingSpiralAttack(),
-                    new ArcAttackPattern(dir => new StraightBullet(dir, 200f), 0f)
+                    new ConcentricCircleAttack()
                 ),
-                HpThreshold = 800
+                HpThreshold = 500
             }
         };
 
@@ -130,7 +139,10 @@ namespace CompileAndConquer.Content.WaveManager
             {
                 Steps = new List<List<WaveEvent>>
                 {
+                    
+                    
                     //  4 grunts move left-to-right
+                    
                     new List<WaveEvent>
                     {
                         new WaveEvent(
@@ -138,7 +150,7 @@ namespace CompileAndConquer.Content.WaveManager
                                 TextureHandler.TypeAEnemy,
                                 new Vector2(0,0),
                                 () => new LinearMovement(startRight: true),
-                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                                () => new TriangleAttack(rows: 3, spacing: 40f)
                             ),
                             spawnCount: 4,
                             duration: 5,
@@ -148,8 +160,6 @@ namespace CompileAndConquer.Content.WaveManager
                         ) { SpawnPattern = new LineSpawnPattern(y:200f) }
                     },
                     
-                    
-        
                     //  4 grunts move right-to-left
                     new List<WaveEvent>
                     {
@@ -217,8 +227,7 @@ namespace CompileAndConquer.Content.WaveManager
                                     horizontalFrequency: 0.7f,
                                     verticalFrequency: 1.3f
                                 ),
-                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
-                            ),
+                                () => new TriangleAttack(rows: 3, spacing: 40f)),
                             spawnCount: 1,
                             duration: 5,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Top, target: finalPos, speed: 120f),
@@ -240,7 +249,7 @@ namespace CompileAndConquer.Content.WaveManager
                                     horizontalFrequency: 0.7f,
                                     verticalFrequency: 1.3f
                                 ),
-                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                                () => new TriangleAttack(rows: 3, spacing: 40f)
                             ),
                             spawnCount: 1,
                             duration: 5,
@@ -314,7 +323,7 @@ namespace CompileAndConquer.Content.WaveManager
                                 TextureHandler.MiniBoss,
                                 Vector2.Zero,
                                 () => new LinearMovement(startRight: false),
-                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                                () => new TriangleAttack(rows: 3, spacing: 40f)
                             ),
                             spawnCount: 1,
                             duration: 5,
@@ -328,7 +337,7 @@ namespace CompileAndConquer.Content.WaveManager
                                 TextureHandler.MiniBoss,
                                 Vector2.Zero,
                                 () => new LinearMovement(startRight: true),
-                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                                () => new TriangleAttack(rows: 3, spacing: 40f)
                             ),
                             spawnCount: 1,
                             duration: 5,
@@ -405,7 +414,7 @@ namespace CompileAndConquer.Content.WaveManager
                                 TextureHandler.MiniBoss,
                                 Vector2.Zero,
                                 () => new LinearMovement(startRight: false),
-                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                                () => new TriangleAttack(rows: 3, spacing: 40f)
                             ),
                             spawnCount: 1,
                             duration: 5,
@@ -419,7 +428,7 @@ namespace CompileAndConquer.Content.WaveManager
                                 TextureHandler.MiniBoss,
                                 Vector2.Zero,
                                 () => new LinearMovement(startRight: true),
-                                () => new TriangleAttack(8,10f,2.0, dir => new StraightBullet(new Vector2(0,1), 350f))
+                                () => new TriangleAttack(rows: 3, spacing: 40f)
                             ),
                             spawnCount: 1,
                             duration: 5,
@@ -488,8 +497,7 @@ namespace CompileAndConquer.Content.WaveManager
                         ) { SpawnPattern = new LineSpawnPattern(y:180f) }
                     },
                     
-                    
-            
+                
                     // grunts in pyramid on left, move right and attack
                     new List<WaveEvent>
                     {
@@ -498,10 +506,10 @@ namespace CompileAndConquer.Content.WaveManager
                                 TextureHandler.TypeBEnemy,
                                 Vector2.Zero,
                                 () => new LinearMovement(startRight: false),
-                                () => new TimedStraightAttack(dir => new StraightBullet(dir, 300f), 0.5f)
+                                () => new TriangleAttack(rows: 3, spacing: 40f)
                             ),
                             spawnCount: 6,
-                            duration: 6,
+                            duration: 16,
                             entryFactory: finalPos => new DirectionalEntry(dir: CardinalDirection.Left, target: finalPos, speed: 120f),
                             exitFactory:  finalPos => new DirectionalExit(
                                 CardinalDirection.Left, 120f)

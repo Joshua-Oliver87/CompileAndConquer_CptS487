@@ -1,4 +1,3 @@
-// fires a straight bullet every fireInterval seconds
 using Microsoft.Xna.Framework;
 using System;
 using CompileAndConquer.Content.Interfaces;
@@ -10,34 +9,48 @@ public class TimedStraightAttack : IAttackPattern
     private readonly float fireInterval;
     private readonly Func<Vector2, IMovementStrategy> _bulletFactory;
     private float timer;
-    public bool IsAttackInProgress => false;
-	private Color color = Color.Yellow;
-    private bool hasFired = false;
+    private bool firingCycleActive = false;
+    private float cycleDuration = 2f; 
+    private float cycleTimer = 0f;
+
+    public bool IsAttackInProgress => firingCycleActive;
 
     public TimedStraightAttack(Func<Vector2, IMovementStrategy> bulletFactory, float fireInterval = 0.2f)
     {
-		this._bulletFactory = bulletFactory;
+        _bulletFactory = bulletFactory;
         this.fireInterval = fireInterval;
     }
 
     public void Reset()
     {
         timer = 0f;
-        hasFired = false;
+        cycleTimer = 0f;
+        firingCycleActive = false;
     }
-
 
     public void Update(Enemy enemy, GameTime gameTime)
     {
+        if (!firingCycleActive)
+        {
+            firingCycleActive = true;
+            cycleTimer = 0f;
+        }
+
+        cycleTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-        if (timer < fireInterval)
-            return;
 
-        var dir = new Vector2(0,1);
+        if (cycleTimer >= cycleDuration)
+        {
+            firingCycleActive = false;
+            return; // stop firing after cycle ends
+        }
 
-        var move = _bulletFactory(dir);
-        EntityHandler.Add(new EnemyBullet(enemy.Position, move, color));
-
-        timer = 0;
+        if (timer >= fireInterval)
+        {
+            var dir = new Vector2(0, 1);
+            var move = _bulletFactory(dir);
+            EntityHandler.Add(new EnemyBullet(enemy.Position, move, Color.Yellow));
+            timer = 0;
+        }
     }
 }

@@ -1,59 +1,80 @@
 using Microsoft.Xna.Framework;
 using System;
 using CompileAndConquer.Content;
-using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
 using CompileAndConquer.Content.Interfaces;
+using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
 
 namespace CompileAndConquer.Content.AttackPatterns
 {
     public class CircleAttack : IAttackPattern
     {
-        private bool _hasFired;
+        private readonly int count;
+        private readonly float radius;
+        private readonly Func<Vector2, IMovementStrategy> movementFactory;
+        private readonly float burstDuration;
 
-        public bool IsAttackInProgress => !_hasFired;
-        private readonly int _count;
-        private readonly float _radius;
-        private readonly Func<Vector2, IMovementStrategy> _movementFactory;
-        private Color color = Color.Yellow;
-		private float timer = 0f;
-   		private bool hasFired = false;
+        private float timer = 0f;
+        private bool inBurst = true;
+        private bool hasFired = false;
 
-        /// <param name="count">How many bullets around the circumference.</param>
-        /// <param name="radius">Radius of the ring.</param>
-        /// <param name="bulletSpeed">Speed at which the ring flies toward the player.</param>
-        public CircleAttack(int count, float radius, Func<Vector2, IMovementStrategy> movementFactory)
+        private readonly Color color = Color.Yellow;
+
+        public bool IsAttackInProgress => inBurst;
+
+        public CircleAttack(
+            int count,
+            float radius,
+            Func<Vector2, IMovementStrategy>? movementFactory = null,
+            float burstDuration = 1.0f
+        )
         {
-            _count = count;
-            _radius = radius;
-            _movementFactory = movementFactory;
+            this.count = count;
+            this.radius = radius;
+            this.movementFactory = movementFactory ?? DefaultFactory;
+            this.burstDuration = burstDuration;
+            Reset();
         }
 
         public void Reset()
         {
             timer = 0f;
+            inBurst = true;
             hasFired = false;
         }
 
-
         public void Update(Enemy enemy, GameTime gameTime)
         {
-            if (_hasFired) return;
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            Vector2 center = enemy.Position;
-            Vector2 toPlayer = Player.Instance.Position - center;
-            if (toPlayer != Vector2.Zero) toPlayer.Normalize();
+            if (!inBurst) return;
 
-            for (int i = 0; i < _count; i++)
+            if (!hasFired)
             {
-                float θ = MathHelper.TwoPi * i / _count;
-                Vector2 offset = new Vector2((float)Math.Cos(θ), (float)Math.Sin(θ)) * _radius;
-                Vector2 spawnPos = center + offset;
+                Vector2 center = enemy.Position;
+                Vector2 toPlayer = Player.Instance.Position - center;
+                if (toPlayer != Vector2.Zero) toPlayer.Normalize();
 
-                var mv = _movementFactory(toPlayer);
-                EntityHandler.Add(new EnemyBullet(spawnPos, mv, color));
+                for (int i = 0; i < count; i++)
+                {
+                    float θ = MathHelper.TwoPi * i / count;
+                    Vector2 offset = new Vector2((float)Math.Cos(θ), (float)Math.Sin(θ)) * radius;
+                    Vector2 spawnPos = center + offset;
+
+                    var move = movementFactory(toPlayer);
+                    EntityHandler.Add(new EnemyBullet(spawnPos, move, color));
+                }
+
+                hasFired = true;
             }
 
-            _hasFired = true;
+            timer += dt;
+            if (timer >= burstDuration)
+                inBurst = false;
+        }
+
+        private IMovementStrategy DefaultFactory(Vector2 dir)
+        {
+            return new StraightBullet(dir, 200f);
         }
     }
 }

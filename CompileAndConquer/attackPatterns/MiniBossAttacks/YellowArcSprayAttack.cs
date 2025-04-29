@@ -12,7 +12,6 @@ public class ArcAttackPattern : IAttackPattern
     private bool           inBurst;
     private readonly Func<Vector2, IMovementStrategy> movementFactory;
 
-    // You can change these to the colors you actually want:
     private readonly Color color     = Color.Red;
     private readonly int   arcs         = 3;
     private readonly int   bulletsPerArc= 12;
@@ -37,7 +36,7 @@ public class ArcAttackPattern : IAttackPattern
     {
         timer += (float)gt.ElapsedGameTime.TotalSeconds;
 
-        // Wait until our cooldown has elapsed, then fire exactly once:
+        // Wait until our cooldown has elapsed
         if (inBurst && timer >= cooldown)
         {
             Vector2 origin = enemy.Position;

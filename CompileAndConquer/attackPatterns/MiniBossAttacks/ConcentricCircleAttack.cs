@@ -1,53 +1,79 @@
 using Microsoft.Xna.Framework;
 using System;
+using CompileAndConquer.Content;
 using CompileAndConquer.Content.Interfaces;
 using CompileAndConquer.Entities.BulletSpawners;
-using CompileAndConquer.Content;
 using CompileAndConquer.Content.MovementTypes.BulletMovementTypes;
 
 public class ConcentricCircleAttack : IAttackPattern
 {
-    private readonly int   rings         = 2;
-    private readonly int   perRing       = 16;
-    private readonly float burstDuration = 1.0f;
-    private float          timer;
-    private bool           inBurst;
+    private readonly int rings;
+    private readonly int perRing;
+    private readonly float burstDuration;
+    private readonly Func<Vector2, float, IMovementStrategy> bulletFactory;
 
-    public void Reset()
-    {
-        timer   = 0f;
-        inBurst = true;
-    }
+    private float timer;
+    private bool inBurst;
+    private bool hasSpawned;
 
     public bool IsAttackInProgress => inBurst;
 
-    public void Update(Enemy enemy, GameTime gt)
+    public ConcentricCircleAttack(
+        Func<Vector2, float, IMovementStrategy>? bulletFactory = null,
+        int rings = 2,
+        int perRing = 16,
+        float burstDuration = 1.0f
+    )
     {
-        float dt = (float)gt.ElapsedGameTime.TotalSeconds;
+        this.rings = rings;
+        this.perRing = perRing;
+        this.burstDuration = burstDuration;
+        this.bulletFactory = bulletFactory ?? DefaultBulletFactory;
+        Reset();
+    }
 
-        // Spawn once at start of burst
-        if (inBurst && timer == 0f)
+    public void Reset()
+    {
+        timer = 0f;
+        inBurst = true;
+        hasSpawned = false;
+    }
+
+    public void Update(Enemy enemy, GameTime gameTime)
+    {
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        if (inBurst && !hasSpawned)
         {
+            hasSpawned = true;
             Vector2 origin = enemy.Position;
+
             for (int r = 1; r <= rings; r++)
+            {
                 for (int i = 0; i < perRing; i++)
                 {
                     float ang = i * MathHelper.TwoPi / perRing;
-                    Vector2 spawn = origin + new Vector2((float)Math.Cos(ang), (float)Math.Sin(ang)) * (r * 30f);
-                    EntityHandler.Add(new EnemyBullet(
-                        spawn,
-                        new StraightBullet(new Vector2((float)Math.Cos(ang), (float)Math.Sin(ang)), 150f + r * 20f),
-                        Color.Blue
-                    ));
+                    Vector2 dir = new Vector2((float)Math.Cos(ang), (float)Math.Sin(ang));
+                    Vector2 spawn = origin + dir * (r * 30f);
+
+                    float speed = 150f + r * 20f;
+                    var move = bulletFactory(dir, speed);
+
+                    EntityHandler.Add(new EnemyBullet(spawn, move, Color.Blue));
                 }
+            }
         }
 
-        // Advance timer, end burst when done
         if (inBurst)
         {
             timer += dt;
             if (timer >= burstDuration)
                 inBurst = false;
         }
+    }
+
+    private IMovementStrategy DefaultBulletFactory(Vector2 direction, float speed)
+    {
+        return new StraightBullet(direction, speed);
     }
 }
